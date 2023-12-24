@@ -14,6 +14,11 @@
     <PackageIcon>monster128x128.png</PackageIcon>
     <PackageProjectUrl>monstersoft.com.tr</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/bay-lavabo/Orhanization</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Orhanization test</PackageTags>
+    <PackageReleaseNotes>Orhanization nuget package</PackageReleaseNotes>
+    <NeutralLanguage>tr</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
