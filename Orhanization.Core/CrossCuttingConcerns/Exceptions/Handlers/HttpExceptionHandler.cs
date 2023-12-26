@@ -27,7 +27,7 @@ public class HttpExceptionHandler : ExceptionHandler
 
     protected override Task HandleException(Exception exception)
     {
-        Response.StatusCode = StatusCodes.Status400BadRequest;
+        Response.StatusCode = StatusCodes.Status500InternalServerError;
         string details = new InternalServerProblemDetails(exception.Message).AsJson();
         return Response.WriteAsync(details);
     }
@@ -36,6 +36,20 @@ public class HttpExceptionHandler : ExceptionHandler
     {
         Response.StatusCode = StatusCodes.Status400BadRequest;
         string details = new ValidationProblemDetails(validationException.Errors).AsJson();
+        return Response.WriteAsync(details);
+    }
+
+    protected override Task HandleException(AuthorizationException authorizationException)
+    {
+        Response.StatusCode = StatusCodes.Status401Unauthorized;
+        string details = new AuthorizationProblemDetails(authorizationException.Message).AsJson();
+        return Response.WriteAsync(details);
+    }
+
+    protected override Task HandleException(NotFoundException notFoundException)
+    {
+        Response.StatusCode = StatusCodes.Status404NotFound;
+        string details = new NotFoundProblemDetails(notFoundException.Message).AsJson();
         return Response.WriteAsync(details);
     }
 }
