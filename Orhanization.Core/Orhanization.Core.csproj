@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Title>DDD Helper Service</Title>
+    <Title>DDD Helper Service For Local Project</Title>
     <Authors>Orhan Firtina</Authors>
     <Company>Monstersoft</Company>
     <Product>Orhanization.Core</Product>
@@ -19,9 +19,9 @@
     <PackageTags>Orhanization test</PackageTags>
     <PackageReleaseNotes>Orhanization nuget package</PackageReleaseNotes>
     <NeutralLanguage>tr</NeutralLanguage>
-    <Version>1.0.4</Version>
-    <AssemblyVersion>1.0.4</AssemblyVersion>
-    <FileVersion>1.0.4</FileVersion>
+    <Version>1.0.5</Version>
+    <AssemblyVersion>1.0.5</AssemblyVersion>
+    <FileVersion>1.0.5</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
