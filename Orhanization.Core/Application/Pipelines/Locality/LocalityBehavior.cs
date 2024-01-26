@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Orhanization.Core.Application.Pipelines.Locality;
 
-internal class LocalityBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public class LocalityBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>, ILocalityRequest
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
