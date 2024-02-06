@@ -10,6 +10,5 @@ namespace Orhanization.Core.Application.Pipelines.Locality;
 
 public interface ILocalityRequest
 {
-    [JsonIgnore]
-    public UserRequestInfo userRequestInfo { get; set; }
+    public UserRequestInfo? UserRequestInfo { get; set; }
 }

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
+using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Security.Extensions;
 using System;
@@ -21,9 +22,12 @@ public class LocalityBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest,
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        request.userRequestInfo.RequestUserId = _httpContextAccessor.HttpContext.User.GetUserId();
-        request.userRequestInfo.RequestUserLocalityId = _httpContextAccessor.HttpContext.User.GetUserLocalityId();
-
+        request.UserRequestInfo = new UserRequestInfo()
+        {
+            RequestUserId = _httpContextAccessor.HttpContext.User.GetUserId(),
+            RequestUserLocalityId = _httpContextAccessor.HttpContext.User.GetUserLocalityId()
+        };
+            
         TResponse response = await next();
         return response;
     }

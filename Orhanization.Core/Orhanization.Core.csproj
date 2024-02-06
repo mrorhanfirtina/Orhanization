@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -19,9 +19,9 @@
     <PackageTags>Orhanization test</PackageTags>
     <PackageReleaseNotes>Orhanization nuget package</PackageReleaseNotes>
     <NeutralLanguage>tr</NeutralLanguage>
-    <Version>1.0.5</Version>
-    <AssemblyVersion>1.0.5</AssemblyVersion>
-    <FileVersion>1.0.5</FileVersion>
+    <Version>1.0.9</Version>
+    <AssemblyVersion>1.0.9</AssemblyVersion>
+    <FileVersion>1.0.9</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
