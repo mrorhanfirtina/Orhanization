@@ -59,5 +59,6 @@ public class BarcodeMappingProfiles : Profile
         //GetListByDynamicBarcodeQuery
         CreateMap<Barcode, GetListByDynamicBarcodeListItemDto>().ReverseMap();
         CreateMap<Paginate<Barcode>, GetListResponse<GetListByDynamicBarcodeListItemDto>>().ReverseMap();
+
     }
 }

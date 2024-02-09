@@ -61,7 +61,7 @@ public class GetListByDynamicBarcodeQueryHandler : IRequestHandler<GetListByDyna
                 index: request.PageRequest.PageIndex,
                 size: request.PageRequest.PageSize);
 
-        // Sonuç maplenip dönğlür.
+        // Sonuç maplenip dönülür.
         return _mapper.Map<GetListResponse<GetListByDynamicBarcodeListItemDto>>(barcodes);
     }
 }
