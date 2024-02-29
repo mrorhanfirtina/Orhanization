@@ -27,7 +27,7 @@ public class EFRepositoryBase<TEntity, TEntityId, TContext> : IAsyncRepository<T
     #region ASENKRON CRUD METODLAR
     public async Task<TEntity> AddAsync(TEntity entity)
     {
-        entity.CreatedDate = DateTime.UtcNow;
+        entity.CreatedDate = DateTime.Now;
         await Context.AddAsync(entity);
         await Context.SaveChangesAsync();
         return entity;
