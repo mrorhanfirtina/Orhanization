@@ -1,17 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
-using Microsoft.EntityFrameworkCore;
-using System;
+using Orhanization.Core.Persistence.Dynamic;
+using Orhanization.Core.Persistence.Paging;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Orhanization.Core.Persistence.Paging;
-using Orhanization.Core.Persistence.Dynamic;
 
 namespace Orhanization.Core.Persistence.Repositories;
 

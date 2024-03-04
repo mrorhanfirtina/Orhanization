@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Orhanization.Core.Application.Dtos;
+﻿namespace Orhanization.Core.Application.Dtos;
 
 public class UserForRegisterDto : IDto
 {
@@ -12,7 +6,7 @@ public class UserForRegisterDto : IDto
     public string Password { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public string DepositorId { get; set; }
+    public string LocalityId { get; set; }
     public int[] UserOperationClaimIds { get; set; }
 
     public UserForRegisterDto()
@@ -23,13 +17,13 @@ public class UserForRegisterDto : IDto
         LastName = string.Empty;
     }
 
-    public UserForRegisterDto(string email, string password, string firstName, string lastName, string depositorId, int[] userOperationClaimIds)
+    public UserForRegisterDto(string email, string password, string firstName, string lastName, string localityId, int[] userOperationClaimIds)
     {
         Email = email;
         Password = password;
         FirstName = firstName;
         LastName = lastName;
-        DepositorId = depositorId;
+        LocalityId = localityId;
         UserOperationClaimIds = userOperationClaimIds;
     }
 }
