@@ -8,6 +8,7 @@ public class UserForRegisterDto : IDto
     public string LastName { get; set; }
     public string LocalityId { get; set; }
     public int[] UserOperationClaimIds { get; set; }
+    public Guid[] UserLocalityIds { get; set; }
 
     public UserForRegisterDto()
     {
@@ -17,7 +18,7 @@ public class UserForRegisterDto : IDto
         LastName = string.Empty;
     }
 
-    public UserForRegisterDto(string email, string password, string firstName, string lastName, string localityId, int[] userOperationClaimIds)
+    public UserForRegisterDto(string email, string password, string firstName, string lastName, string localityId, int[] userOperationClaimIds, Guid[] userLocalityIds)
     {
         Email = email;
         Password = password;
@@ -25,5 +26,6 @@ public class UserForRegisterDto : IDto
         LastName = lastName;
         LocalityId = localityId;
         UserOperationClaimIds = userOperationClaimIds;
+        UserLocalityIds = userLocalityIds;
     }
 }
