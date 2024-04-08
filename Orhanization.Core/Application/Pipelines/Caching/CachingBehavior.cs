@@ -58,7 +58,10 @@ public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
 
         await _cache.SetAsync(request.CacheKey, serializeData, cacheOptions, cancellationToken);
 
-        if (request.CacheGroupKey != null)
+        string cacheGroupKey = request.CacheGroupKey + _httpContextAccessor.HttpContext.User.GetUserLocalityId(); //1.0.10
+
+
+        if (cacheGroupKey != null)
         {
             await AddCacheKeyToGroup(request, slidingExpiration, cancellationToken);
         }

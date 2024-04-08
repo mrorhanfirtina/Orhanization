@@ -1,9 +1,4 @@
 ﻿using Orhanization.Core.Persistence.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 
@@ -12,8 +7,7 @@ public class ShipmentAttributeValue : Entity<Guid>
     public Guid ShipmentId { get; set; }
     public Guid ShipmentAttributeId { get; set; }
     public string Value { get; set; }
-    public virtual Shipment? Shipment { get; set; }
-    public virtual ShipmentAttribute? ShipmentAttribute { get; set; }
+    public virtual ShipmentAttribute ShipmentAttribute { get; set; }
 
     public ShipmentAttributeValue()
     {

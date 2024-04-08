@@ -23,11 +23,13 @@ public class TaskStockConfiguration : IEntityTypeConfiguration<TaskStock>
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.WorkTaskId, p.StockId, p.Quantity, p.CreatedDate }, name: "IX_TaskStocks_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Stock);
+        builder.HasOne(p => p.WorkTask).WithMany().HasForeignKey(p => p.WorkTaskId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.Stock).WithMany().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

@@ -1,11 +1,5 @@
 ﻿using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Persistence.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 
@@ -17,14 +11,15 @@ public class ContainerUnit : Entity<int>
     public string CountryCode { get; set; }
     public string ProducerCode { get; set; }
     public string Counter { get; set; }
-    public Guid DepositorId { get; set; }
+    public Guid DepositorCompanyId { get; set; }
+    public virtual DepositorCompany DepositorCompany { get; set; }
 
     public ContainerUnit()
     {
         
     }
 
-    public ContainerUnit(int id, string code, string description, string firstDigit, string countryCode, string producerCode, string counter, Guid depositorId):this()
+    public ContainerUnit(int id, string code, string description, string firstDigit, string countryCode, string producerCode, string counter, Guid depositorCompanyId):this()
     {
         Id = id;
         Code = code;
@@ -33,7 +28,7 @@ public class ContainerUnit : Entity<int>
         CountryCode = countryCode;
         ProducerCode = producerCode;
         Counter = counter;
-        DepositorId = depositorId;
+        DepositorCompanyId = depositorCompanyId;
     }
 }
 

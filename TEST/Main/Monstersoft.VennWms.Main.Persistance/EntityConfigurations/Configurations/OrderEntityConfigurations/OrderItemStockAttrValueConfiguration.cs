@@ -23,12 +23,12 @@ public class OrderItemStockAttrValueConfiguration : IEntityTypeConfiguration<Ord
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.OrderItemId, p.StockAttributeId, p.Value, p.CreatedDate }, name: "IX_OrderItemStockAttrValues_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.OrderItem);
-        builder.HasOne(p => p.StockAttribute);
+        builder.HasOne(p => p.StockAttribute).WithMany().HasForeignKey(p => p.StockAttributeId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

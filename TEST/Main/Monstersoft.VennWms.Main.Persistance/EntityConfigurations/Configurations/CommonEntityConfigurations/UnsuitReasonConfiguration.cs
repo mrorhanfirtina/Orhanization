@@ -16,20 +16,19 @@ public class UnsuitReasonConfiguration : IEntityTypeConfiguration<UnsuitReason>
         builder.Property(p => p.Id).HasColumnName("Id").IsRequired();
         builder.Property(p => p.Code).HasColumnName("Code").HasMaxLength(30).IsRequired();
         builder.Property(p => p.Description).HasColumnName("Description").HasMaxLength(60).IsRequired();
-        builder.Property(p => p.DepositorId).HasColumnName("DepositorId").IsRequired();
+        builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
         builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
         #endregion
 
         #region Indexler
-        builder.HasIndex(indexExpression: p => p.Code, name: "UK_UnsuitReasons_Code").IsUnique();
-        builder.HasIndex(indexExpression: p => p.Description, name: "UK_UnsuitReasons_Description").IsUnique();
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.Description, p.DepositorCompanyId, p.CreatedDate }, name: "IX_UnsuitReasons_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.LogStockUnsuitReasons);
-        builder.HasMany(p => p.StockUnsuitReasons);
+        builder.HasOne(p => p.DepositorCompany);
         #endregion
 
         #region Filtreler

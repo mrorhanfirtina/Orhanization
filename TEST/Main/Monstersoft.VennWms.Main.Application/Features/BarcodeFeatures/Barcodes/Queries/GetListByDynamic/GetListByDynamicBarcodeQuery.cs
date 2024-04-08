@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Rules;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
 using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
 using Orhanization.Core.Application.Dtos;
@@ -26,42 +25,37 @@ public class GetListByDynamicBarcodeQuery : IRequest<GetListResponse<GetListByDy
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-}
 
-public class GetListByDynamicBarcodeQueryHandler : IRequestHandler<GetListByDynamicBarcodeQuery, GetListResponse<GetListByDynamicBarcodeListItemDto>>
-{
-    private readonly IBarcodeRepository _barcodeRepository;
-    private readonly BarcodeBusinessRules _barcodeBusinessRules;
-    private readonly DepositorBusinessRules _depositorBusinessRules;
-    private readonly IMapper _mapper;
 
-    public GetListByDynamicBarcodeQueryHandler(IBarcodeRepository barcodeRepository, IMapper mapper, BarcodeBusinessRules barcodeBusinessRules, DepositorBusinessRules depositorBusinessRules)
+    public class GetListByDynamicBarcodeQueryHandler : IRequestHandler<GetListByDynamicBarcodeQuery, GetListResponse<GetListByDynamicBarcodeListItemDto>>
     {
-        _barcodeRepository = barcodeRepository;
-        _mapper = mapper;
-        _barcodeBusinessRules = barcodeBusinessRules;
-        _depositorBusinessRules = depositorBusinessRules;
+        private readonly IBarcodeRepository _barcodeRepository;
+        private readonly BarcodeBusinessRules _barcodeBusinessRules;
+        private readonly IMapper _mapper;
+
+        public GetListByDynamicBarcodeQueryHandler(IBarcodeRepository barcodeRepository, IMapper mapper, BarcodeBusinessRules barcodeBusinessRules)
+        {
+            _barcodeRepository = barcodeRepository;
+            _barcodeBusinessRules = barcodeBusinessRules;
+            _mapper = mapper;
+        }
+
+        public async Task<GetListResponse<GetListByDynamicBarcodeListItemDto>> Handle(GetListByDynamicBarcodeQuery request, CancellationToken cancellationToken)
+        {
+            _barcodeBusinessRules.GetRequest()
+            .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
+
+            Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
+
+            Paginate<Barcode> barcodeList = await _barcodeRepository.GetListByDynamicAsync(
+            dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+            include: m => m.Include(m => m.BarcodeAreas).Include(m => m.BarcodePrinters),
+            index: request.PageRequest.PageIndex,
+            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+            return _mapper.Map<GetListResponse<GetListByDynamicBarcodeListItemDto>>(barcodeList);
+        }
     }
 
-    public async Task<GetListResponse<GetListByDynamicBarcodeListItemDto>> Handle(GetListByDynamicBarcodeQuery request, CancellationToken cancellationToken)
-    {
-        // User ile gelen token bilgisinden depositor id numarası çekilir.
-        Guid depositorId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
-
-        // Depositor id gerçekten var mı ve aktif mi kontrol edilir.
-        await _depositorBusinessRules.DepositorIdMustBeValid(depositorId);
-        // Depositorun herhangi bir barkodu var mı kontrol edilir.
-        await _barcodeBusinessRules.IsDepositorHaveAnyBarcode(depositorId);
-
-        // Depositorun barkodları çekilir.
-        Paginate<Barcode> barcodes = await _barcodeRepository.GetListByDynamicAsync(
-                dynamic: request.DynamicQuery,
-                include: m => m.Include(m => m.BarcodeAreas).Include(m => m.Printers),
-                predicate: m => m.DepositorId == depositorId,
-                index: request.PageRequest.PageIndex,
-                size: request.PageRequest.PageSize);
-
-        // Sonuç maplenip dönülür.
-        return _mapper.Map<GetListResponse<GetListByDynamicBarcodeListItemDto>>(barcodes);
-    }
 }
+

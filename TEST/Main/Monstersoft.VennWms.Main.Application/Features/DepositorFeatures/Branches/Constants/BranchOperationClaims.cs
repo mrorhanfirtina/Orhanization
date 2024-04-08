@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Branches.Constants;
+﻿namespace Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Branches.Constants;
 
 public static class BranchOperationClaims
 {

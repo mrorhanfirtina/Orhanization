@@ -1,10 +1,5 @@
 ﻿using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Persistence.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Domain.Entities.POEntities;
 
@@ -15,15 +10,16 @@ public class PoType : Entity<Guid>
     public bool IsCodeGenerate { get; set; }
     public string Format { get; set; }
     public int Counter { get; set; }
-    public Guid DepositorId { get; set; }
+    public Guid DepositorCompanyId { get; set; }
     public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; }
+    public virtual DepositorCompany DepositorCompany { get; set; }
 
     public PoType()
     {
         PurchaseOrders = new HashSet<PurchaseOrder>();
     }
 
-    public PoType(Guid id, string code, string description, bool isCodeGenerate, string format, int counter, Guid depositorId) : this()
+    public PoType(Guid id, string code, string description, bool isCodeGenerate, string format, int counter, Guid depositorCompanyId) : this()
     {
         Id = id;
         Code = code;
@@ -31,6 +27,6 @@ public class PoType : Entity<Guid>
         IsCodeGenerate = isCodeGenerate;
         Format = format;
         Counter = counter;
-        DepositorId = depositorId;
+        DepositorCompanyId = depositorCompanyId;
     }
 }

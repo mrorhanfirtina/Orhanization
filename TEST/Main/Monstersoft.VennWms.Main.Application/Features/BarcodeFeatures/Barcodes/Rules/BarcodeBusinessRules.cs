@@ -1,109 +1,180 @@
 ﻿using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Constants;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Constants;
 using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
-using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
+using Monstersoft.VennWms.Main.Domain.Enums;
 using Orhanization.Core.Application.Rules;
 using Orhanization.Core.CrossCuttingConcerns.Exceptions.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Rules;
 
 public class BarcodeBusinessRules : BaseBusinessRules
 {
+    private readonly IDepositorCompanyRepository _depositorCompanyRepository;
     private readonly IBarcodeRepository _barcodeRepository;
-
-    public BarcodeBusinessRules(IBarcodeRepository barcodeRepository)
+    private readonly IPrinterRepository _printerRepository;
+    private readonly IDepositorRepository _depositorRepository;
+    public BarcodeBusinessRules(IDepositorCompanyRepository depositorCompanyRepository, IBarcodeRepository barcodeRepository, 
+        IDepositorRepository depositorRepository, IPrinterRepository printerRepository)
     {
+        _depositorCompanyRepository = depositorCompanyRepository;
         _barcodeRepository = barcodeRepository;
+        _depositorRepository = depositorRepository;
+        _printerRepository = printerRepository;
     }
+    #region BASE RULES
+    public RequestType CurrentRequest { get; set; } = RequestType.Null;
+    public Guid DepositorCompanyId { get; set; } = Guid.Empty;
 
-    //Barkod eklenirken mevcut mudiye ait aynı kodda başka barkod kaydı var mı?
-    public async Task BarcodeCodeCannotBeDuplicatedWhenInsert(string code, Guid depositorId)
+    // Burada depositorComapnyId yi miras alan siniflarda kullanmak için Guid e çevirip sakliyoruz.
+    public BarcodeBusinessRules CheckDepositorCompany(string localityId)
     {
-        Barcode? result = await _barcodeRepository.GetAsync(predicate: p => p.Code.ToLower() == code.ToLower() 
-                                                            && p.DepositorId == depositorId
-                                                            && p.DeletedDate == null);
+        Guid depositorCompanyId = Guid.Parse(localityId);
 
-        if (result != null)
+        if (depositorCompanyId == Guid.Empty)
         {
-            throw new BusinessException(BarcodeMessages.BarcodeCodeExists);
+            throw new BusinessException(BarcodeMessages.EmptyLocalityId);
         }
+
+        var isExists = _depositorCompanyRepository.Any(predicate: x => x.Id == depositorCompanyId && !x.DeletedDate.HasValue);
+
+        if (!isExists)
+        {
+            throw new BusinessException(BarcodeMessages.LocalityIdNotFound);
+        }
+
+        var isNotActive = _depositorCompanyRepository.Any(predicate: x => x.Id == depositorCompanyId && x.DeletedDate != null, withDeleted: true);
+
+        if (isNotActive)
+        {
+            throw new BusinessException(BarcodeMessages.LocalityIdNotActive);
+        }
+
+        DepositorCompanyId = depositorCompanyId;
+
+        return this;
     }
 
-    //Update işlemleri için barkod kodu gerçekten var mı? Varsa barkod bilgisi dönülecek.
-    public async Task<Barcode> BarcodeCodeMustBeValidWhenUpdate(string code, Guid depositorId)
+    // Istek tipini sakliyoruz.
+    private void SetRequestType(RequestType requestType)
     {
-        Barcode? result = await _barcodeRepository.GetAsync(withDeleted: false, predicate: d => d.Code == code && d.DepositorId == depositorId);
-
-        if (result == null)
-        {
-            throw new BusinessException(BarcodeMessages.BarcodeCodeNotExists);
-        }
-        else if (result.DeletedDate != null)
-        {
-            throw new BusinessException(BarcodeMessages.BarcodeCodeIsDeleted);
-        }
-
-        return result;
+        CurrentRequest = requestType;
     }
 
-    //Delete işlemleri için barkod kodu gerçekten var mı? Varsa barkod bilgisi dönülecek.
-    public async Task<Barcode> BarcodeCodeMustBeValidWhenDelete(string code, Guid depositorId)
+    // Istek tipini Get olarak ayarliyoruz.
+    public BarcodeBusinessRules GetRequest()
     {
-        Barcode? result = await _barcodeRepository.GetAsync(withDeleted: false, predicate: d => d.Code == code && d.DepositorId == depositorId, enableTracking: false);
-
-        if (result == null)
-        {
-            throw new BusinessException(BarcodeMessages.BarcodeCodeNotExists);
-        }
-
-        return result;
+        SetRequestType(RequestType.Get);
+        return this;
     }
 
-    public async Task BarcodeCodeMustBeValid(string code, Guid depositorId)
+    // Istek tipini Create olarak ayarliyoruz.
+    public BarcodeBusinessRules CreateRequest()
     {
-        var result = await _barcodeRepository.AnyAsync(predicate: d => d.Code == code && d.DepositorId == depositorId && d.DeletedDate == null);
-
-        if (!result)
-        {
-            throw new BusinessException(BarcodeMessages.BarcodeCodeNotExists);
-        }
+        SetRequestType(RequestType.Create);
+        return this;
     }
 
-    public async Task BarcodeIdMustBeValid(Guid barcodeId)
+    // Istek tipini Update olarak ayarliyoruz.
+    public BarcodeBusinessRules UpdateRequest()
     {
-        var result = await _barcodeRepository.AnyAsync(predicate: d => d.Id == barcodeId && d.DeletedDate == null);
-
-        if (!result)
-        {
-            throw new BusinessException(BarcodeMessages.BarcodeActiveIdNotExists);
-        }
+        SetRequestType(RequestType.Update);
+        return this;
     }
 
-    public async Task BarcodeIdMustBeValid(Guid barcodeId, Guid depositorId)
+    // Istek tipini Delete olarak ayarliyoruz.
+    public BarcodeBusinessRules DeleteRequest()
     {
-        var result = await _barcodeRepository.AnyAsync(predicate: d => d.Id == barcodeId && d.DepositorId == depositorId && d.DeletedDate == null);
-
-        if (!result)
-        {
-            throw new BusinessException(BarcodeMessages.BarcodeActiveIdNotExists);
-        }
+        SetRequestType(RequestType.Delete);
+        return this;
     }
 
-    public async Task IsDepositorHaveAnyBarcode(Guid depositorId)
+    // Istek tipini Null olarak ayarliyoruz.
+    public BarcodeBusinessRules NullRequest()
     {
-        var result = await _barcodeRepository.AnyAsync(predicate: d => d.DepositorId == depositorId && d.DeletedDate == null);
+        SetRequestType(RequestType.Null);
+        return this;
+    }
+    #endregion
 
-        if (!result)
+    #region ID RULES
+    public BarcodeBusinessRules CheckIdExistence(Guid id)
+    {
+        var isExists = _barcodeRepository.Any(predicate: x => x.Id == id && !x.DeletedDate.HasValue);
+
+        if (CurrentRequest == RequestType.Create && isExists)
         {
-            throw new BusinessException(BarcodeMessages.DepositorIsNotHaveBarcode);
+            throw new BusinessException(BarcodeMessages.IdExistsError);
         }
+        else if (CurrentRequest == RequestType.Update && !isExists)
+        {
+            throw new BusinessException(BarcodeMessages.IdNotExistsError);
+        }
+        else if (CurrentRequest == RequestType.Delete && !isExists)
+        {
+            throw new BusinessException(BarcodeMessages.IdNotExistsError);
+        }
+
+        return this;
+    }
+    #endregion
+
+    #region CODE RULES
+    public BarcodeBusinessRules CheckCodeExistenceWhenCreate(string code)
+    {
+        if (CurrentRequest == RequestType.Create)
+        {
+            var isExists = _barcodeRepository.Any(predicate: x => x.DepositorCompanyId == DepositorCompanyId && x.Code == code && !x.DeletedDate.HasValue);
+            if (isExists)
+            {
+                throw new BusinessException(BarcodeMessages.CodeExistsError);
+            }
+        }
+
+        return this;
     }
 
+    public BarcodeBusinessRules CheckCodeExistenceWhenUpdate(string code, Guid id)
+    {
+        if (CurrentRequest == RequestType.Update)
+        {
+            var isExists = _barcodeRepository.Any(predicate: x => x.DepositorCompanyId == DepositorCompanyId && x.Code == code && x.Id != id && !x.DeletedDate.HasValue);
+            if (isExists)
+            {
+                throw new BusinessException(BarcodeMessages.CodeExistsError);
+            }
+        }
+
+        return this;
+    }
+    #endregion
+
+    #region PRINTERID RULES
+    public BarcodeBusinessRules CheckPrinterIdExistence(Guid printerId)
+    {
+        var isExists = _printerRepository.Any(predicate: x => x.Id == printerId 
+        && x.DepositorCompanyId == DepositorCompanyId && !x.DeletedDate.HasValue);
+
+        if (!isExists)
+        {
+            throw new BusinessException(BarcodeMessages.PrinterIdNotExistsError);
+        }
+
+        return this;
+    }
+
+    public BarcodeBusinessRules CheckPrinterIdIsDuplicateInRequest(Guid[] printerIds)
+    {
+        if (printerIds != null && printerIds.Any())
+        {
+            var isDuplicate = printerIds.GroupBy(x => x).Any(g => g.Count() > 1);
+
+            if (isDuplicate)
+            {
+                throw new BusinessException(BarcodeMessages.PrinterIdDuplicateError);
+            }
+        }
+
+        return this;
+    }
+    #endregion
 }

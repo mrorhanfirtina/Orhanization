@@ -1,10 +1,5 @@
 ﻿using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Persistence.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 
@@ -15,36 +10,32 @@ public class Building : Entity<Guid>
     public string Province { get; set; }
     public string City { get; set; }
     public string Country { get; set; }
-    public string Address { get; set; }
+    public string AddressText { get; set; }
     public string ZipCode { get; set; }
-    public virtual ICollection<Site> Sites { get; set; }
-    public virtual ICollection<Branch> Branches { get; set; }
-    public virtual ICollection<Customer> Customers { get; set; }
-    public virtual ICollection<Depositor> Depositors { get; set; }
-    public virtual ICollection<Disturbitor> Disturbitors { get; set; }
-    public virtual ICollection<Receiver> Receivers { get; set; }
-    public virtual ICollection<Supplier> Suppliers { get; set; }
-
+    public Guid SiteId { get; set; }
+    public Guid DepositorCompanyId { get; set; }
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
+    public virtual DepositorCompany DepositorCompany { get; set; }
+    public virtual BuildingDimension? BuildingDimension { get; set; }
+    public virtual Site? Site { get; set; }
+    public virtual ICollection<StorageSystem>? StorageSystems { get; set; }
     public Building()
     {
-        Sites = new HashSet<Site>();
-        Branches = new HashSet<Branch>();
-        Customers = new HashSet<Customer>();
-        Depositors = new HashSet<Depositor>();
-        Disturbitors = new HashSet<Disturbitor>();
-        Receivers = new HashSet<Receiver>();
-        Suppliers = new HashSet<Supplier>();
+        StorageSystems = new HashSet<StorageSystem>();
     }
 
-    public Building(Guid id, string code, string description, string province, string city, string country, string address, string zipCode) : this()
+    public Building(Guid id, string code, Guid siteId, string description, string province, string city, string country, string addressText, string zipCode, Guid depositorCompanyId) : this()
     {
         Id = id;
         Code = code;
         Description = description;
         Province = province;
         City = city;
+        AddressText = addressText;
         Country = country;
-        Address = address;
         ZipCode = zipCode;
+        SiteId = siteId;
+        DepositorCompanyId = depositorCompanyId;
     }
 }

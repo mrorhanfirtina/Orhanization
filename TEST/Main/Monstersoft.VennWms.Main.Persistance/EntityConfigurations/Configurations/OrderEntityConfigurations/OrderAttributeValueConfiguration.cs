@@ -23,12 +23,12 @@ public class OrderAttributeValueConfiguration : IEntityTypeConfiguration<OrderAt
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.OrderId, p.OrderAttributeId, p.Value, p.CreatedDate }, name: "IX_OrderAttributeValues_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Order);
-        builder.HasOne(p => p.OrderAttribute);
+        builder.HasOne(p => p.OrderAttribute).WithMany().HasForeignKey(p => p.OrderAttributeId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

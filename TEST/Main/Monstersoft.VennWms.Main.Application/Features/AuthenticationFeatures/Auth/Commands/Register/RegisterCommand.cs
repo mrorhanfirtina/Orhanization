@@ -2,16 +2,14 @@
 using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Auth.Rules;
 using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.OperationClaims.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.AuthenticationRepositories;
+using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
 using Monstersoft.VennWms.Main.Application.Services.Abstract.AuthenticationServices;
+using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Security.Entities;
 using Orhanization.Core.Security.Hashing;
 using Orhanization.Core.Security.JWT;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Auth.Commands.Register;
 
@@ -27,15 +25,17 @@ public class RegisterCommand : IRequest<RegisteredResponse>
         private readonly OperationClaimBusinessRules _operationClaimBusinessRules;
         private readonly IAuthService _authService;
         private readonly AuthBusinessRules _authBusinessRules;
+        private readonly IUserDepositorRepository _userDepositorRepository;
 
         public RegisterCommandHandler(IUserRepository userRepository, IAuthService authService, AuthBusinessRules authBusinessRules,
-            OperationClaimBusinessRules operationClaimBusinessRules, IUserOperationClaimRepository userOperationClaimRepository)
+            OperationClaimBusinessRules operationClaimBusinessRules, IUserOperationClaimRepository userOperationClaimRepository, IUserDepositorRepository userDepositorRepository)
         {
             _userRepository = userRepository;
             _authService = authService;
             _authBusinessRules = authBusinessRules;
             _operationClaimBusinessRules = operationClaimBusinessRules;
             _userOperationClaimRepository = userOperationClaimRepository;
+            _userDepositorRepository = userDepositorRepository;
         }
 
         public async Task<RegisteredResponse> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -53,7 +53,7 @@ public class RegisterCommand : IRequest<RegisteredResponse>
                     Email = request.UserForRegisterDto.Email,
                     FirstName = request.UserForRegisterDto.FirstName,
                     LastName = request.UserForRegisterDto.LastName,
-                    LocalityId = request.UserForRegisterDto.DepositorId,
+                    LocalityId = request.UserForRegisterDto.LocalityId,
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
                     Status = true
@@ -69,6 +69,12 @@ public class RegisterCommand : IRequest<RegisteredResponse>
                 UserOperationClaim operationClaim = await _userOperationClaimRepository.AddAsync(userOperationClaim);
                 // UserOperationClaim nesnesini User nesnesine ekle
                 createdUser.UserOperationClaims.Add(operationClaim);
+            }
+
+            foreach (Guid depositorId in request.UserForRegisterDto.UserLocalityIds)
+            {
+                UserDepositor userDepositor = new(id: Guid.NewGuid(), userId: createdUser.Id, depositorId: depositorId);
+                UserDepositor createdUserDepositor = await _userDepositorRepository.AddAsync(userDepositor);
             }
 
             AccessToken createdAccessToken = await _authService.CreateAccessToken(createdUser);

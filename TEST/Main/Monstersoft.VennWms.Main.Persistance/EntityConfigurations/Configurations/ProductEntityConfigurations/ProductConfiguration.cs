@@ -17,23 +17,24 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(p => p.Code).HasColumnName("Code").HasMaxLength(30).IsRequired();
         builder.Property(p => p.Description).HasColumnName("Description").HasMaxLength(120).IsRequired();
         builder.Property(p => p.AlternativeCode).HasColumnName("AlternativeCode").HasMaxLength(30);
-        builder.Property(p => p.DepositorId).HasColumnName("DepositorId").IsRequired();
+        builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
         builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
         #endregion
 
         #region Indexler
-        //Kod kısmı business rules tarafında yazılacak. Code, Description, AlternativeCode farklı depositorlarda aynı kod olabilir cunku.
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.Description, p.AlternativeCode, p.DepositorCompanyId, p.CreatedDate }, name: "IX_Products_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.ProductAttributeValues);
-        builder.HasMany(p => p.OrderItems);
-        builder.HasMany(p => p.LogStocks);
-        builder.HasMany(p => p.ReceiptItems);
-        builder.HasMany(p => p.ReturnItems);
-        builder.HasMany(p => p.Stocks);
+        builder.HasMany(p => p.ProductAttributeValues).WithOne().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ProductBarcodes).WithOne().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ItemUnits).WithOne().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ProductDepositors).WithOne().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ProductStockAttributes).WithOne().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

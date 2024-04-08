@@ -16,10 +16,11 @@ public class WorkTaskConfiguration : IEntityTypeConfiguration<WorkTask>
         builder.Property(p => p.Id).HasColumnName("Id").IsRequired();
         builder.Property(p => p.Code).HasColumnName("Code").HasMaxLength(30).IsRequired();
         builder.Property(p => p.DepositorId).HasColumnName("DepositorId").IsRequired();
+        builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.TaskListId).HasColumnName("TaskListId").IsRequired();
         builder.Property(p => p.StockId).HasColumnName("StockId").IsRequired();
         builder.Property(p => p.FromLocationId).HasColumnName("FromLocationId").IsRequired();
-        builder.Property(p => p.ToLocaitonId).HasColumnName("ToLocaitonId").IsRequired();
+        builder.Property(p => p.ToLocationId).HasColumnName("ToLocationId").IsRequired();
         builder.Property(p => p.StatusId).HasColumnName("StatusId").IsRequired();
         builder.Property(p => p.TransactionTypeId).HasColumnName("TransactionTypeId").IsRequired();
         builder.Property(p => p.Quantity).HasColumnName("Quantity").HasColumnType("DECIMAL(18,6)").IsRequired();
@@ -29,15 +30,18 @@ public class WorkTaskConfiguration : IEntityTypeConfiguration<WorkTask>
         #endregion
 
         #region Indexler
-        builder.HasIndex(indexExpression: p => p.Code, name: "UK_WorkTasks_Code").IsUnique();
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.DepositorId, p.DepositorCompanyId, p.TaskListId, p.StockId, p.FromLocationId, p.ToLocationId, p.StatusId, p.TransactionTypeId, p.Quantity, p.CreatedDate }, name: "IX_WorkTasks_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.TaskList);
-        builder.HasOne(p => p.Stock);
-        builder.HasOne(p => p.Status);
-        builder.HasOne(p => p.TransactionType);
-        builder.HasMany(p => p.TransactionLogs);
+        builder.HasOne(p => p.Depositor).WithMany().HasForeignKey(p => p.DepositorId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Stock).WithMany().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(p => p.FromLocation).WithMany().HasForeignKey(p => p.FromLocationId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(p => p.ToLocation).WithMany().HasForeignKey(p => p.ToLocationId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(p => p.Status).WithMany().HasForeignKey(p => p.StatusId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(p => p.TransactionType).WithMany().HasForeignKey(p => p.TransactionTypeId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

@@ -24,11 +24,11 @@ public class BarcodeAreaConfiguration : IEntityTypeConfiguration<BarcodeArea>
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.BarcodeId, p.QueryField, p.TextField, p.CreatedDate }, name: "IX_BarcodeAreas_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Barcode);
         #endregion
 
         #region Filtreler

@@ -23,12 +23,12 @@ public class StockAttributeValueConfiguration : IEntityTypeConfiguration<StockAt
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.StockId, p.StockAttributeId, p.Value, p.CreatedDate }, name: "IX_StockAttributeValues_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Stock);
-        builder.HasOne(p => p.StockAttribute);
+        builder.HasOne(p => p.StockAttribute).WithMany().HasForeignKey(p => p.StockAttributeId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

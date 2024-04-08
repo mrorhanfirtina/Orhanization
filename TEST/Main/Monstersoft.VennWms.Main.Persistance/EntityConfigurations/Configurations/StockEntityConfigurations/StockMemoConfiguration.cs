@@ -25,11 +25,11 @@ public class StockMemoConfiguration : IEntityTypeConfiguration<StockMemo>
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.StockId, p.Description, p.Text, p.InputDate, p.EditDate, p.CreatedDate }, name: "IX_StockMemos_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Stock);
         #endregion
 
         #region Filtreler

@@ -1,9 +1,4 @@
 ﻿using Orhanization.Core.Persistence.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities
 {
@@ -12,8 +7,7 @@ namespace Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities
         public Guid ReceiptId { get; set; }
         public Guid ReceiptAttributeId { get; set; }
         public string Value { get; set; }
-        public virtual Receipt? Receipt { get; set; }
-        public virtual ReceiptAttribute? ReceiptAttribute { get; set; }
+        public virtual ReceiptAttribute ReceiptAttribute { get; set; }
 
         public ReceiptAttributeValue()
         {

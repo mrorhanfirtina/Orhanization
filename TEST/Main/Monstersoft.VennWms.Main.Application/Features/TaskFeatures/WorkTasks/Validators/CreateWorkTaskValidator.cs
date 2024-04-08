@@ -1,0 +1,13 @@
+﻿using FluentValidation;
+using Monstersoft.VennWms.Main.Application.Dtos.DtoValidators.CreateDtoValidators.CreateDtoRootValidators.WorkTaskDtos;
+using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.WorkTasks.Commands.Create;
+
+namespace Monstersoft.VennWms.Main.Application.Features.TaskFeatures.WorkTasks.Validators;
+
+public class CreateWorkTaskValidator : AbstractValidator<CreateWorkTaskCommand>
+{
+    public CreateWorkTaskValidator()
+    {
+        RuleFor(x => x.WorkTask).SetValidator(new CreateWorkTaskDtoValidator());
+    }
+}

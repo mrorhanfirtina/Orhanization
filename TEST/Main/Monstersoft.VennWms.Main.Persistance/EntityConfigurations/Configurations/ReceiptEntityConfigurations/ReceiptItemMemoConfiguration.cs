@@ -25,11 +25,11 @@ public class ReceiptItemMemoConfiguration : IEntityTypeConfiguration<ReceiptItem
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.ReceiptItemId, p.Description, p.Text, p.InputDate, p.EditDate, p.CreatedDate }, name: "IX_ReceiptItemMemos_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.ReceiptItem);
         #endregion
 
         #region Filtreler

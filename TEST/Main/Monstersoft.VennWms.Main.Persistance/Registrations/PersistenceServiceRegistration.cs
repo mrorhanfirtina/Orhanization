@@ -30,12 +30,6 @@ using Monstersoft.VennWms.Main.Persistance.Repositories.ReturnRepositories;
 using Monstersoft.VennWms.Main.Persistance.Repositories.ShipmentRepositories;
 using Monstersoft.VennWms.Main.Persistance.Repositories.StockRepositories;
 using Monstersoft.VennWms.Main.Persistance.Repositories.TaskRepositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Persistance.Registrations;
 
@@ -49,6 +43,7 @@ public static class PersistenceServiceRegistration
 
         services.AddScoped<IBarcodeRepository, BarcodeRepository>();
         services.AddScoped<IBarcodeAreaRepository, BarcodeAreaRepository>();
+        services.AddScoped<IBarcodePrinterRepository, BarcodePrinterRepository>();
         services.AddScoped<IPrinterRepository, PrinterRepository>();
         services.AddScoped<IAttributeInputTypeRepository, AttributeInputTypeRepository>();
         services.AddScoped<IContainerUnitRepository, ContainerUnitRepository>();
@@ -62,11 +57,14 @@ public static class PersistenceServiceRegistration
         services.AddScoped<IDepositorCompanyRepository, DepositorCompanyRepository>();
         services.AddScoped<ICustomerRepository, CustomerRepository>();
         services.AddScoped<IDepositorRepository, DepositorRepository>();
-        services.AddScoped<IDisturbitorRepository, DisturbitorRepository>();
+        services.AddScoped<IDepositorFeatureRepository, DepositorFeatureRepository>();
+        services.AddScoped<IUserDepositorRepository, UserDepositorRepository>();
+        services.AddScoped<IDistributorRepository, DistributorRepository>();
         services.AddScoped<IReceiverRepository, ReceiverRepository>();
         services.AddScoped<ISupplierRepository, SupplierRepository>();
         services.AddScoped<IBuildingRepository, BuildingRepository>();
         services.AddScoped<ILocationRepository, LocationRepository>();
+        services.AddScoped<ISiteDepositorRepository, SiteDepositorRepository>();
         services.AddScoped<ISiteRepository, SiteRepository>();
         services.AddScoped<IStorageSystemRepository, StorageSystemRepository>();
         services.AddScoped<ILogStockRepository, LogStockRepository>();
@@ -91,7 +89,9 @@ public static class PersistenceServiceRegistration
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IProductAttributeRepository, ProductAttributeRepository>();
         services.AddScoped<IProductAttributeValueRepository, ProductAttributeValueRepository>();
+        services.AddScoped<IProductStockAttributeRepository, ProductStockAttributeRepository>();
         services.AddScoped<IReceiptRepository, ReceiptRepository>();
+        services.AddScoped<IProductDepositorRepository, ProductDepositorRepository>();
         services.AddScoped<IReceiptAttributeRepository, ReceiptAttributeRepository>();
         services.AddScoped<IReceiptAttributeValueRepository, ReceiptAttributeValueRepository>();
         services.AddScoped<IReceiptItemRepository, ReceiptItemRepository>();
@@ -127,6 +127,34 @@ public static class PersistenceServiceRegistration
         services.AddScoped<ITaskListRepository, TaskListRepository>();
         services.AddScoped<ITransactionTypeRepository, TransactionTypeRepository>();
         services.AddScoped<IWorkTaskRepository, WorkTaskRepository>();
+        services.AddScoped<ITaskCodeFormatRepository, TaskCodeFormatRepository>();
+        services.AddScoped<IAddressRepository, AddressRepository>();
+        services.AddScoped<ILocationProductAttributeRepository, LocationProductAttributeRepository>();
+        services.AddScoped<ILocationProductRepository, LocationProductRepository>();
+        services.AddScoped<ILocationStockAttributeRepository, LocationStockAttributeRepository>();
+        services.AddScoped<ILocationZoneRepository, LocationZoneRepository>();
+        services.AddScoped<IZoneRepository, ZoneRepository>();
+        services.AddScoped<IBarcodeSupplierRepository, BarcodeSupplierRepository>();
+        services.AddScoped<IItemPackTypeRepository, ItemPackTypeRepository>();
+        services.AddScoped<IItemUnitConversionRepository, ItemUnitConversionRepository>();
+        services.AddScoped<IItemUnitRepository, ItemUnitRepository>();
+        services.AddScoped<IProductBarcodeRepository, ProductBarcodeRepository>();
+        services.AddScoped<IStockPackTypeRepository, StockPackTypeRepository>();
+        services.AddScoped<ILocationLockReasonRepository, LocationLockReasonRepository>();
+        services.AddScoped<ILocationPickingTypeRepository, LocationPickingTypeRepository>();
+        services.AddScoped<ILocationUnitConstraintRepository, LocationUnitConstraintRepository>();
+        services.AddScoped<ILocationProductConstraintRepository, LocationProductConstraintRepository>();
+        services.AddScoped<ILocationDimensionRepository, LocationDimensionRepository>();
+        services.AddScoped<ILocationFeatureRepository, LocationFeatureRepository>();
+        services.AddScoped<ILocationPriorityRepository, LocationPriorityRepository>();
+        services.AddScoped<ILocationDepositorRepository, LocationDepositorRepository>();
+        services.AddScoped<ILocationCodeFormatRepository, LocationCodeFormatRepository>();
+        services.AddScoped<IBuildingDimensionRepository, BuildingDimensionRepository>();
+        services.AddScoped<ILocationCoordinateRepository, LocationCoordinateRepository>();
+        services.AddScoped<ILockReasonRepository, LockReasonRepository>();
+        services.AddScoped<IPickingTypeRepository, PickingTypeRepository>();
+        services.AddScoped<ILocationCodeComponentRepository, LocationCodeComponentRepository>();
+
 
         services.AddScoped<IEmailAuthenticatorRepository, EmailAuthenticatorRepository>();
         services.AddScoped<IOperationClaimRepository, OperationClaimRepository>();

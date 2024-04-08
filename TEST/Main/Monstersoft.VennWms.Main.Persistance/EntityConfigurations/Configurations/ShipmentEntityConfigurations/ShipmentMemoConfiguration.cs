@@ -25,11 +25,11 @@ public class ShipmentMemoConfiguration : IEntityTypeConfiguration<ShipmentMemo>
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.ShipmentId, p.Description, p.Text, p.InputDate, p.EditDate, p.CreatedDate }, name: "IX_ShipmentMemos_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Shipment);
         #endregion
 
         #region Filtreler

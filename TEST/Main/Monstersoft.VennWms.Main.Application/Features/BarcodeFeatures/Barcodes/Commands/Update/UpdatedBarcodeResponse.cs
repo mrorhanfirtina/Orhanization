@@ -1,9 +1,4 @@
 ﻿using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Commands.Update;
 
@@ -16,7 +11,7 @@ public class UpdatedBarcodeResponse
     public int Copy { get; set; }
     public string Query { get; set; }
     public string Text { get; set; }
-    public string DepositorCode { get; set; }
+    public Guid DepositorCompanyId { get; set; }
     public virtual ICollection<BarcodeArea> BarcodeAreas { get; set; }
-    public virtual ICollection<Printer> Printers { get; set; }
+    public virtual ICollection<BarcodePrinter> BarcodePrinters { get; set; }
 }

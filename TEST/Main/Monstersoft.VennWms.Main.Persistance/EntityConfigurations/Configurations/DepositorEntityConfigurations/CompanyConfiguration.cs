@@ -21,20 +21,21 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
         builder.Property(p => p.TaxNumber).HasColumnName("TaxNumber").HasMaxLength(30);
         builder.Property(p => p.PhoneNumber).HasColumnName("PhoneNumber").HasMaxLength(15);
         builder.Property(p => p.FaxNumber).HasColumnName("FaxNumber").HasMaxLength(15);
+        builder.Property(p => p.AddressId).HasColumnName("AddressId").IsRequired();
+        builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
         builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
         #endregion
 
         #region Indexler
-        builder.HasIndex(indexExpression: p => p.Code, name: "UK_Companies_Code").IsUnique();
-        builder.HasIndex(indexExpression: p => p.Name, name: "UK_Companies_Name").IsUnique();
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.Name, p.Description, p.TaxNumber, p.PhoneNumber, p.FaxNumber, p.AddressId, p.DepositorCompanyId, p.CreatedDate }, name: "IX_Companies_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.Customers);
-        builder.HasMany(p => p.Disturbitors);
-        builder.HasMany(p => p.Suppliers);
+        builder.HasOne(p => p.Address).WithOne().HasForeignKey<Company>(p => p.AddressId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

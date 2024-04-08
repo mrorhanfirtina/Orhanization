@@ -1,9 +1,4 @@
 ﻿using Orhanization.Core.Persistence.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 
@@ -14,7 +9,6 @@ public class StockMemo : Entity<Guid>
     public string Text { get; set; }
     public DateTime InputDate { get; set; }
     public DateTime? EditDate { get; set; }
-    public virtual Stock? Stock { get; set; }
 
     public StockMemo()
     {

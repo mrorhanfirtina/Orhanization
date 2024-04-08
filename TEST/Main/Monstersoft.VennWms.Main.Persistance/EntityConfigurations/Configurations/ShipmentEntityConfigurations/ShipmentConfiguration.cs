@@ -16,7 +16,8 @@ public class ShipmentConfiguration : IEntityTypeConfiguration<Shipment>
         builder.Property(p => p.Id).HasColumnName("Id").IsRequired();
         builder.Property(p => p.Code).HasColumnName("Code").HasMaxLength(30).IsRequired();
         builder.Property(p => p.DepositorId).HasColumnName("DepositorId").IsRequired();
-        builder.Property(p => p.DistirbutorId).HasColumnName("DistirbutorId").IsRequired();
+        builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
+        builder.Property(p => p.DistributorId).HasColumnName("DistributorId").IsRequired();
         builder.Property(p => p.BranchId).HasColumnName("BranchId").IsRequired();
         builder.Property(p => p.ShipmentTypeId).HasColumnName("ShipmentTypeId").IsRequired();
         builder.Property(p => p.InputDate).HasColumnName("InputDate").IsRequired();
@@ -28,15 +29,17 @@ public class ShipmentConfiguration : IEntityTypeConfiguration<Shipment>
         #endregion
 
         #region Indexler
-        builder.HasIndex(indexExpression: p => p.Code, name: "UK_Shipments_Code").IsUnique();
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.DepositorId, p.DepositorCompanyId, p.DistributorId, p.BranchId, p.ShipmentTypeId, p.InputDate, p.ExpectedDate, p.ActualDate, p.CreatedDate }, name: "IX_Shipments_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Disturbitor);
-        builder.HasOne(p => p.Branch);
-        builder.HasOne(p => p.ShipmentType);
-        builder.HasMany(p => p.ShipmentAttributeValues);
-        builder.HasMany(p => p.ShipmentMemos);
+        builder.HasOne(p => p.Distributor).WithMany().HasForeignKey(p => p.DistributorId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Branch).WithMany().HasForeignKey(p => p.BranchId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(p => p.ShipmentAttributeValues).WithOne().HasForeignKey(p => p.ShipmentId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ShipmentMemos).WithOne().HasForeignKey(p => p.ShipmentId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.Depositor).WithMany().HasForeignKey(p => p.DepositorId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

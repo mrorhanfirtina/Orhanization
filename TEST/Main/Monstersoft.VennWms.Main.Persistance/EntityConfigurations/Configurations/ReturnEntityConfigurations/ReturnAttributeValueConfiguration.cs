@@ -23,12 +23,12 @@ public class ReturnAttributeValueConfiguration : IEntityTypeConfiguration<Return
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.ReturnId, p.ReturnAttributeId, p.Value,  p.CreatedDate }, name: "IX_ReturnAttributeValues_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Return);
-        builder.HasOne(p => p.ReturnAttribute);
+        builder.HasOne(p => p.ReturnAttribute).WithMany().HasForeignKey(p => p.ReturnAttributeId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

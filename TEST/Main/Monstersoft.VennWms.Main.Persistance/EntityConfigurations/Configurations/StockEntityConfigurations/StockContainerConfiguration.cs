@@ -22,12 +22,12 @@ public class StockContainerConfiguration : IEntityTypeConfiguration<StockContain
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Sscc, p.ContainerUnitId, p.CreatedDate }, name: "IX_StockContainers_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.ContainerUnit);
-        builder.HasMany(p => p.Stocks);
+        builder.HasOne(p => p.ContainerUnit).WithMany().HasForeignKey(p => p.ContainerUnitId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

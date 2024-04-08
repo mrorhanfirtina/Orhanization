@@ -1,9 +1,5 @@
-﻿using Orhanization.Core.Persistence.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
+using Orhanization.Core.Persistence.Repositories;
 
 namespace Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 
@@ -11,8 +7,9 @@ public class StorageSystem : Entity<Guid>
 {
     public string Code { get; set; }
     public string Description { get; set; }
-    public Guid SiteId { get; set; }
-    public virtual Site? Site { get; set; }
+    public Guid BuildingId { get; set; }
+    public Guid DepositorCompanyId { get; set; }
+    public virtual DepositorCompany DepositorCompany { get; set; }
     public virtual ICollection<Location> Locations { get; set; }
 
     public StorageSystem()
@@ -20,11 +17,12 @@ public class StorageSystem : Entity<Guid>
         Locations = new HashSet<Location>();
     }
 
-    public StorageSystem(Guid id, string code, string description, Guid siteId) : this()
+    public StorageSystem(Guid id, string code, string description, Guid buildingId, Guid depositorCompanyId) : this()
     {
         Id = id;
         Code = code;
         Description = description;
-        SiteId = siteId;
+        BuildingId = buildingId;
+        DepositorCompanyId = depositorCompanyId;
     }
 }

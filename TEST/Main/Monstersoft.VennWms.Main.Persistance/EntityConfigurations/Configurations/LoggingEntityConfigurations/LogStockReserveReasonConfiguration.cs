@@ -23,13 +23,12 @@ public class LogStockReserveReasonConfiguration : IEntityTypeConfiguration<LogSt
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.LogStockId, p.FromReasaonId, p.ToReasaonId, p.CreatedDate }, name: "IX_LogStockReserveReasons_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.LogStock);
-        builder.HasOne(p => p.FromReason);
-        builder.HasOne(p => p.ToReason);
+
         #endregion
 
         #region Filtreler

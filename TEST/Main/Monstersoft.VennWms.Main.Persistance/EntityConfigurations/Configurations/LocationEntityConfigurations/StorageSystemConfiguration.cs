@@ -16,20 +16,21 @@ public class StorageSystemConfiguration : IEntityTypeConfiguration<StorageSystem
         builder.Property(p => p.Id).HasColumnName("Id").IsRequired();
         builder.Property(p => p.Code).HasColumnName("Code").HasMaxLength(30).IsRequired();
         builder.Property(p => p.Description).HasColumnName("Description").HasMaxLength(30).IsRequired();
-        builder.Property(p => p.SiteId).HasColumnName("SiteId").IsRequired();
+        builder.Property(p => p.BuildingId).HasColumnName("BuildingId").IsRequired();
+        builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
         builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
         #endregion
 
         #region Indexler
-        builder.HasIndex(indexExpression: p => p.Code, name: "UK_StorageSystems_Code").IsUnique();
-        builder.HasIndex(indexExpression: p => p.Description, name: "UK_StorageSystems_Description").IsUnique();
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.Description, p.DepositorCompanyId, p.BuildingId, p.CreatedDate }, name: "IX_StorageSystems_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Site);
-        builder.HasMany(p => p.Locations);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(p => p.Locations).WithOne().HasForeignKey(p => p.StorageSystemId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

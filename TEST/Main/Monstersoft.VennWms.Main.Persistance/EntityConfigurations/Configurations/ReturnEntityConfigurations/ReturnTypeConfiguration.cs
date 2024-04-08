@@ -18,19 +18,20 @@ public class ReturnTypeConfiguration : IEntityTypeConfiguration<ReturnType>
         builder.Property(p => p.Description).HasColumnName("Description").HasMaxLength(60).IsRequired();
         builder.Property(p => p.Format).HasColumnName("Format").HasMaxLength(20).IsRequired();
         builder.Property(p => p.Counter).HasColumnName("Counter").IsRequired();
-        builder.Property(p => p.DepositorId).HasColumnName("DepositorId").IsRequired();
+        builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
         builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
         #endregion
 
         #region Indexler
-        builder.HasIndex(indexExpression: p => p.Code, name: "UK_ReturnTypes_Code").IsUnique();
-        builder.HasIndex(indexExpression: p => p.Description, name: "UK_ReturnTypes_Description").IsUnique();
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.Description, p.Format, p.Counter, p.DepositorCompanyId, p.CreatedDate }, name: "IX_ReturnTypes_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.Returns);
+        builder.HasMany(p => p.Returns).WithOne().HasForeignKey(p => p.ReturnTypeId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

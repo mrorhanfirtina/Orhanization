@@ -17,6 +17,7 @@ public class StockConfiguration : IEntityTypeConfiguration<Stock>
         builder.Property(p => p.StockContainerId).HasColumnName("StockContainerId").IsRequired();
         builder.Property(p => p.ProductId).HasColumnName("ProductId").IsRequired();
         builder.Property(p => p.DepositorId).HasColumnName("DepositorId").IsRequired();
+        builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.LocationId).HasColumnName("LocationId").IsRequired();
         builder.Property(p => p.UnitId).HasColumnName("UnitId").IsRequired();
         builder.Property(p => p.ReceiptId).HasColumnName("ReceiptId");
@@ -29,22 +30,23 @@ public class StockConfiguration : IEntityTypeConfiguration<Stock>
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.StockContainerId, p.ProductId, p.DepositorId, p.DepositorCompanyId, p.LocationId, p.UnitId, p.ReceiptId, p.ReturnId, p.Quantity, p.FreeQuantity, p.CreatedDate }, name: "IX_Stocks_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.StockContainer);
-        builder.HasOne(p => p.Product);
-        builder.HasOne(p => p.Location);
-        builder.HasOne(p => p.Unit);
-        builder.HasOne(p => p.Receipt);
-        builder.HasOne(p => p.Return);
-        builder.HasMany(p => p.WorkTasks);
-        builder.HasMany(p => p.StockAttributeValues);
-        builder.HasMany(p => p.StockMemos);
-        builder.HasMany(p => p.StockReserveReasons);
-        builder.HasMany(p => p.StockUnsuitReasons);
-        builder.HasMany(p => p.TaskStocks);
+        builder.HasOne(p => p.StockContainer).WithMany().HasForeignKey(p => p.StockContainerId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasMany(p => p.StockAttributeValues).WithOne().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.StockMemos).WithOne().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.StockReserveReasons).WithOne().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.StockUnsuitReasons).WithOne().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.Product).WithMany().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Depositor).WithMany().HasForeignKey(p => p.DepositorId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Location).WithMany().HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Unit).WithMany().HasForeignKey(p => p.UnitId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Receipt).WithMany().HasForeignKey(p => p.ReceiptId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(p => p.Return).WithMany().HasForeignKey(p => p.ReturnId).OnDelete(DeleteBehavior.NoAction);
         #endregion
 
         #region Filtreler

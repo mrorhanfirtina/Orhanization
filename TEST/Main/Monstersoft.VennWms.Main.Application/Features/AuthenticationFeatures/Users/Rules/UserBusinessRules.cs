@@ -1,27 +1,25 @@
 ﻿using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Auth.Constants;
+using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.OperationClaims.Constants;
 using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Users.Constants;
 using Monstersoft.VennWms.Main.Application.Repositories.AuthenticationRepositories;
-using Nest;
+using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
 using Orhanization.Core.Application.Rules;
 using Orhanization.Core.CrossCuttingConcerns.Exceptions.Types;
 using Orhanization.Core.Security.Entities;
 using Orhanization.Core.Security.Hashing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Users.Rules;
 
 public class UserBusinessRules : BaseBusinessRules
 {
     private readonly IUserRepository _userRepository;
+    private readonly IDepositorRepository _depositorRepository;
 
-    public UserBusinessRules(IUserRepository userRepository)
+    public UserBusinessRules(IUserRepository userRepository, IDepositorRepository depositorRepository)
     {
         _userRepository = userRepository;
+        _depositorRepository = depositorRepository;
     }
 
     public async Task UserIdShouldExistWhenSelected(int id)
@@ -69,7 +67,16 @@ public class UserBusinessRules : BaseBusinessRules
 
         if (!isStrong)
             throw new BusinessException(UserMessages.PasswordIsNotStrong);
-
         return Task.CompletedTask;
+    }
+
+    public async Task DepositorIdsShouldExistWhenSelected(Guid[] ids)
+    {
+        foreach (Guid id in ids)
+        {
+            bool result = await _depositorRepository.AnyAsync(predicate: b => b.Id == id && b.DeletedDate == null, enableTracking: false);
+            if (!result)
+                throw new BusinessException(OperationClaimsMessages.DepositorNotExists);
+        }
     }
 }

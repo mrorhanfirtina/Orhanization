@@ -9,7 +9,7 @@ public class StockUnsuitReasonConfiguration : IEntityTypeConfiguration<StockUnsu
     public void Configure(EntityTypeBuilder<StockUnsuitReason> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("StockUnsuitReason").HasKey(p => p.Id);
+        builder.ToTable("StockUnsuitReasons").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -22,12 +22,12 @@ public class StockUnsuitReasonConfiguration : IEntityTypeConfiguration<StockUnsu
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.StockId, p.UnsuitReasonId, p.CreatedDate }, name: "IX_StockUnsuitReason_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Stock);
-        builder.HasOne(p => p.UnsuitReason);
+        builder.HasOne(p => p.UnsuitReason).WithMany().HasForeignKey(p => p.UnsuitReasonId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

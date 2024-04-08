@@ -1,52 +1,47 @@
 ﻿using AutoMapper;
 using MediatR;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Rules;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
-using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
+using Orhanization.Core.Application.Dtos;
+using Orhanization.Core.Application.Pipelines.Authorization;
+using Orhanization.Core.Application.Pipelines.Locality;
 using Orhanization.Core.Application.Pipelines.Logging;
 using Orhanization.Core.Application.Pipelines.Transaction;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Constants.ContainerUnitOperationClaims;
 
 namespace Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Queries.GetById;
 
-public class GetByIdContainerUnitQuery : IRequest<GetByIdContainerUnitResponse>, ITransactionalRequest, ILoggableRequest
+public class GetByIdContainerUnitQuery : IRequest<GetByIdContainerUnitResponse>, ITransactionalRequest, ILoggableRequest, ISecuredRequest, ILocalityRequest
 {
+    public string[] Roles => [Admin, User, Read];
+    public UserRequestInfo? UserRequestInfo { get; set; }
+
+
     public int Id { get; set; }
-}
 
-public class GetByIdContainerUnitQueryHandler : IRequestHandler<GetByIdContainerUnitQuery, GetByIdContainerUnitResponse>
-{
-    private readonly IContainerUnitRepository _containerUnitRepository;
-    private readonly IMapper _mapper;
-    private readonly DepositorBusinessRules _depositorBusinessRules;
-    private readonly ContainerUnitBusinessRules _containerUnitBusinessRules;
 
-    public GetByIdContainerUnitQueryHandler(IContainerUnitRepository containerUnitRepository, IMapper mapper, DepositorBusinessRules depositorBusinessRules, ContainerUnitBusinessRules containerUnitBusinessRules)
+    public class GetByIdContainerUnitQueryHandler : IRequestHandler<GetByIdContainerUnitQuery, GetByIdContainerUnitResponse>
     {
-        _containerUnitRepository = containerUnitRepository;
-        _mapper = mapper;
-        _depositorBusinessRules = depositorBusinessRules;
-        _containerUnitBusinessRules = containerUnitBusinessRules;
+        private readonly IContainerUnitRepository _containerUnitRepository;
+        private readonly ContainerUnitBusinessRules _containerUnitBusinessRules;
+        private readonly IMapper _mapper;
+
+        public GetByIdContainerUnitQueryHandler(IContainerUnitRepository containerUnitRepository, IMapper mapper, ContainerUnitBusinessRules containerUnitBusinessRules)
+        {
+            _containerUnitRepository = containerUnitRepository;
+            _mapper = mapper;
+            _containerUnitBusinessRules = containerUnitBusinessRules;
+        }
+
+        public async Task<GetByIdContainerUnitResponse> Handle(GetByIdContainerUnitQuery request, CancellationToken cancellationToken)
+        {
+            _containerUnitBusinessRules.GetRequest()
+            .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
+            .CheckIdExistence(request.Id);
+
+            return _mapper.Map<GetByIdContainerUnitResponse>(await _containerUnitRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+        }
     }
 
-    public async Task<GetByIdContainerUnitResponse> Handle(GetByIdContainerUnitQuery request, CancellationToken cancellationToken)
-    {
-        
-        await _containerUnitBusinessRules.IsContainerUnitIdExists(request.Id);
 
-        ContainerUnit? containerUnit = await _containerUnitRepository.GetAsync(predicate: p => p.Id == request.Id && p.DeletedDate == null);
-
-        Depositor depositor = await _depositorBusinessRules.DepositorIdMustBeValid(containerUnit.DepositorId);
-
-        var response = _mapper.Map<GetByIdContainerUnitResponse>(containerUnit);
-        response.DepositorCode = depositor.Code;
-
-        return response;
-    }
 }

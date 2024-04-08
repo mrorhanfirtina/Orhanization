@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Persistance.EntityConfigurations.Configurations.CommonEntityConfigurations;
 
@@ -26,17 +21,13 @@ public class AttributeInputTypeConfiguration : IEntityTypeConfiguration<Attribut
         #endregion
 
         #region Indexler
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Description, p.CreatedDate }, name: "IX_AttributeInputTypes_Areas");
         builder.HasIndex(indexExpression: p => p.Description, name: "UK_AttributeInputTypes_Description").IsUnique();
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.OrderAttributes);
-        builder.HasMany(p => p.PoAttributes);
-        builder.HasMany(p => p.ProductAttributes);
-        builder.HasMany(p => p.ReceiptAttributes);
-        builder.HasMany(p => p.ReturnAttributes);
-        builder.HasMany(p => p.ShipmentAttributes);
-        builder.HasMany(p => p.StockAttributes);
+
         #endregion
 
         #region Filtreler

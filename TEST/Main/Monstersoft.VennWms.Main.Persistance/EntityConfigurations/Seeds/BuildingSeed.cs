@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Persistance.EntityConfigurations.Seeds;
 
@@ -20,11 +15,15 @@ public class BuildingSeed : IEntityTypeConfiguration<Building>
                     Code = "MAIN",
                     Country = "Turkey",
                     City = "Istanbul",
-                    Address = "Deri Org. San. Bolgesi No:26",
+                    AddressText = "Deri Org. San. Bolgesi No:26",
                     Province = "Tuzla",
                     CreatedDate = DateTime.Now,
                     Description = "Main Factory",
-                    ZipCode = "34953"
+                    ZipCode = "34953",
+                    DepositorCompanyId = Guid.Parse("dd4d5460-8146-4e62-ac19-a74d89955dd7"),
+                    SiteId = Guid.Parse("f769e1ec-71cd-450b-80aa-1b863e518a26"),
+                    Latitude = 40.8503m,
+                    Longitude = 29.3032m
                 }
             );
     }

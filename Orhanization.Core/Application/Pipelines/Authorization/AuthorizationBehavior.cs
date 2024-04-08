@@ -4,11 +4,6 @@ using Microsoft.IdentityModel.Tokens;
 using Orhanization.Core.CrossCuttingConcerns.Exceptions.Types;
 using Orhanization.Core.Security.Constants;
 using Orhanization.Core.Security.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Orhanization.Core.Application.Pipelines.Authorization;
 

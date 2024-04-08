@@ -17,6 +17,7 @@ public class OrderShipItemStockConfiguration : IEntityTypeConfiguration<OrderShi
         builder.Property(p => p.OrderShipItemId).HasColumnName("OrderShipItemId").IsRequired();
         builder.Property(p => p.OrderShipItemTaskId).HasColumnName("OrderShipItemTaskId").IsRequired();
         builder.Property(p => p.StockId).HasColumnName("StockId").IsRequired();
+        builder.Property(p => p.StockPackTypeId).HasColumnName("StockPackTypeId").IsRequired();
         builder.Property(p => p.Quantity).HasColumnName("Quantity").HasColumnType("DECIMAL(18,6)").IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
@@ -24,11 +25,13 @@ public class OrderShipItemStockConfiguration : IEntityTypeConfiguration<OrderShi
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.OrderShipItemId, p.OrderShipItemTaskId, p.StockId, p.StockPackTypeId, p.Quantity, p.CreatedDate }, name: "IX_OrderShipItemStocks_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.OrderShipItemTask);
+        builder.HasOne(p => p.Stock).WithMany().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.StockPackType).WithMany().HasForeignKey(p => p.StockPackTypeId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

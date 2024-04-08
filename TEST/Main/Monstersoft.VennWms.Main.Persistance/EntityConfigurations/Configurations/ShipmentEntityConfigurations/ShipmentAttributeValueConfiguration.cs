@@ -23,12 +23,12 @@ public class ShipmentAttributeValueConfiguration : IEntityTypeConfiguration<Ship
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.ShipmentId, p.ShipmentAttributeId, p.Value, p.CreatedDate }, name: "IX_ShipmentAttributeValues_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Shipment);
-        builder.HasOne(p => p.ShipmentAttribute);
+        builder.HasOne(p => p.ShipmentAttribute).WithMany().HasForeignKey(p => p.ShipmentAttributeId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

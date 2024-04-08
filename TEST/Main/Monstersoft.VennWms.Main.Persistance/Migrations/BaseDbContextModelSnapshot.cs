@@ -47,9 +47,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Query")
                         .IsRequired()
@@ -66,6 +66,13 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnName("UpdatedDate");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "DepositorCompanyId", "CreatedDate" }, "IX_Barcodes_Areas");
 
                     b.ToTable("Barcodes", (string)null);
                 });
@@ -107,12 +114,15 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BarcodeId");
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "BarcodeId", "QueryField", "TextField", "CreatedDate" }, "IX_BarcodeAreas_Areas");
 
                     b.ToTable("BarcodeAreas", (string)null);
                 });
 
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities.Printer", b =>
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities.BarcodePrinter", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -122,6 +132,41 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                     b.Property<Guid>("BarcodeId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("BarcodeId");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("PrinterId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("PrinterId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("PrinterId");
+
+                    b.HasIndex(new[] { "BarcodeId", "PrinterId", "CreatedDate" }, "IX_BarcodePrinters_Areas");
+
+                    b.ToTable("BarcodePrinters", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities.Printer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -137,6 +182,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
                     b.Property<string>("PrinterAddress")
                         .IsRequired()
                         .HasMaxLength(600)
@@ -149,7 +198,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BarcodeId");
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "PrinterAddress", "DepositorCompanyId", "CreatedDate" }, "IX_Printers_Areas");
 
                     b.ToTable("Printers", (string)null);
                 });
@@ -183,6 +237,11 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Description", "CreatedDate" }, "IX_AttributeInputTypes_Areas");
+
                     b.HasIndex(new[] { "Description" }, "UK_AttributeInputTypes_Description")
                         .IsUnique();
 
@@ -192,31 +251,31 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1416),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(3674),
                             Description = "Text"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1427),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(3677),
                             Description = "Bool"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1429),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(3678),
                             Description = "Numeric"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1431),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(3679),
                             Description = "Date"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1433),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(3680),
                             Description = "DateTime"
                         });
                 });
@@ -254,9 +313,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -281,6 +340,13 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "Description", "FirstDigit", "CountryCode", "ProducerCode", "Counter", "DepositorCompanyId", "CreatedDate" }, "IX_ContainerUnits_Areas");
+
                     b.ToTable("ContainerUnits", (string)null);
 
                     b.HasData(
@@ -290,8 +356,8 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                             Code = "PAL",
                             Counter = "101",
                             CountryCode = "40",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1687),
-                            DepositorId = new Guid("202d64f3-4474-4b55-b30d-61c430799efa"),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4008),
+                            DepositorCompanyId = new Guid("dd4d5460-8146-4e62-ac19-a74d89955dd7"),
                             Description = "Pallet",
                             FirstDigit = "P",
                             ProducerCode = "1234567"
@@ -302,8 +368,8 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                             Code = "EUR",
                             Counter = "201",
                             CountryCode = "40",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1690),
-                            DepositorId = new Guid("202d64f3-4474-4b55-b30d-61c430799efa"),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4011),
+                            DepositorCompanyId = new Guid("dd4d5460-8146-4e62-ac19-a74d89955dd7"),
                             Description = "Euro Pallet",
                             FirstDigit = "E",
                             ProducerCode = "1234567"
@@ -314,8 +380,8 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                             Code = "PCK",
                             Counter = "301",
                             CountryCode = "40",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1692),
-                            DepositorId = new Guid("202d64f3-4474-4b55-b30d-61c430799efa"),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4014),
+                            DepositorCompanyId = new Guid("dd4d5460-8146-4e62-ac19-a74d89955dd7"),
                             Description = "Packing Pallet",
                             FirstDigit = "C",
                             ProducerCode = "1234567"
@@ -326,12 +392,236 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                             Code = "AMR",
                             Counter = "401",
                             CountryCode = "40",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1694),
-                            DepositorId = new Guid("202d64f3-4474-4b55-b30d-61c430799efa"),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4016),
+                            DepositorCompanyId = new Guid("dd4d5460-8146-4e62-ac19-a74d89955dd7"),
                             Description = "American Pallet",
                             FirstDigit = "A",
                             ProducerCode = "1234567"
                         });
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.LocationCodeComponent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("Description");
+
+                    b.Property<string>("FieldCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("FieldCode");
+
+                    b.Property<string>("FieldName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("FieldName");
+
+                    b.Property<string>("TableName")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("TableName");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Description")
+                        .IsUnique();
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Description", "TableName", "FieldName", "FieldCode", "CreatedDate" }, "IX_LocationCodeComponents_Areas");
+
+                    b.ToTable("LocationCodeComponents", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4453),
+                            Description = "StorageSystem",
+                            FieldCode = "{SS}",
+                            FieldName = "Code",
+                            TableName = "StorageSystems"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4455),
+                            Description = "Building",
+                            FieldCode = "{BLD}",
+                            FieldName = "Code",
+                            TableName = "Buildings"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4457),
+                            Description = "Sector",
+                            FieldCode = "{SEC}",
+                            FieldName = "Code",
+                            TableName = "Sectors"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4459),
+                            Description = "Column",
+                            FieldCode = "{COL}",
+                            FieldName = "ColumnCode",
+                            TableName = "LocationCodeFormat"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4460),
+                            Description = "Level",
+                            FieldCode = "{LEV}",
+                            FieldName = "LevelCode",
+                            TableName = "LocationCodeFormat"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4461),
+                            Description = "SubColumn",
+                            FieldCode = "{SUBCOL}",
+                            FieldName = "SubColumnCode",
+                            TableName = "LocationCodeFormat"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4463),
+                            Description = "SubLevel",
+                            FieldCode = "{SUBLEV}",
+                            FieldName = "SubLevelCode",
+                            TableName = "LocationCodeFormat"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4464),
+                            Description = "SubPosition",
+                            FieldCode = "{SUBPOS}",
+                            FieldName = "SubPositionCode",
+                            TableName = "LocationCodeFormat"
+                        });
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.LockReason", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("Code");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)")
+                        .HasColumnName("Description");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "Description", "DepositorCompanyId", "CreatedDate" }, "IX_LockReasons_Areas");
+
+                    b.ToTable("LockReasons", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.PickingType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("Code");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)")
+                        .HasColumnName("Description");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "Description", "CreatedDate" }, "IX_PickingTypes_Areas");
+
+                    b.ToTable("PickingTypes", (string)null);
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.ProgressStatus", b =>
@@ -369,6 +659,11 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "Description", "CreatedDate" }, "IX_ProgressStatuses_Areas");
+
                     b.HasIndex(new[] { "Code" }, "UK_ProgressStatuses_Code")
                         .IsUnique();
 
@@ -382,77 +677,77 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         {
                             Id = 1,
                             Code = "01",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2054),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4686),
                             Description = "Pending"
                         },
                         new
                         {
                             Id = 2,
                             Code = "02",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2056),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4687),
                             Description = "ToPick"
                         },
                         new
                         {
                             Id = 3,
                             Code = "03",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2057),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4689),
                             Description = "InPick"
                         },
                         new
                         {
                             Id = 4,
                             Code = "04",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2058),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4690),
                             Description = "Picked"
                         },
                         new
                         {
                             Id = 5,
                             Code = "05",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2059),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4691),
                             Description = "InSorting"
                         },
                         new
                         {
                             Id = 6,
                             Code = "06",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2061),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4692),
                             Description = "Sorted"
                         },
                         new
                         {
                             Id = 7,
                             Code = "07",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2062),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4693),
                             Description = "InPacking"
                         },
                         new
                         {
                             Id = 8,
                             Code = "08",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2063),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4694),
                             Description = "Packed"
                         },
                         new
                         {
                             Id = 9,
                             Code = "09",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2064),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4695),
                             Description = "InLoading"
                         },
                         new
                         {
                             Id = 10,
                             Code = "10",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2065),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4696),
                             Description = "Completed"
                         },
                         new
                         {
                             Id = 11,
                             Code = "11",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2066),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4697),
                             Description = "Cancelled"
                         });
                 });
@@ -478,9 +773,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -497,11 +792,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Code" }, "UK_ReserveReasons_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Description" }, "UK_ReserveReasons_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "DepositorCompanyId", "CreatedDate" }, "IX_ReserveReasons_Areas");
 
                     b.ToTable("ReserveReasons", (string)null);
                 });
@@ -541,6 +837,11 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "Description", "CreatedDate" }, "IX_Status_Areas");
+
                     b.HasIndex(new[] { "Code" }, "UK_Status_Code")
                         .IsUnique();
 
@@ -554,28 +855,28 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         {
                             Id = 1,
                             Code = "01",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2143),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4899),
                             Description = "Pending"
                         },
                         new
                         {
                             Id = 2,
                             Code = "02",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2145),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4942),
                             Description = "Executing"
                         },
                         new
                         {
                             Id = 3,
                             Code = "03",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2146),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4943),
                             Description = "Completed"
                         },
                         new
                         {
                             Id = 4,
                             Code = "04",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2147),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4944),
                             Description = "Cancelled"
                         });
                 });
@@ -603,9 +904,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -619,11 +920,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Code" }, "UK_Units_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Description" }, "UK_Units_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "DepositorCompanyId", "CreatedDate" }, "IX_Units_Areas");
 
                     b.ToTable("Units", (string)null);
 
@@ -632,9 +934,25 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         {
                             Id = 1,
                             Code = "EA",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(2223),
-                            DepositorId = new Guid("202d64f3-4474-4b55-b30d-61c430799efa"),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(5135),
+                            DepositorCompanyId = new Guid("dd4d5460-8146-4e62-ac19-a74d89955dd7"),
                             Description = "Adet"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "m",
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(5139),
+                            DepositorCompanyId = new Guid("dd4d5460-8146-4e62-ac19-a74d89955dd7"),
+                            Description = "Meter"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "desi",
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(5141),
+                            DepositorCompanyId = new Guid("dd4d5460-8146-4e62-ac19-a74d89955dd7"),
+                            Description = "Desi"
                         });
                 });
 
@@ -659,9 +977,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -678,13 +996,100 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Code" }, "UK_UnsuitReasons_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Description" }, "UK_UnsuitReasons_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "DepositorCompanyId", "CreatedDate" }, "IX_UnsuitReasons_Areas");
 
                     b.ToTable("UnsuitReasons", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Address", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<string>("AddressText")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)")
+                        .HasColumnName("AddressText");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)")
+                        .HasColumnName("City");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)")
+                        .HasColumnName("Country");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)")
+                        .HasColumnName("Description");
+
+                    b.Property<decimal?>("Latitude")
+                        .HasColumnType("DECIMAL(11,7)")
+                        .HasColumnName("Latitude");
+
+                    b.Property<decimal?>("Longitude")
+                        .HasColumnType("DECIMAL(11,7)")
+                        .HasColumnName("Longitude");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)")
+                        .HasColumnName("Province");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("ZipCode");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Description", "Province", "City", "Country", "AddressText", "ZipCode", "Latitude", "Longitude", "CreatedDate" }, "IX_Adresses_Areas");
+
+                    b.ToTable("Addresses", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("1224c606-3856-4a03-bb00-ed897ce47098"),
+                            AddressText = "Istanbul",
+                            City = "Istanbul",
+                            Country = "Turkey",
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(3475),
+                            Description = "Kadikoy Main",
+                            Province = "Kadikoy",
+                            ZipCode = "34710"
+                        });
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Branch", b =>
@@ -694,9 +1099,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("Id");
 
-                    b.Property<Guid>("BuildingId")
+                    b.Property<Guid>("AddressId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("BuildingId");
+                        .HasColumnName("AddressId");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -708,16 +1113,17 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("CreatedDate");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CustomerId");
-
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid?>("DisturbitorId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
+                    b.Property<Guid>("DistributorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DistributorId");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -731,17 +1137,19 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BuildingId");
-
-                    b.HasIndex("DisturbitorId");
-
-                    b.HasIndex(new[] { "Code" }, "UK_Branchs_Code")
+                    b.HasIndex("AddressId")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Name" }, "UK_Branchs_Name")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("DistributorId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.ToTable("Branchs", (string)null);
+                    b.HasIndex(new[] { "Code", "Name", "AddressId", "DistributorId", "DepositorCompanyId", "CreatedDate" }, "IX_Branchs_Areas");
+
+                    b.ToTable("Branches", (string)null);
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Company", b =>
@@ -750,6 +1158,199 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("Id");
+
+                    b.Property<Guid>("AddressId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("AddressId");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("Code");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)")
+                        .HasColumnName("Description");
+
+                    b.Property<string>("FaxNumber")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)")
+                        .HasColumnName("FaxNumber");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)")
+                        .HasColumnName("Name");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)")
+                        .HasColumnName("PhoneNumber");
+
+                    b.Property<string>("TaxNumber")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("TaxNumber");
+
+                    b.Property<string>("TaxOffice")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("TaxOffice");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId")
+                        .IsUnique();
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "Name", "Description", "TaxNumber", "PhoneNumber", "FaxNumber", "AddressId", "DepositorCompanyId", "CreatedDate" }, "IX_Companies_Areas");
+
+                    b.ToTable("Companies", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Customer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<Guid>("AddressId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("AddressId");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("Code");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CompanyId");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)")
+                        .HasColumnName("Name");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId")
+                        .IsUnique();
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "Name", "CompanyId", "AddressId", "DepositorCompanyId", "CreatedDate" }, "IX_Customers_Areas");
+
+                    b.ToTable("Customers", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("Code");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "DepositorCompanyId", "CreatedDate" }, "IX_Depositors_Areas");
+
+                    b.ToTable("Depositors", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("202d64f3-4474-4b55-b30d-61c430799efa"),
+                            Code = "MAIN",
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4361),
+                            DepositorCompanyId = new Guid("dd4d5460-8146-4e62-ac19-a74d89955dd7")
+                        });
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<Guid>("AddressId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("AddressId");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -802,25 +1403,155 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Code" }, "UK_Companies_Code")
+                    b.HasIndex("AddressId")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Name" }, "UK_Companies_Name")
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.ToTable("Companies", (string)null);
+                    b.HasIndex(new[] { "Code", "Name", "Description", "TaxOffice", "TaxNumber", "PhoneNumber", "FaxNumber", "AddressId", "CreatedDate" }, "IX_DepositorCompanies_Areas");
+
+                    b.HasIndex(new[] { "Code" }, "UK_DepositorCompanies_Code")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Name" }, "UK_DepositorCompanies_Name")
+                        .IsUnique();
+
+                    b.ToTable("DepositorCompanies", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("dd4d5460-8146-4e62-ac19-a74d89955dd7"),
+                            AddressId = new Guid("1224c606-3856-4a03-bb00-ed897ce47098"),
+                            Code = "MAIN",
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4182),
+                            Description = "Main Company",
+                            FaxNumber = "123456789101",
+                            Name = "Main Company LTD.",
+                            PhoneNumber = "905432044767",
+                            TaxNumber = "123456789",
+                            TaxOffice = "Istanbul Anadolu Kurumlar VD"
+                        });
                 });
 
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Customer", b =>
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorFeature", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("Id");
 
-                    b.Property<Guid>("BuildingId")
+                    b.Property<bool>("AllowDuplicateBarcodeLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("AllowDuplicateBarcodeLed");
+
+                    b.Property<bool>("ChangeStockWithTaskLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("ChangeStockWithTaskLed");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("BuildingId");
+                        .HasColumnName("DepositorId");
+
+                    b.Property<bool>("ForbidNewReceiptLineLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("ForbidNewReceiptLineLed");
+
+                    b.Property<bool>("ForbidTransferReservedLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("ForbidTransferReservedLed");
+
+                    b.Property<bool>("ForceTaskStockLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("ForceTaskStockLed");
+
+                    b.Property<bool>("GenerateSsccLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("GenerateSsccLed");
+
+                    b.Property<bool>("ManualReceiptCompletionLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("ManualReceiptCompletionLed");
+
+                    b.Property<bool>("ManualReturnCompletionLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("ManualReturnCompletionLed");
+
+                    b.Property<bool>("OrderModifyLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("OrderModifyLed");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepositorId")
+                        .IsUnique();
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "DepositorId", "CreatedDate" }, "IX_DepositorFeatures_Areas");
+
+                    b.ToTable("DepositorFeatures", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("2c3f6012-1d25-4818-b450-a90460e8d0e4"),
+                            AllowDuplicateBarcodeLed = false,
+                            ChangeStockWithTaskLed = false,
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4273),
+                            DepositorId = new Guid("202d64f3-4474-4b55-b30d-61c430799efa"),
+                            ForbidNewReceiptLineLed = false,
+                            ForbidTransferReservedLed = false,
+                            ForceTaskStockLed = false,
+                            GenerateSsccLed = true,
+                            ManualReceiptCompletionLed = false,
+                            ManualReturnCompletionLed = false,
+                            OrderModifyLed = false
+                        });
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Distributor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<Guid>("AddressId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("AddressId");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -840,9 +1571,578 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)")
+                        .HasColumnName("Name");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId")
+                        .IsUnique();
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "Name", "CompanyId", "AddressId", "DepositorCompanyId", "CreatedDate" }, "IX_Disturbitors_Areas");
+
+                    b.ToTable("Distributors", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Receiver", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<Guid>("AddressId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("AddressId");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("Code");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CustomerId");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)")
+                        .HasColumnName("Name");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId")
+                        .IsUnique();
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "Name", "AddressId", "CustomerId", "DepositorCompanyId", "CreatedDate" }, "IX_Receivers_Areas");
+
+                    b.ToTable("Receivers", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Supplier", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<Guid>("AddressId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("AddressId");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("Code");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("CompanyId");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)")
+                        .HasColumnName("Name");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId")
+                        .IsUnique();
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "Name", "AddressId", "CompanyId", "DepositorCompanyId", "CreatedDate" }, "IX_Suppliers_Areas");
+
+                    b.ToTable("Suppliers", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.UserDepositor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
                     b.Property<Guid>("DepositorId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("DepositorId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex(new[] { "DepositorId", "UserId", "CreatedDate" }, "IX_UserDepositors_Areas");
+
+                    b.ToTable("UserDepositors", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Building", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<string>("AddressText")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)")
+                        .HasColumnName("AddressText");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)")
+                        .HasColumnName("City");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("Code");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)")
+                        .HasColumnName("Country");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)")
+                        .HasColumnName("Description");
+
+                    b.Property<decimal?>("Latitude")
+                        .HasColumnType("DECIMAL(11,7)")
+                        .HasColumnName("Latitude");
+
+                    b.Property<decimal?>("Longitude")
+                        .HasColumnType("DECIMAL(11,7)")
+                        .HasColumnName("Longitude");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)")
+                        .HasColumnName("Province");
+
+                    b.Property<Guid>("SiteId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("SiteId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasColumnName("ZipCode");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("SiteId");
+
+                    b.HasIndex(new[] { "Code", "SiteId", "Description", "Province", "City", "Country", "AddressText", "ZipCode", "DepositorCompanyId", "Longitude", "Latitude", "CreatedDate" }, "IX_Buildings_Areas");
+
+                    b.ToTable("Buildings", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("6b94bdfe-4158-4e98-816e-a3422816b2a3"),
+                            AddressText = "Deri Org. San. Bolgesi No:26",
+                            City = "Istanbul",
+                            Code = "MAIN",
+                            Country = "Turkey",
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(3907),
+                            DepositorCompanyId = new Guid("dd4d5460-8146-4e62-ac19-a74d89955dd7"),
+                            Description = "Main Factory",
+                            Latitude = 40.8503m,
+                            Longitude = 29.3032m,
+                            Province = "Tuzla",
+                            SiteId = new Guid("f769e1ec-71cd-450b-80aa-1b863e518a26"),
+                            ZipCode = "34953"
+                        });
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.BuildingDimension", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<Guid>("BuildingId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("BuildingId");
+
+                    b.Property<int?>("BuildingLevel")
+                        .HasColumnType("int")
+                        .HasColumnName("BuildingLevel");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<decimal?>("Height")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("Height");
+
+                    b.Property<int?>("LenghtUnitId")
+                        .IsRequired()
+                        .HasColumnType("int")
+                        .HasColumnName("LenghtUnitId");
+
+                    b.Property<decimal?>("Length")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("Length");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.Property<decimal?>("Volume")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("Volume");
+
+                    b.Property<int?>("VolumeUnitId")
+                        .IsRequired()
+                        .HasColumnType("int")
+                        .HasColumnName("VolumeUnitId");
+
+                    b.Property<decimal?>("Width")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("Width");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuildingId")
+                        .IsUnique();
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("LenghtUnitId");
+
+                    b.HasIndex("VolumeUnitId");
+
+                    b.HasIndex(new[] { "BuildingId", "LenghtUnitId", "BuildingLevel", "VolumeUnitId", "CreatedDate" }, "IX_BuildingDimensions_Areas");
+
+                    b.ToTable("BuildingDimensions", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("daf214c4-92e9-4e93-989b-4fa1c2ecf793"),
+                            BuildingId = new Guid("6b94bdfe-4158-4e98-816e-a3422816b2a3"),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(3791),
+                            Height = 10m,
+                            LenghtUnitId = 2,
+                            Length = 30m,
+                            Volume = 6000m,
+                            VolumeUnitId = 3,
+                            Width = 20m
+                        });
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("Code");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)")
+                        .HasColumnName("Description");
+
+                    b.Property<Guid>("StorageSystemId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("StorageSystemId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("StorageSystemId");
+
+                    b.HasIndex(new[] { "Code", "Description", "StorageSystemId", "DepositorCompanyId", "CreatedDate" }, "IX_Locations_Areas");
+
+                    b.ToTable("Locations", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationCodeFormat", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<int>("Column")
+                        .HasColumnType("int")
+                        .HasColumnName("Column");
+
+                    b.Property<string>("ColumnCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("ColumnCode");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int")
+                        .HasColumnName("Level");
+
+                    b.Property<string>("LevelCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("LevelCode");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LocationId");
+
+                    b.Property<int>("Sector")
+                        .HasColumnType("int")
+                        .HasColumnName("Sector");
+
+                    b.Property<string>("SectorCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("SectorCode");
+
+                    b.Property<int>("Side")
+                        .HasColumnType("int")
+                        .HasColumnName("Side");
+
+                    b.Property<string>("SideCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("SideCode");
+
+                    b.Property<int>("SubColumn")
+                        .HasColumnType("int")
+                        .HasColumnName("SubColumn");
+
+                    b.Property<string>("SubColumnCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("SubColumnCode");
+
+                    b.Property<int>("SubLevel")
+                        .HasColumnType("int")
+                        .HasColumnName("SubLevel");
+
+                    b.Property<string>("SubLevelCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("SubLevelCode");
+
+                    b.Property<string>("SubPositionCode")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("SubPositionCode");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("LocationId")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "LocationId", "Sector", "Column", "Level", "Side", "SubLevel", "SubColumn", "CreatedDate" }, "IX_LocationCodeFormat_Areas");
+
+                    b.ToTable("LocationCodeFormats", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationCoordinate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<Guid>("BuildingId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("BuildingId");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LocationId");
+
+                    b.Property<decimal>("LocationX")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("LocationX");
+
+                    b.Property<decimal>("LocationY")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("LocationY");
+
+                    b.Property<decimal>("LocationZ")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("LocationZ");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2")
@@ -852,15 +2152,755 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasIndex("BuildingId");
 
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex(new[] { "Code" }, "UK_Customers_Code")
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.ToTable("Customers", (string)null);
+                    b.HasIndex("LocationId")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "LocationId", "BuildingId", "CreatedDate" }, "IX_LocationCoordinates_Areas");
+
+                    b.ToTable("LocationCoordinates", (string)null);
                 });
 
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", b =>
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationDepositor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorId");
+
+                    b.Property<bool>("IsForbid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsForbid");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LocationId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepositorId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "LocationId", "DepositorId", "CreatedDate" }, "IX_LocationDepositors_Areas");
+
+                    b.ToTable("LocationDepositors", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationDimension", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<decimal?>("Height")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("Height");
+
+                    b.Property<decimal?>("Length")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("Length");
+
+                    b.Property<int?>("LengthUnitId")
+                        .HasColumnType("int")
+                        .HasColumnName("LengthUnitId");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LocationId");
+
+                    b.Property<decimal?>("MaxWeight")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("MaxWeight");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.Property<decimal?>("Volume")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("Volume");
+
+                    b.Property<int?>("VolumeUnitId")
+                        .HasColumnType("int")
+                        .HasColumnName("VolumeUnitId");
+
+                    b.Property<int?>("WeightUnitId")
+                        .HasColumnType("int")
+                        .HasColumnName("WeightUnitId");
+
+                    b.Property<decimal?>("Width")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("Width");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("LengthUnitId");
+
+                    b.HasIndex("LocationId")
+                        .IsUnique();
+
+                    b.HasIndex("VolumeUnitId");
+
+                    b.HasIndex("WeightUnitId");
+
+                    b.HasIndex(new[] { "LocationId", "LengthUnitId", "VolumeUnitId", "WeightUnitId", "CreatedDate" }, "IX_LocationDimensions_Areas");
+
+                    b.ToTable("LocationDimensions", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationFeature", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<bool>("DamagedLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("DamagedLed");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LocationId");
+
+                    b.Property<bool>("NoStockMergeLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("NoStockMergeLed");
+
+                    b.Property<bool>("PackingLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("PackingLed");
+
+                    b.Property<bool>("PickingLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("PickingLed");
+
+                    b.Property<bool>("ReceivingLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("ReceivingLed");
+
+                    b.Property<bool>("RepackingLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("RepackingLed");
+
+                    b.Property<bool>("ReplenishSourceLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("ReplenishSourceLed");
+
+                    b.Property<bool>("ReplenishTargetLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("ReplenishTargetLed");
+
+                    b.Property<bool>("ReturnsLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("ReturnsLed");
+
+                    b.Property<bool>("SendingLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("SendingLed");
+
+                    b.Property<bool>("SinglePackTypeLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("SinglePackTypeLed");
+
+                    b.Property<bool>("SingleProductLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("SingleProductLed");
+
+                    b.Property<bool>("SortingLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("SortingLed");
+
+                    b.Property<bool>("StockControlLed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("StockControlLed");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("LocationId")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "LocationId", "CreatedDate" }, "IX_LocationFeatures_Areas");
+
+                    b.ToTable("LocationFeatures", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationLockReason", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LocationId");
+
+                    b.Property<int>("LockReasonId")
+                        .HasColumnType("int")
+                        .HasColumnName("LockReasonId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("LocationId")
+                        .IsUnique();
+
+                    b.HasIndex("LockReasonId");
+
+                    b.HasIndex(new[] { "LocationId", "LockReasonId", "CreatedDate" }, "IX_LocationLockReasons_Areas");
+
+                    b.ToTable("LocationLockReasons", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationPickingType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LocationId");
+
+                    b.Property<int>("PickingTypeId")
+                        .HasColumnType("int")
+                        .HasColumnName("PickingTypeId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("LocationId")
+                        .IsUnique();
+
+                    b.HasIndex("PickingTypeId");
+
+                    b.HasIndex(new[] { "LocationId", "PickingTypeId", "CreatedDate" }, "IX_LocationPickingTypes_Areas");
+
+                    b.ToTable("LocationPickingTypes", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationPriority", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<int>("InboundPriority")
+                        .HasColumnType("int")
+                        .HasColumnName("InboundPriority");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LocationId");
+
+                    b.Property<int>("OutboundPriority")
+                        .HasColumnType("int")
+                        .HasColumnName("OutboundPriority");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("LocationId")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "LocationId", "CreatedDate" }, "IX_LocationPriorities_Areas");
+
+                    b.ToTable("LocationPriorities", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationProduct", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<bool>("IsForbid")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LocationId");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ProductId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex(new[] { "LocationId", "ProductId", "CreatedDate" }, "IX_LocationProducts_Areas");
+
+                    b.ToTable("LocationProducts", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationProductAttribute", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<bool>("IsForbid")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LocationId");
+
+                    b.Property<Guid>("ProductAttributeId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ProductAttributeId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)")
+                        .HasColumnName("Value");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("ProductAttributeId");
+
+                    b.HasIndex(new[] { "LocationId", "ProductAttributeId", "CreatedDate" }, "IX_LocationProductAttributes_Areas");
+
+                    b.ToTable("LocationProductAttributes", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationProductConstraint", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<decimal>("Capacity")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("Capacity");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<decimal>("ExceedCapacityMargin")
+                        .HasColumnType("DECIMAL(6,3)")
+                        .HasColumnName("ExceedCapacityMargin");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LocationId");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ProductId");
+
+                    b.Property<decimal>("ReplenishmentTreshold")
+                        .HasColumnType("DECIMAL(6,3)")
+                        .HasColumnName("ReplenishmentTreshold");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int")
+                        .HasColumnName("UnitId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UnitId");
+
+                    b.HasIndex(new[] { "LocationId", "ProductId", "UnitId", "CreatedDate" }, "IX_LocationProductConstraints_Areas");
+
+                    b.ToTable("LocationProductConstraints", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationStockAttribute", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<bool>("IsForbid")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LocationId");
+
+                    b.Property<Guid>("StockAttributeId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("StockAttributeId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)")
+                        .HasColumnName("Value");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("StockAttributeId");
+
+                    b.HasIndex(new[] { "LocationId", "StockAttributeId", "CreatedDate" }, "IX_LocationStockAttributes_Areas");
+
+                    b.ToTable("LocationStockAttributes", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationUnitConstraint", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<decimal>("Capacity")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("Capacity");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LocationId");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int")
+                        .HasColumnName("UnitId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("UnitId");
+
+                    b.HasIndex(new[] { "LocationId", "UnitId", "CreatedDate" }, "IX_LocationUnitConstraints_Areas");
+
+                    b.ToTable("LocationUnitConstraints", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationZone", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("LocationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("LocationId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.Property<Guid>("ZoneId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ZoneId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("ZoneId");
+
+                    b.HasIndex(new[] { "LocationId", "ZoneId", "CreatedDate" }, "IX_LocationZones_Areas");
+
+                    b.ToTable("LocationZones", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Site", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("Code");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)")
+                        .HasColumnName("Description");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "Description", "DepositorCompanyId", "CreatedDate" }, "IX_Sites_Areas");
+
+                    b.ToTable("Sites", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("f769e1ec-71cd-450b-80aa-1b863e518a26"),
+                            Code = "MAIN",
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4811),
+                            DepositorCompanyId = new Guid("dd4d5460-8146-4e62-ac19-a74d89955dd7"),
+                            Description = "MAIN SITE"
+                        });
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.SiteDepositor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorId");
+
+                    b.Property<Guid>("SiteId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("SiteId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepositorId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "SiteId", "DepositorId", "CreatedDate" }, "IX_SiteDepositors_Areas");
+
+                    b.ToTable("SiteDepositors", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.StorageSystem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -889,6 +2929,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("DepositorCompanyId");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("Description");
+
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("UpdatedDate");
@@ -899,481 +2945,76 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasIndex("DepositorCompanyId");
 
-                    b.HasIndex(new[] { "Code" }, "UK_Depositors_Code")
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.ToTable("Depositors", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("202d64f3-4474-4b55-b30d-61c430799efa"),
-                            BuildingId = new Guid("6b94bdfe-4158-4e98-816e-a3422816b2a3"),
-                            Code = "MAIN",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1846),
-                            DepositorCompanyId = new Guid("dd4d5460-8146-4e62-ac19-a74d89955dd7")
-                        });
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("Id");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("Code");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CreatedDate");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DeletedDate");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("Description");
-
-                    b.Property<string>("FaxNumber")
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)")
-                        .HasColumnName("FaxNumber");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("Name");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)")
-                        .HasColumnName("PhoneNumber");
-
-                    b.Property<string>("TaxNumber")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("TaxNumber");
-
-                    b.Property<string>("TaxOffice")
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("TaxOffice");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("UpdatedDate");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex(new[] { "Code" }, "UK_DepositorCompanies_Code")
-                        .IsUnique();
-
-                    b.HasIndex(new[] { "Name" }, "UK_DepositorCompanies_Name")
-                        .IsUnique();
-
-                    b.ToTable("DepositorCompanies", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("dd4d5460-8146-4e62-ac19-a74d89955dd7"),
-                            Code = "MAIN",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1772),
-                            Description = "Main Company",
-                            FaxNumber = "123456789101",
-                            Name = "Main Company LTD.",
-                            PhoneNumber = "905432044767",
-                            TaxNumber = "123456789",
-                            TaxOffice = "Istanbul Anadolu Kurumlar VD"
-                        });
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Disturbitor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("Id");
-
-                    b.Property<Guid>("BuildingId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("BuildingId");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("Code");
-
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CompanyId");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CreatedDate");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DeletedDate");
-
-                    b.Property<Guid>("DepositorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("UpdatedDate");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BuildingId");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex(new[] { "Code" }, "UK_Disturbitors_Code")
-                        .IsUnique();
-
-                    b.ToTable("Disturbitors", (string)null);
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Receiver", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("Id");
-
-                    b.Property<Guid>("BuildingId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("BuildingId");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("Code");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CreatedDate");
-
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CustomerId");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DeletedDate");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("Name");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("UpdatedDate");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BuildingId");
-
-                    b.HasIndex(new[] { "Code" }, "UK_Receivers_Code")
-                        .IsUnique();
-
-                    b.HasIndex(new[] { "Name" }, "UK_Receivers_Name")
-                        .IsUnique();
-
-                    b.ToTable("Receivers", (string)null);
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Supplier", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("Id");
-
-                    b.Property<Guid>("BuildingId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("BuildingId");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("Code");
-
-                    b.Property<Guid>("CompanyId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CompanyId");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CreatedDate");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DeletedDate");
-
-                    b.Property<Guid>("DepositorId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("UpdatedDate");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BuildingId");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex(new[] { "Code" }, "UK_Suppliers_Code")
-                        .IsUnique();
-
-                    b.ToTable("Suppliers", (string)null);
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Building", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("Id");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)")
-                        .HasColumnName("Address");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)")
-                        .HasColumnName("City");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("Code");
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)")
-                        .HasColumnName("Country");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CreatedDate");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DeletedDate");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("Description");
-
-                    b.Property<string>("Province")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)")
-                        .HasColumnName("Province");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("UpdatedDate");
-
-                    b.Property<string>("ZipCode")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasColumnName("ZipCode");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex(new[] { "Code" }, "UK_Buildings_Code")
-                        .IsUnique();
-
-                    b.HasIndex(new[] { "Description" }, "UK_Buildings_Description")
-                        .IsUnique();
-
-                    b.ToTable("Buildings", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("6b94bdfe-4158-4e98-816e-a3422816b2a3"),
-                            Address = "Deri Org. San. Bolgesi No:26",
-                            City = "Istanbul",
-                            Code = "MAIN",
-                            Country = "Turkey",
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1613),
-                            Description = "Main Factory",
-                            Province = "Tuzla",
-                            ZipCode = "34953"
-                        });
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("Id");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("Code");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CreatedDate");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DeletedDate");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("Description");
-
-                    b.Property<Guid>("StorageSystemId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("StorageSystemId");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("UpdatedDate");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StorageSystemId");
-
-                    b.HasIndex(new[] { "Code" }, "UK_Locations_Code")
-                        .IsUnique();
-
-                    b.HasIndex(new[] { "Description" }, "UK_Locations_Description")
-                        .IsUnique();
-
-                    b.ToTable("Locations", (string)null);
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Site", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("Id");
-
-                    b.Property<Guid>("BuildingId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("BuildingId");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("Code");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CreatedDate");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DeletedDate");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(120)
-                        .HasColumnType("nvarchar(120)")
-                        .HasColumnName("Description");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("UpdatedDate");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BuildingId");
-
-                    b.HasIndex(new[] { "Code" }, "UK_Sites_Code")
-                        .IsUnique();
-
-                    b.HasIndex(new[] { "Description" }, "UK_Sites_Description")
-                        .IsUnique();
-
-                    b.ToTable("Sites", (string)null);
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.StorageSystem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("Id");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("Code");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("CreatedDate");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DeletedDate");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("Description");
-
-                    b.Property<Guid>("SiteId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("SiteId");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("UpdatedDate");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SiteId");
-
-                    b.HasIndex(new[] { "Code" }, "UK_StorageSystems_Code")
-                        .IsUnique();
-
-                    b.HasIndex(new[] { "Description" }, "UK_StorageSystems_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "DepositorCompanyId", "BuildingId", "CreatedDate" }, "IX_StorageSystems_Areas");
 
                     b.ToTable("StorageSystems", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("861615e9-ec51-44f2-91dc-7a30fa477896"),
+                            BuildingId = new Guid("6b94bdfe-4158-4e98-816e-a3422816b2a3"),
+                            Code = "RAMP",
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(5043),
+                            DepositorCompanyId = new Guid("dd4d5460-8146-4e62-ac19-a74d89955dd7"),
+                            Description = "Ramp Area"
+                        });
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Zone", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<Guid>("BuildingId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("BuildingId");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)")
+                        .HasColumnName("Code");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)")
+                        .HasColumnName("Description");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BuildingId");
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "Description", "DepositorCompanyId", "BuildingId", "CreatedDate" }, "IX_Zones_Areas");
+
+                    b.ToTable("Zones", (string)null);
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.LogStock", b =>
@@ -1394,12 +3035,6 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                     b.Property<Guid>("FromLocaitonId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("FromLocaitonId");
-
-                    b.Property<Guid?>("FromLocationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("LocationId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier")
@@ -1431,17 +3066,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FromLocationId");
+                    b.HasIndex("Id")
+                        .IsUnique();
 
-                    b.HasIndex("LocationId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ToLocationId");
-
-                    b.HasIndex("TransactionLogId");
-
-                    b.HasIndex("TransactionTypeId");
+                    b.HasIndex(new[] { "TransactionLogId", "StockId", "ProductId", "FromLocaitonId", "ToLocationId", "TransactionTypeId", "Quantity", "CreatedDate" }, "IX_LogStocks_Areas");
 
                     b.ToTable("LogStocks", (string)null);
                 });
@@ -1485,9 +3113,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LogStockId");
+                    b.HasIndex("Id")
+                        .IsUnique();
 
-                    b.HasIndex("StockAttributeId");
+                    b.HasIndex(new[] { "LogStockId", "StockAttributeId", "FromValue", "ToValue", "CreatedDate" }, "IX_LogStockAttributeValues_Areas");
 
                     b.ToTable("LogStockAttributeValues", (string)null);
                 });
@@ -1517,6 +3146,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("nvarchar(30)")
                         .HasColumnName("FromContainerSSCC");
 
+                    b.Property<int>("FromContainerTypeId")
+                        .HasColumnType("int")
+                        .HasColumnName("FromContainerTypeId");
+
                     b.Property<Guid>("LogStockId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("LogStockId");
@@ -1531,13 +3164,20 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("nvarchar(30)")
                         .HasColumnName("ToContainerSSCC");
 
+                    b.Property<int>("ToContainerTypeId")
+                        .HasColumnType("int")
+                        .HasColumnName("ToContainerTypeId");
+
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("UpdatedDate");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LogStockId");
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "LogStockId", "FromContainerId", "ToContainerId", "FromContainerSSCC", "ToContainerSSCC", "FromContainerTypeId", "ToContainerTypeId", "CreatedDate" }, "IX_LogStockContainers_Areas");
 
                     b.ToTable("LogStockContainers", (string)null);
                 });
@@ -1561,22 +3201,13 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("FromReasaonId");
 
-                    b.Property<Guid?>("FromReasonId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("LogStockId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("LogStockId");
 
-                    b.Property<Guid?>("ReserveReasonId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("ToReasaonId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ToReasaonId");
-
-                    b.Property<Guid?>("ToReasonId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2")
@@ -1584,13 +3215,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FromReasonId");
+                    b.HasIndex("Id")
+                        .IsUnique();
 
-                    b.HasIndex("LogStockId");
-
-                    b.HasIndex("ReserveReasonId");
-
-                    b.HasIndex("ToReasonId");
+                    b.HasIndex(new[] { "LogStockId", "FromReasaonId", "ToReasaonId", "CreatedDate" }, "IX_LogStockReserveReasons_Areas");
 
                     b.ToTable("LogStockReserveReasons", (string)null);
                 });
@@ -1611,24 +3239,18 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnName("DeletedDate");
 
                     b.Property<Guid?>("FromReasonId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FromResaonId")
                         .IsRequired()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("FromResaonId");
+                        .HasColumnName("FromReasonId");
 
                     b.Property<Guid>("LogStockId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("LogStockId");
 
-                    b.Property<Guid?>("ToResaonId")
+                    b.Property<Guid?>("ToReasonId")
                         .IsRequired()
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ToResaonId");
-
-                    b.Property<Guid?>("UnsuitReasonId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnName("ToReasonId");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2")
@@ -1636,13 +3258,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FromReasonId");
+                    b.HasIndex("Id")
+                        .IsUnique();
 
-                    b.HasIndex("LogStockId");
-
-                    b.HasIndex("ToResaonId");
-
-                    b.HasIndex("UnsuitReasonId");
+                    b.HasIndex(new[] { "LogStockId", "FromReasonId", "ToReasonId", "CreatedDate" }, "IX_LogStockUnsuitReasons_Areas");
 
                     b.ToTable("LogStockUnsuitReasons", (string)null);
                 });
@@ -1662,6 +3281,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
                     b.Property<Guid>("DepositorId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("DepositorId");
@@ -1673,13 +3296,25 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("OrderId");
 
+                    b.Property<Guid?>("OrderItemId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("OrderItemId");
+
                     b.Property<Guid?>("ReceiptId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ReceiptId");
 
+                    b.Property<Guid?>("ReceiptItemId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ReceiptItemId");
+
                     b.Property<Guid?>("ReturnId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ReturnId");
+
+                    b.Property<Guid?>("ReturnItemId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ReturnItemId");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2")
@@ -1695,13 +3330,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("Id")
+                        .IsUnique();
 
-                    b.HasIndex("ReceiptId");
-
-                    b.HasIndex("ReturnId");
-
-                    b.HasIndex("WorkTaskId");
+                    b.HasIndex(new[] { "DepositorId", "DepositorCompanyId", "UserId", "OrderId", "OrderItemId", "ReturnId", "ReturnItemId", "ReceiptId", "ReceiptItemId", "WorkTaskId", "CreatedDate" }, "IX_TransactionLogs_Areas");
 
                     b.ToTable("TransactionLogs", (string)null);
                 });
@@ -1735,6 +3367,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
                     b.Property<Guid>("DepositorId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("DepositorId");
@@ -1767,12 +3403,20 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasIndex("CustomerId");
 
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("DepositorId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("OrderTypeId");
+
+                    b.HasIndex("ReceiverId");
 
                     b.HasIndex("StatusId");
 
-                    b.HasIndex(new[] { "Code" }, "UK_Orders_Code")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "DepositorId", "DepositorCompanyId", "CustomerId", "ReceiverId", "OrderTypeId", "StatusId", "InputDate", "ExpectedDate", "ActualDate", "CreatedDate" }, "IX_Orders_Areas");
 
                     b.ToTable("Orders", (string)null);
                 });
@@ -1802,9 +3446,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -1826,11 +3470,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasIndex("AttributeInputTypeId");
 
-                    b.HasIndex(new[] { "Code" }, "UK_OrderAttributes_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Description" }, "UK_OrderAttributes_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "AttributeInputTypeId", "DepositorCompanyId", "CreatedDate" }, "IX_OrderAttributes_Areas");
 
                     b.ToTable("OrderAttributes", (string)null);
                 });
@@ -1870,9 +3515,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("OrderAttributeId");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex(new[] { "OrderId", "OrderAttributeId", "Value", "CreatedDate" }, "IX_OrderAttributeValues_Areas");
 
                     b.ToTable("OrderAttributeValues", (string)null);
                 });
@@ -1892,6 +3540,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
+                    b.Property<Guid>("ItemUnitId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ItemUnitId");
+
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("OrderId");
@@ -1904,21 +3556,18 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("DECIMAL(18,6)")
                         .HasColumnName("Quantity");
 
-                    b.Property<int>("UnitId")
-                        .HasColumnType("int")
-                        .HasColumnName("UnitId");
-
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("UpdatedDate");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("UnitId");
+                    b.HasIndex(new[] { "OrderId", "ProductId", "ItemUnitId", "Quantity", "CreatedDate" }, "IX_OrderItems_Areas");
 
                     b.ToTable("OrderItems", (string)null);
                 });
@@ -1968,7 +3617,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderItemId");
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "OrderItemId", "Description", "Text", "CreatedDate" }, "IX_OrderItemMemos_Areas");
 
                     b.ToTable("OrderItemMemos", (string)null);
                 });
@@ -2008,9 +3660,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderItemId");
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.HasIndex("StockAttributeId");
+
+                    b.HasIndex(new[] { "OrderItemId", "StockAttributeId", "Value", "CreatedDate" }, "IX_OrderItemStockAttrValues_Areas");
 
                     b.ToTable("OrderItemStockAttrValues", (string)null);
                 });
@@ -2060,7 +3715,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "OrderId", "Description", "Text", "EditDate", "InputDate", "CreatedDate" }, "IX_OrderMemos_Areas");
 
                     b.ToTable("OrderMemos", (string)null);
                 });
@@ -2090,9 +3748,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -2115,11 +3773,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Code" }, "UK_OrderTypes_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Description" }, "UK_OrderTypes_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "Format", "Counter", "DepositorCompanyId", "CreatedDate" }, "IX_OrderTypes_Areas");
 
                     b.ToTable("OrderTypes", (string)null);
                 });
@@ -2149,9 +3808,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -2170,11 +3829,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasIndex("AttributeInputTypeId");
 
-                    b.HasIndex(new[] { "Code" }, "UK_PoAttributes_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Description" }, "UK_PoAttributes_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "AttributeInputTypeId", "DepositorCompanyId", "CreatedDate" }, "IX_PoAttributes_Areas");
 
                     b.ToTable("PoAttributes", (string)null);
                 });
@@ -2214,9 +3874,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("PoAttributeId");
 
-                    b.HasIndex("PurchaseOrderId");
+                    b.HasIndex(new[] { "PurchaseOrderId", "PoAttributeId", "Value", "CreatedDate" }, "IX_PoAttributeValues_Areas");
 
                     b.ToTable("PoAttributeValues", (string)null);
                 });
@@ -2266,7 +3929,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PurchaseOrderId");
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "PurchaseOrderId", "Description", "InputDate", "Text", "EditDate", "CreatedDate" }, "IX_PoMemos_Areas");
 
                     b.ToTable("PoMemos", (string)null);
                 });
@@ -2296,9 +3962,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -2321,11 +3987,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Code" }, "UK_PoTypes_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Description" }, "UK_PoTypes_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "Format", "Counter", "DepositorCompanyId", "CreatedDate" }, "IX_PoTypes_Areas");
 
                     b.ToTable("PoTypes", (string)null);
                 });
@@ -2351,6 +4018,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
                     b.Property<Guid>("DepositorId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("DepositorId");
@@ -2373,14 +4044,228 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("DepositorId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("PoTypeId");
+
+                    b.HasIndex("StatusId");
 
                     b.HasIndex("SupplierId");
 
-                    b.HasIndex(new[] { "Code" }, "UK_PurchaseOrders_Code")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "DepositorId", "DepositorCompanyId", "SupplierId", "PoTypeId", "StatusId", "CreatedDate" }, "IX_PurchaseOrders_Areas");
 
                     b.ToTable("PurchaseOrders", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.BarcodeSupplier", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
+                    b.Property<Guid>("ProductBarcodeId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ProductBarcodeId");
+
+                    b.Property<Guid>("SupplierId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("SupplierId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("SupplierId");
+
+                    b.HasIndex(new[] { "ProductBarcodeId", "SupplierId", "DepositorCompanyId", "CreatedDate" }, "IX_BarcodeSuppliers_Areas");
+
+                    b.ToTable("BarcodeSuppliers", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ItemPackType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<decimal?>("DeadWeight")
+                        .HasColumnType("decimal(18,6)")
+                        .HasColumnName("DeadWeight");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<decimal?>("Height")
+                        .HasColumnType("decimal(18,6)")
+                        .HasColumnName("Height");
+
+                    b.Property<Guid>("ItemUnitId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ItemUnitId");
+
+                    b.Property<int>("LenghtUnitId")
+                        .HasColumnType("int")
+                        .HasColumnName("LenghtUnitId");
+
+                    b.Property<decimal?>("Length")
+                        .HasColumnType("decimal(18,6)")
+                        .HasColumnName("Length");
+
+                    b.Property<decimal?>("NetWeight")
+                        .HasColumnType("decimal(18,6)")
+                        .HasColumnName("NetWeight");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.Property<decimal?>("Volume")
+                        .HasColumnType("decimal(18,6)")
+                        .HasColumnName("Volume");
+
+                    b.Property<int>("VolumeUnitId")
+                        .HasColumnType("int")
+                        .HasColumnName("VolumeUnitId");
+
+                    b.Property<int>("WeightUnitId")
+                        .HasColumnType("int")
+                        .HasColumnName("WeightUnitId");
+
+                    b.Property<decimal?>("Width")
+                        .HasColumnType("decimal(18,6)")
+                        .HasColumnName("Width");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("LenghtUnitId");
+
+                    b.HasIndex("VolumeUnitId");
+
+                    b.HasIndex("WeightUnitId");
+
+                    b.HasIndex(new[] { "ItemUnitId", "Length", "Width", "Height", "LenghtUnitId", "Volume", "VolumeUnitId", "DeadWeight", "NetWeight", "WeightUnitId", "CreatedDate" }, "IX_ItemPackTypes_Areas");
+
+                    b.ToTable("ItemPackTypes", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ItemUnit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<bool>("IsCustomerUnit")
+                        .HasColumnType("bit")
+                        .HasColumnName("IsCustomerUnit");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ProductId");
+
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int")
+                        .HasColumnName("UnitId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("UnitId");
+
+                    b.HasIndex(new[] { "ProductId", "UnitId", "IsCustomerUnit", "CreatedDate" }, "IX_ItemUnits_Areas");
+
+                    b.ToTable("ItemUnits", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ItemUnitConversion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<decimal>("ConversionQuantity")
+                        .HasColumnType("decimal(18,6)")
+                        .HasColumnName("ConversionQuantity");
+
+                    b.Property<Guid>("ConvertedItemUnitId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ConvertedItemUnitId");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("ReferenceItemUnitId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ReferenceItemUnitId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConvertedItemUnitId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "ReferenceItemUnitId", "ConvertedItemUnitId", "ConversionQuantity", "CreatedDate" }, "IX_ItemUnitConversions_Areas");
+
+                    b.ToTable("ItemUnitConversions", (string)null);
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", b =>
@@ -2409,9 +4294,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -2424,6 +4309,13 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnName("UpdatedDate");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "Description", "AlternativeCode", "DepositorCompanyId", "CreatedDate" }, "IX_Products_Areas");
 
                     b.ToTable("Products", (string)null);
                 });
@@ -2453,9 +4345,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -2474,11 +4366,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasIndex("AttributeInputTypeId");
 
-                    b.HasIndex(new[] { "Code" }, "UK_ProductAttributes_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Description" }, "UK_ProductAttributes_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "AttributeInputTypeId", "DepositorCompanyId", "CreatedDate" }, "IX_ProductAttributes_Areas");
 
                     b.ToTable("ProductAttributes", (string)null);
                 });
@@ -2518,11 +4411,142 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("ProductAttributeId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex(new[] { "ProductId", "ProductAttributeId", "Value", "CreatedDate" }, "IX_ProductAttributeValues_Areas");
 
                     b.ToTable("ProductAttributeValues", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ProductBarcode", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<string>("BarcodeString")
+                        .IsRequired()
+                        .HasMaxLength(140)
+                        .HasColumnType("nvarchar(140)")
+                        .HasColumnName("BarcodeString");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid?>("ItemUnitId")
+                        .IsRequired()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ItemUnitId");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ProductId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("ItemUnitId");
+
+                    b.HasIndex(new[] { "ProductId", "BarcodeString", "ItemUnitId", "CreatedDate" }, "IX_ProductBarcodes_Areas");
+
+                    b.ToTable("ProductBarcodes", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ProductDepositor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorId");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ProductId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepositorId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "ProductId", "DepositorId", "CreatedDate" }, "IX_ProductDepositors_Areas");
+
+                    b.ToTable("ProductDepositors", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ProductStockAttribute", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<bool>("IsNecessary")
+                        .HasColumnType("bit")
+                        .HasColumnName("IsNecessary");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ProductId");
+
+                    b.Property<Guid>("StockAttributeId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("StockAttributeId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("StockAttributeId");
+
+                    b.HasIndex(new[] { "ProductId", "StockAttributeId", "CreatedDate" }, "IX_ProductStockAttributes_Areas");
+
+                    b.ToTable("ProductStockAttributes", (string)null);
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.Receipt", b =>
@@ -2546,6 +4570,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
                     b.Property<Guid>("DepositorId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("DepositorId");
@@ -2558,7 +4586,7 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("InputDate");
 
-                    b.Property<Guid>("PurchaseOrderId")
+                    b.Property<Guid?>("PurchaseOrderId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("PurchaseOrderId");
 
@@ -2580,12 +4608,20 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("DepositorId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("PurchaseOrderId");
 
                     b.HasIndex("ReceiptTypeId");
 
-                    b.HasIndex(new[] { "Code" }, "UK_Receipts_Code")
-                        .IsUnique();
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex(new[] { "Code", "DepositorId", "DepositorCompanyId", "PurchaseOrderId", "ReceiptTypeId", "StatusId", "InputDate", "ExpectedDate", "ReceiveDate", "CreatedDate" }, "IX_Receipts_Areas");
 
                     b.ToTable("Receipts", (string)null);
                 });
@@ -2615,9 +4651,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -2636,11 +4672,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasIndex("AttributeInputTypeId");
 
-                    b.HasIndex(new[] { "Code" }, "UK_ReceiptAttributes_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Description" }, "UK_ReceiptAttributes_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "AttributeInputTypeId", "DepositorCompanyId", "CreatedDate" }, "IX_ReceiptAttributes_Areas");
 
                     b.ToTable("ReceiptAttributes", (string)null);
                 });
@@ -2680,9 +4717,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("ReceiptAttributeId");
 
-                    b.HasIndex("ReceiptId");
+                    b.HasIndex(new[] { "ReceiptId", "ReceiptAttributeId", "Value", "CreatedDate" }, "IX_ReceiptAttributeValues_Areas");
 
                     b.ToTable("ReceiptAttributeValues", (string)null);
                 });
@@ -2710,6 +4750,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("DECIMAL(18,6)")
                         .HasColumnName("ExpectedQuantity");
 
+                    b.Property<Guid>("ItemUnitId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ItemUnitId");
+
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ProductId");
@@ -2722,21 +4766,22 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("int")
                         .HasColumnName("StatusId");
 
-                    b.Property<int>("UnitId")
-                        .HasColumnType("int")
-                        .HasColumnName("UnitId");
-
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("UpdatedDate");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("ItemUnitId");
+
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("ReceiptId");
+                    b.HasIndex("StatusId");
 
-                    b.HasIndex("UnitId");
+                    b.HasIndex(new[] { "ReceiptId", "ProductId", "ItemUnitId", "StatusId", "ExpectedQuantity", "ActualQuantity", "CreatedDate" }, "IX_ReceiptItems_Areas");
 
                     b.ToTable("ReceiptItems", (string)null);
                 });
@@ -2786,7 +4831,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceiptItemId");
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "ReceiptItemId", "Description", "Text", "InputDate", "EditDate", "CreatedDate" }, "IX_ReceiptItemMemos_Areas");
 
                     b.ToTable("ReceiptItemMemos", (string)null);
                 });
@@ -2805,9 +4853,6 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
-
-                    b.Property<Guid?>("ReceiptId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ReceiptItemId")
                         .HasColumnType("uniqueidentifier")
@@ -2829,11 +4874,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceiptId");
-
-                    b.HasIndex("ReceiptItemId");
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.HasIndex("StockAttributeId");
+
+                    b.HasIndex(new[] { "ReceiptItemId", "StockAttributeId", "Value", "CreatedDate" }, "IX_ReceiptItmStockAttrValues_Areas");
 
                     b.ToTable("ReceiptItmStockAttrValues", (string)null);
                 });
@@ -2883,7 +4929,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceiptId");
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "ReceiptId", "Description", "InputDate", "Text", "EditDate", "CreatedDate" }, "IX_ReceiptMemos_Areas");
 
                     b.ToTable("ReceiptMemos", (string)null);
                 });
@@ -2913,9 +4962,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -2938,11 +4987,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Code" }, "UK_ReceiptTypes_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Description" }, "UK_ReceiptTypes_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "Format", "Counter", "DepositorCompanyId", "CreatedDate" }, "IX_ReceiptTypes_Areas");
 
                     b.ToTable("ReceiptTypes", (string)null);
                 });
@@ -2971,6 +5021,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<Guid>("DepositorId")
                         .HasColumnType("uniqueidentifier")
@@ -3004,10 +5058,18 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasIndex("CustomerId");
 
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("DepositorId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("ReturnTypeId");
 
-                    b.HasIndex(new[] { "Code" }, "UK_Returns_Code")
-                        .IsUnique();
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex(new[] { "Code", "CustomerId", "StatusId", "DepositorCompanyId", "DepositorId", "ReturnTypeId", "InputDate", "ExpectedDate", "ReceiveDate", "CreatedDate" }, "IX_Returns_Areas");
 
                     b.ToTable("Returns", (string)null);
                 });
@@ -3037,9 +5099,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -3058,11 +5120,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasIndex("AttributeInputTypeId");
 
-                    b.HasIndex(new[] { "Code" }, "UK_ReturnAttributes_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Description" }, "UK_ReturnAttributes_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "AttributeInputTypeId", "DepositorCompanyId", "CreatedDate" }, "IX_ReturnAttributes_Areas");
 
                     b.ToTable("ReturnAttributes", (string)null);
                 });
@@ -3102,9 +5165,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("ReturnAttributeId");
 
-                    b.HasIndex("ReturnId");
+                    b.HasIndex(new[] { "ReturnId", "ReturnAttributeId", "Value", "CreatedDate" }, "IX_ReturnAttributeValues_Areas");
 
                     b.ToTable("ReturnAttributeValues", (string)null);
                 });
@@ -3132,6 +5198,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("DECIMAL(18,6)")
                         .HasColumnName("ExpectedQuantity");
 
+                    b.Property<Guid>("ItemUnitId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ItemUnitId");
+
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ProductId");
@@ -3144,21 +5214,22 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("int")
                         .HasColumnName("StatusId");
 
-                    b.Property<int>("UnitId")
-                        .HasColumnType("int")
-                        .HasColumnName("UnitId");
-
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("UpdatedDate");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("ItemUnitId");
+
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("ReturnId");
+                    b.HasIndex("StatusId");
 
-                    b.HasIndex("UnitId");
+                    b.HasIndex(new[] { "ReturnId", "ProductId", "ItemUnitId", "StatusId", "ExpectedQuantity", "ActualQuantity", "CreatedDate" }, "IX_ReturnItems_Areas");
 
                     b.ToTable("ReturnItems", (string)null);
                 });
@@ -3208,7 +5279,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReturnItemId");
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "ReturnItemId", "Description", "Text", "InputDate", "EditDate", "CreatedDate" }, "IX_ReturnItemMemos_Areas");
 
                     b.ToTable("ReturnItemMemos", (string)null);
                 });
@@ -3248,9 +5322,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReturnItemId");
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.HasIndex("StockAttributeId");
+
+                    b.HasIndex(new[] { "ReturnItemId", "StockAttributeId", "Value", "CreatedDate" }, "IX_ReturnItmStockAttrValues_Areas");
 
                     b.ToTable("ReturnItmStockAttrValues", (string)null);
                 });
@@ -3300,7 +5377,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReturnId");
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "ReturnId", "Description", "Text", "InputDate", "EditDate", "CreatedDate" }, "IX_ReturnMemos_Areas");
 
                     b.ToTable("ReturnMemos", (string)null);
                 });
@@ -3330,9 +5410,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -3355,11 +5435,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Code" }, "UK_ReturnTypes_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Description" }, "UK_ReturnTypes_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "Format", "Counter", "DepositorCompanyId", "CreatedDate" }, "IX_ReturnTypes_Areas");
 
                     b.ToTable("ReturnTypes", (string)null);
                 });
@@ -3387,12 +5468,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("OrderShipmentId");
 
-                    b.Property<Guid>("ProgressStatusId")
-                        .HasColumnType("uniqueidentifier")
+                    b.Property<int>("ProgressStatusId")
+                        .HasColumnType("int")
                         .HasColumnName("ProgressStatusId");
-
-                    b.Property<int?>("ProgressStatusId1")
-                        .HasColumnType("int");
 
                     b.Property<decimal>("Quantity")
                         .HasColumnType("DECIMAL(18,6)")
@@ -3404,9 +5482,14 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderItemId");
+                    b.HasIndex("Id")
+                        .IsUnique();
 
-                    b.HasIndex("ProgressStatusId1");
+                    b.HasIndex("OrderShipmentId");
+
+                    b.HasIndex("ProgressStatusId");
+
+                    b.HasIndex(new[] { "OrderItemId", "OrderShipmentId", "ProgressStatusId", "Quantity", "CreatedDate" }, "IX_OrderShipItems_Areas");
 
                     b.ToTable("OrderShipItems", (string)null);
                 });
@@ -3442,13 +5525,26 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("StockId");
 
+                    b.Property<Guid>("StockPackTypeId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("StockPackTypeId");
+
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("UpdatedDate");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("OrderShipItemTaskId");
+
+                    b.HasIndex("StockId");
+
+                    b.HasIndex("StockPackTypeId");
+
+                    b.HasIndex(new[] { "OrderShipItemId", "OrderShipItemTaskId", "StockId", "StockPackTypeId", "Quantity", "CreatedDate" }, "IX_OrderShipItemStocks_Areas");
 
                     b.ToTable("OrderShipItemStocks", (string)null);
                 });
@@ -3486,7 +5582,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderShipItemId");
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("WorkTaskId");
+
+                    b.HasIndex(new[] { "OrderShipItemId", "WorkTaskId", "Quantity", "CreatedDate" }, "IX_OrderShipItemTasks_Areas");
 
                     b.ToTable("OrderShipItemTasks", (string)null);
                 });
@@ -3512,6 +5613,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
                     b.Property<DateTime?>("LastMoveDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("LastMoveDate");
@@ -3534,12 +5639,19 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
 
                     b.HasIndex("ProgressStatusId");
 
-                    b.HasIndex(new[] { "Code" }, "UK_OrderShipments_Code")
-                        .IsUnique();
+                    b.HasIndex("ShipmentId");
+
+                    b.HasIndex(new[] { "Code", "OrderId", "ShipmentId", "ProgressStatusId", "LastMoveDate", "CreatedDate" }, "IX_OrderShipments_Areas");
 
                     b.ToTable("OrderShipments", (string)null);
                 });
@@ -3573,16 +5685,17 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
                     b.Property<Guid>("DepositorId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("DepositorId");
 
-                    b.Property<Guid>("DistirbutorId")
+                    b.Property<Guid>("DistributorId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DistirbutorId");
-
-                    b.Property<Guid?>("DisturbitorId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnName("DistributorId");
 
                     b.Property<DateTime?>("ExpectedDate")
                         .HasColumnType("datetime2")
@@ -3604,12 +5717,18 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasIndex("BranchId");
 
-                    b.HasIndex("DisturbitorId");
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("DepositorId");
+
+                    b.HasIndex("DistributorId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.HasIndex("ShipmentTypeId");
 
-                    b.HasIndex(new[] { "Code" }, "UK_Shipments_Code")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "DepositorId", "DepositorCompanyId", "DistributorId", "BranchId", "ShipmentTypeId", "InputDate", "ExpectedDate", "ActualDate", "CreatedDate" }, "IX_Shipments_Areas");
 
                     b.ToTable("Shipments", (string)null);
                 });
@@ -3639,9 +5758,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -3660,11 +5779,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasIndex("AttributeInputTypeId");
 
-                    b.HasIndex(new[] { "Code" }, "UK_ShipmentAttributes_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Description" }, "UK_ShipmentAttributes_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "AttributeInputTypeId", "DepositorCompanyId", "CreatedDate" }, "IX_ShipmentAttributes_Areas");
 
                     b.ToTable("ShipmentAttributes", (string)null);
                 });
@@ -3704,9 +5824,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("ShipmentAttributeId");
 
-                    b.HasIndex("ShipmentId");
+                    b.HasIndex(new[] { "ShipmentId", "ShipmentAttributeId", "Value", "CreatedDate" }, "IX_ShipmentAttributeValues_Areas");
 
                     b.ToTable("ShipmentAttributeValues", (string)null);
                 });
@@ -3756,7 +5879,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ShipmentId");
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "ShipmentId", "Description", "Text", "InputDate", "EditDate", "CreatedDate" }, "IX_ShipmentMemos_Areas");
 
                     b.ToTable("ShipmentMemos", (string)null);
                 });
@@ -3786,9 +5912,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -3811,11 +5937,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Code" }, "UK_ShipmentTypes_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Description" }, "UK_ShipmentTypes_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "Format", "Counter", "DepositorCompanyId", "CreatedDate" }, "IX_ShipmentTypes_Areas");
 
                     b.ToTable("ShipmentTypes", (string)null);
                 });
@@ -3834,6 +5961,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<Guid>("DepositorId")
                         .HasColumnType("uniqueidentifier")
@@ -3867,18 +5998,22 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("StockContainerId");
 
-                    b.Property<Guid>("UnitId")
-                        .HasColumnType("uniqueidentifier")
+                    b.Property<int>("UnitId")
+                        .HasColumnType("int")
                         .HasColumnName("UnitId");
-
-                    b.Property<int?>("UnitId1")
-                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("UpdatedDate");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("DepositorId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.HasIndex("LocationId");
 
@@ -3888,9 +6023,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasIndex("ReturnId");
 
-                    b.HasIndex("StockContainerId");
+                    b.HasIndex("UnitId");
 
-                    b.HasIndex("UnitId1");
+                    b.HasIndex(new[] { "StockContainerId", "ProductId", "DepositorId", "DepositorCompanyId", "LocationId", "UnitId", "ReceiptId", "ReturnId", "Quantity", "FreeQuantity", "CreatedDate" }, "IX_Stocks_Areas");
 
                     b.ToTable("Stocks", (string)null);
                 });
@@ -3920,9 +6055,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -3941,11 +6076,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasIndex("AttributeInputTypeId");
 
-                    b.HasIndex(new[] { "Code" }, "UK_StockAttributes_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Description" }, "UK_StockAttributes_Description")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "Description", "AttributeInputTypeId", "DepositorCompanyId", "CreatedDate" }, "IX_StockAttributes_Areas");
 
                     b.ToTable("StockAttributes", (string)null);
                 });
@@ -3985,9 +6121,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("StockAttributeId");
 
-                    b.HasIndex("StockId");
+                    b.HasIndex(new[] { "StockId", "StockAttributeId", "Value", "CreatedDate" }, "IX_StockAttributeValues_Areas");
 
                     b.ToTable("StockAttributeValues", (string)null);
                 });
@@ -3999,12 +6138,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("Id");
 
-                    b.Property<Guid>("ContainerUnitId")
-                        .HasColumnType("uniqueidentifier")
+                    b.Property<int>("ContainerUnitId")
+                        .HasColumnType("int")
                         .HasColumnName("ContainerUnitId");
-
-                    b.Property<int?>("ContainerUnitId1")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2")
@@ -4026,7 +6162,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ContainerUnitId1");
+                    b.HasIndex("ContainerUnitId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Sscc", "ContainerUnitId", "CreatedDate" }, "IX_StockContainers_Areas");
 
                     b.ToTable("StockContainers", (string)null);
                 });
@@ -4076,9 +6217,71 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StockId");
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "StockId", "Description", "Text", "InputDate", "EditDate", "CreatedDate" }, "IX_StockMemos_Areas");
 
                     b.ToTable("StockMemos", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockPackType", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<decimal>("CUQuantity")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("CUQuantity");
+
+                    b.Property<decimal>("CUQuantityFree")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("CUQuantityFree");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("ItemUnitId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ItemUnitId");
+
+                    b.Property<decimal>("PackTypeRatio")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("PackTypeRatio");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("Quantity");
+
+                    b.Property<decimal>("QuantityFree")
+                        .HasColumnType("DECIMAL(18,6)")
+                        .HasColumnName("QuantityFree");
+
+                    b.Property<Guid>("StockId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("StockId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("ItemUnitId");
+
+                    b.HasIndex(new[] { "StockId", "ItemUnitId", "Quantity", "QuantityFree", "CUQuantity", "CUQuantityFree", "PackTypeRatio", "CreatedDate" }, "IX_StockPackTypes_Areas");
+
+                    b.ToTable("StockPackTypes", (string)null);
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockReserveReason", b =>
@@ -4110,9 +6313,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("ReserveReasonId");
 
-                    b.HasIndex("StockId");
+                    b.HasIndex(new[] { "StockId", "ReserveReasonId", "CreatedDate" }, "IX_StockReserveReasons_Areas");
 
                     b.ToTable("StockReserveReasons", (string)null);
                 });
@@ -4146,11 +6352,14 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StockId");
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.HasIndex("UnsuitReasonId");
 
-                    b.ToTable("StockUnsuitReason", (string)null);
+                    b.HasIndex(new[] { "StockId", "UnsuitReasonId", "CreatedDate" }, "IX_StockUnsuitReason_Areas");
+
+                    b.ToTable("StockUnsuitReasons", (string)null);
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.TaskStock", b =>
@@ -4186,9 +6395,81 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("StockId");
 
+                    b.HasIndex(new[] { "WorkTaskId", "StockId", "Quantity", "CreatedDate" }, "IX_TaskStocks_Areas");
+
                     b.ToTable("TaskStocks", (string)null);
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.TaskCodeFormat", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)")
+                        .HasColumnName("Code");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedDate");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletedDate");
+
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
+                    b.Property<int>("TaskCounter")
+                        .HasColumnType("int")
+                        .HasColumnName("TaskCounter");
+
+                    b.Property<string>("TaskFormat")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasColumnName("TaskFormat");
+
+                    b.Property<int>("TaskListCounter")
+                        .HasMaxLength(20)
+                        .HasColumnType("int")
+                        .HasColumnName("TaskListCounter");
+
+                    b.Property<string>("TaskListFormat")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("TaskListFormat");
+
+                    b.Property<int>("TransactionTypeId")
+                        .HasColumnType("int")
+                        .HasColumnName("TransactionTypeId");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedDate");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("TransactionTypeId");
+
+                    b.HasIndex(new[] { "Code", "TaskFormat", "TaskCounter", "TaskListCounter", "TaskListFormat", "TransactionTypeId", "DepositorCompanyId", "CreatedDate" }, "IX_TaskCodeFormats_Areas");
+
+                    b.ToTable("TaskCodeFormats", (string)null);
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.TaskList", b =>
@@ -4212,6 +6493,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
                     b.Property<Guid>("DepositorId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("DepositorId");
@@ -4222,8 +6507,14 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Code" }, "UK_TaskLists_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("DepositorId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "DepositorId", "DepositorCompanyId", "CreatedDate" }, "IX_TaskLists_Areas");
 
                     b.ToTable("TaskLists", (string)null);
                 });
@@ -4239,13 +6530,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
                         .HasColumnName("Code");
-
-                    b.Property<int>("Counter")
-                        .HasColumnType("int")
-                        .HasColumnName("Counter");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2")
@@ -4255,21 +6542,15 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
-                    b.Property<Guid>("DepositorId")
+                    b.Property<Guid>("DepositorCompanyId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("DepositorId");
+                        .HasColumnName("DepositorCompanyId");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(60)
                         .HasColumnType("nvarchar(60)")
                         .HasColumnName("Description");
-
-                    b.Property<string>("Format")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasColumnName("Format");
 
                     b.Property<bool>("IsLogging")
                         .HasColumnType("bit");
@@ -4280,8 +6561,12 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Code" }, "UK_TransactionTypes_Code")
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("Id")
                         .IsUnique();
+
+                    b.HasIndex(new[] { "Code", "Description", "DepositorCompanyId", "CreatedDate" }, "IX_TransactionTypes_Areas");
 
                     b.ToTable("TransactionTypes", (string)null);
                 });
@@ -4307,6 +6592,10 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("DeletedDate");
 
+                    b.Property<Guid>("DepositorCompanyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DepositorCompanyId");
+
                     b.Property<Guid>("DepositorId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("DepositorId");
@@ -4331,9 +6620,9 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("TaskListId");
 
-                    b.Property<Guid>("ToLocaitonId")
+                    b.Property<Guid>("ToLocationId")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ToLocaitonId");
+                        .HasColumnName("ToLocationId");
 
                     b.Property<int>("TransactionTypeId")
                         .HasColumnType("int")
@@ -4345,16 +6634,26 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("DepositorCompanyId");
+
+                    b.HasIndex("DepositorId");
+
+                    b.HasIndex("FromLocationId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("StatusId");
 
                     b.HasIndex("StockId");
 
                     b.HasIndex("TaskListId");
 
+                    b.HasIndex("ToLocationId");
+
                     b.HasIndex("TransactionTypeId");
 
-                    b.HasIndex(new[] { "Code" }, "UK_WorkTasks_Code")
-                        .IsUnique();
+                    b.HasIndex(new[] { "Code", "DepositorId", "DepositorCompanyId", "TaskListId", "StockId", "FromLocationId", "ToLocationId", "StatusId", "TransactionTypeId", "Quantity", "CreatedDate" }, "IX_WorkTasks_Areas");
 
                     b.ToTable("WorkTasks", (string)null);
                 });
@@ -4430,43 +6729,43 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1977),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4560),
                             Name = "Admin"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1978),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4562),
                             Name = "User"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1979),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4563),
                             Name = "Read"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1980),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4564),
                             Name = "Write"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1981),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4565),
                             Name = "Add"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1982),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4566),
                             Name = "Update"
                         },
                         new
                         {
                             Id = 7,
-                            CreatedDate = new DateTime(2024, 1, 26, 22, 40, 12, 332, DateTimeKind.Local).AddTicks(1984),
+                            CreatedDate = new DateTime(2024, 4, 7, 5, 52, 41, 811, DateTimeKind.Local).AddTicks(4577),
                             Name = "Delete"
                         });
                 });
@@ -4673,74 +6972,666 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                     b.ToTable("UserOperationClaims", (string)null);
                 });
 
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities.Barcode", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
+                });
+
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities.BarcodeArea", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities.Barcode", "Barcode")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities.Barcode", null)
                         .WithMany("BarcodeAreas")
                         .HasForeignKey("BarcodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Barcode");
                 });
 
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities.Printer", b =>
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities.BarcodePrinter", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities.Barcode", "Barcode")
-                        .WithMany("Printers")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities.Barcode", null)
+                        .WithMany("BarcodePrinters")
                         .HasForeignKey("BarcodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Barcode");
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities.Printer", "Printer")
+                        .WithMany()
+                        .HasForeignKey("PrinterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Printer");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities.Printer", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.ContainerUnit", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.LockReason", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.ReserveReason", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.UnsuitReason", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Branch", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Building", "Building")
-                        .WithMany("Branches")
-                        .HasForeignKey("BuildingId")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Address", "Address")
+                        .WithOne()
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Branch", "AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Disturbitor", null)
-                        .WithMany("Branches")
-                        .HasForeignKey("DisturbitorId");
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("Building");
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Distributor", "Distributor")
+                        .WithMany()
+                        .HasForeignKey("DistributorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("DepositorCompany");
+
+                    b.Navigation("Distributor");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Company", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Address", "Address")
+                        .WithOne()
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Company", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Customer", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Building", "Building")
-                        .WithMany("Customers")
-                        .HasForeignKey("BuildingId")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Address", "Address")
+                        .WithOne()
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Customer", "AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Company", "Company")
-                        .WithMany("Customers")
+                        .WithMany()
                         .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Building");
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Address");
 
                     b.Navigation("Company");
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", b =>
                 {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Address", "Address")
+                        .WithOne()
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorFeature", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", null)
+                        .WithOne("DepositorFeature")
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorFeature", "DepositorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Distributor", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Address", "Address")
+                        .WithOne()
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Distributor", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("DepositorCompany");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Receiver", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Address", "Address")
+                        .WithOne()
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Receiver", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("DepositorCompany");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Supplier", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Address", "Address")
+                        .WithOne()
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Supplier", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("DepositorCompany");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.UserDepositor", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", "Depositor")
+                        .WithMany()
+                        .HasForeignKey("DepositorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Orhanization.Core.Security.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Depositor");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Building", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Site", "Site")
+                        .WithMany()
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
+
+                    b.Navigation("Site");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.BuildingDimension", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Building", null)
+                        .WithOne("BuildingDimension")
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.BuildingDimension", "BuildingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", "LenghtUnit")
+                        .WithMany()
+                        .HasForeignKey("LenghtUnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", "VolumeUnit")
+                        .WithMany()
+                        .HasForeignKey("VolumeUnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("LenghtUnit");
+
+                    b.Navigation("VolumeUnit");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.StorageSystem", null)
+                        .WithMany("Locations")
+                        .HasForeignKey("StorageSystemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationCodeFormat", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", null)
+                        .WithOne("LocationCodeFormat")
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationCodeFormat", "LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationCoordinate", b =>
+                {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Building", "Building")
-                        .WithMany("Depositors")
+                        .WithMany()
+                        .HasForeignKey("BuildingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", null)
+                        .WithOne("LocationCoordinate")
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationCoordinate", "LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Building");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationDepositor", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", "Depositor")
+                        .WithMany()
+                        .HasForeignKey("DepositorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", null)
+                        .WithMany("LocationDepositors")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Depositor");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationDimension", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", "LengthUnit")
+                        .WithMany()
+                        .HasForeignKey("LengthUnitId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", null)
+                        .WithOne("LocationDimension")
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationDimension", "LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", "VolumeUnit")
+                        .WithMany()
+                        .HasForeignKey("VolumeUnitId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", "WeightUnit")
+                        .WithMany()
+                        .HasForeignKey("WeightUnitId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("LengthUnit");
+
+                    b.Navigation("VolumeUnit");
+
+                    b.Navigation("WeightUnit");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationFeature", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", null)
+                        .WithOne("LocationFeature")
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationFeature", "LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationLockReason", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", null)
+                        .WithOne("LocationLockReason")
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationLockReason", "LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.LockReason", "LockReason")
+                        .WithMany()
+                        .HasForeignKey("LockReasonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("LockReason");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationPickingType", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", null)
+                        .WithOne("LocationPickingType")
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationPickingType", "LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.PickingType", "PickingType")
+                        .WithMany()
+                        .HasForeignKey("PickingTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("PickingType");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationPriority", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", null)
+                        .WithOne("LocationPriority")
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationPriority", "LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationProduct", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", null)
+                        .WithMany("LocationProducts")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationProductAttribute", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", null)
+                        .WithMany("LocationProductAttributes")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ProductAttribute", "ProductAttribute")
+                        .WithMany()
+                        .HasForeignKey("ProductAttributeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ProductAttribute");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationProductConstraint", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", null)
+                        .WithMany("LocationProductConstraints")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Unit");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationStockAttribute", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", null)
+                        .WithMany("LocationStockAttributes")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockAttribute", "StockAttribute")
+                        .WithMany()
+                        .HasForeignKey("StockAttributeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("StockAttribute");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationUnitConstraint", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", null)
+                        .WithMany("LocationUnitConstraints")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Unit");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.LocationZone", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", null)
+                        .WithMany("LocationZones")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Zone", "Zone")
+                        .WithMany()
+                        .HasForeignKey("ZoneId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Zone");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Site", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.SiteDepositor", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", "Depositor")
+                        .WithMany()
+                        .HasForeignKey("DepositorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Site", null)
+                        .WithMany("SiteDepositors")
+                        .HasForeignKey("SiteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Depositor");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.StorageSystem", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Building", null)
+                        .WithMany("StorageSystems")
                         .HasForeignKey("BuildingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
-                        .WithMany("Depositors")
+                        .WithMany()
                         .HasForeignKey("DepositorCompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Zone", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Building", "Building")
+                        .WithMany()
+                        .HasForeignKey("BuildingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Building");
@@ -4748,269 +7639,96 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                     b.Navigation("DepositorCompany");
                 });
 
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Disturbitor", b =>
-                {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Building", "Building")
-                        .WithMany("Disturbitors")
-                        .HasForeignKey("BuildingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Company", "Company")
-                        .WithMany("Disturbitors")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Building");
-
-                    b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Receiver", b =>
-                {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Building", "Building")
-                        .WithMany("Receivers")
-                        .HasForeignKey("BuildingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Building");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Supplier", b =>
-                {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Building", "Building")
-                        .WithMany("Suppliers")
-                        .HasForeignKey("BuildingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Company", "Company")
-                        .WithMany("Suppliers")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Building");
-
-                    b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", b =>
-                {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.StorageSystem", "StorageSystem")
-                        .WithMany("Locations")
-                        .HasForeignKey("StorageSystemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("StorageSystem");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Site", b =>
-                {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Building", "Building")
-                        .WithMany("Sites")
-                        .HasForeignKey("BuildingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Building");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.StorageSystem", b =>
-                {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Site", "Site")
-                        .WithMany("StorageSystems")
-                        .HasForeignKey("SiteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Site");
-                });
-
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.LogStock", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", "FromLocation")
-                        .WithMany()
-                        .HasForeignKey("FromLocationId");
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", null)
-                        .WithMany("LogStocks")
-                        .HasForeignKey("LocationId");
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", "Product")
-                        .WithMany("LogStocks")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", "ToLocation")
-                        .WithMany()
-                        .HasForeignKey("ToLocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.TransactionLog", "TransactionLog")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.TransactionLog", null)
                         .WithMany("LogStocks")
                         .HasForeignKey("TransactionLogId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.TransactionType", "TransactionType")
-                        .WithMany("LogStocks")
-                        .HasForeignKey("TransactionTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FromLocation");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("ToLocation");
-
-                    b.Navigation("TransactionLog");
-
-                    b.Navigation("TransactionType");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.LogStockAttributeValue", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.LogStock", "LogStock")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.LogStock", null)
                         .WithMany("LogStockAttributeValues")
                         .HasForeignKey("LogStockId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockAttribute", "StockAttribute")
-                        .WithMany("LogStockAttributeValues")
-                        .HasForeignKey("StockAttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("LogStock");
-
-                    b.Navigation("StockAttribute");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.LogStockContainer", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.LogStock", "LogStock")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.LogStock", null)
                         .WithMany("LogStockContainers")
                         .HasForeignKey("LogStockId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("LogStock");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.LogStockReserveReason", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.ReserveReason", "FromReason")
-                        .WithMany()
-                        .HasForeignKey("FromReasonId");
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.LogStock", "LogStock")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.LogStock", null)
                         .WithMany("LogStockReserveReasons")
                         .HasForeignKey("LogStockId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.ReserveReason", null)
-                        .WithMany("LogStockReserveReasons")
-                        .HasForeignKey("ReserveReasonId");
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.ReserveReason", "ToReason")
-                        .WithMany()
-                        .HasForeignKey("ToReasonId");
-
-                    b.Navigation("FromReason");
-
-                    b.Navigation("LogStock");
-
-                    b.Navigation("ToReason");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.LogStockUnsuitReason", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.UnsuitReason", "FromReason")
-                        .WithMany()
-                        .HasForeignKey("FromReasonId");
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.LogStock", "LogStock")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.LogStock", null)
                         .WithMany("LogStockUnsuitReasons")
                         .HasForeignKey("LogStockId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.UnsuitReason", "ToResaon")
-                        .WithMany()
-                        .HasForeignKey("ToResaonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.UnsuitReason", null)
-                        .WithMany("LogStockUnsuitReasons")
-                        .HasForeignKey("UnsuitReasonId");
-
-                    b.Navigation("FromReason");
-
-                    b.Navigation("LogStock");
-
-                    b.Navigation("ToResaon");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities.TransactionLog", b =>
-                {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.Order", "Order")
-                        .WithMany("TransactionLogs")
-                        .HasForeignKey("OrderId");
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.Receipt", "Receipt")
-                        .WithMany("TransactionLogs")
-                        .HasForeignKey("ReceiptId");
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.Return", "Return")
-                        .WithMany("TransactionLogs")
-                        .HasForeignKey("ReturnId");
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.WorkTask", "WorkTask")
-                        .WithMany("TransactionLogs")
-                        .HasForeignKey("WorkTaskId");
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Receipt");
-
-                    b.Navigation("Return");
-
-                    b.Navigation("WorkTask");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.Order", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Customer", "Customer")
-                        .WithMany("Orders")
+                        .WithMany()
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderType", "OrderType")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", "Depositor")
+                        .WithMany()
+                        .HasForeignKey("DepositorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderType", null)
                         .WithMany("Orders")
                         .HasForeignKey("OrderTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Receiver", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Status", "Status")
-                        .WithMany("Orders")
+                        .WithMany()
                         .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Customer");
 
-                    b.Navigation("OrderType");
+                    b.Navigation("Depositor");
+
+                    b.Navigation("DepositorCompany");
+
+                    b.Navigation("Receiver");
 
                     b.Navigation("Status");
                 });
@@ -5018,584 +7736,948 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderAttribute", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.AttributeInputType", "AttributeInputType")
-                        .WithMany("OrderAttributes")
+                        .WithMany()
                         .HasForeignKey("AttributeInputTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AttributeInputType");
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderAttributeValue", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderAttribute", "OrderAttribute")
-                        .WithMany("OrderAttributeValues")
+                        .WithMany()
                         .HasForeignKey("OrderAttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.Order", "Order")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.Order", null)
                         .WithMany("OrderAttributeValues")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Order");
 
                     b.Navigation("OrderAttribute");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderItem", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.Order", "Order")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.Order", null)
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", "Product")
-                        .WithMany("OrderItems")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", "Unit")
                         .WithMany()
-                        .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Order");
 
                     b.Navigation("Product");
-
-                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderItemMemo", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderItem", "OrderItem")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderItem", null)
                         .WithMany("OrderItemMemos")
                         .HasForeignKey("OrderItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("OrderItem");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderItemStockAttrValue", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderItem", "OrderItem")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderItem", null)
                         .WithMany("OrderItemStockAttrValues")
                         .HasForeignKey("OrderItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockAttribute", "StockAttribute")
-                        .WithMany("OrderItemStockAttrValues")
+                        .WithMany()
                         .HasForeignKey("StockAttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("OrderItem");
 
                     b.Navigation("StockAttribute");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderMemo", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.Order", "Order")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.Order", null)
                         .WithMany("OrderMemos")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.Navigation("Order");
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderType", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PoAttribute", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.AttributeInputType", "AttributeInputType")
-                        .WithMany("PoAttributes")
+                        .WithMany()
                         .HasForeignKey("AttributeInputTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AttributeInputType");
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PoAttributeValue", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PoAttribute", "PoAttribute")
-                        .WithMany("PoAttributeValues")
+                        .WithMany()
                         .HasForeignKey("PoAttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PurchaseOrder", "PurchaseOrder")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PurchaseOrder", null)
                         .WithMany("PoAttributeValues")
                         .HasForeignKey("PurchaseOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("PoAttribute");
-
-                    b.Navigation("PurchaseOrder");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PoMemo", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PurchaseOrder", "PurchaseOrder")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PurchaseOrder", null)
                         .WithMany("PoMemos")
                         .HasForeignKey("PurchaseOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.Navigation("PurchaseOrder");
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PoType", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PurchaseOrder", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PoType", "PoType")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", "Depositor")
+                        .WithMany()
+                        .HasForeignKey("DepositorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PoType", null)
                         .WithMany("PurchaseOrders")
                         .HasForeignKey("PoTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Supplier", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Depositor");
+
+                    b.Navigation("DepositorCompany");
+
+                    b.Navigation("Status");
+
+                    b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.BarcodeSupplier", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ProductBarcode", null)
+                        .WithMany("BarcodeSuppliers")
+                        .HasForeignKey("ProductBarcodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Supplier", "Supplier")
-                        .WithMany("PurchaseOrders")
+                        .WithMany()
                         .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
+
+                    b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ItemPackType", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ItemUnit", null)
+                        .WithMany("ItemPackTypes")
+                        .HasForeignKey("ItemUnitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("PoType");
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", "LenghtUnit")
+                        .WithMany()
+                        .HasForeignKey("LenghtUnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("Supplier");
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", "VolumeUnit")
+                        .WithMany()
+                        .HasForeignKey("VolumeUnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", "WeightUnit")
+                        .WithMany()
+                        .HasForeignKey("WeightUnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("LenghtUnit");
+
+                    b.Navigation("VolumeUnit");
+
+                    b.Navigation("WeightUnit");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ItemUnit", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", null)
+                        .WithMany("ItemUnits")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", "Unit")
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Unit");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ItemUnitConversion", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ItemUnit", "ConvertedItemUnit")
+                        .WithMany()
+                        .HasForeignKey("ConvertedItemUnitId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ItemUnit", "ReferenceItemUnit")
+                        .WithMany()
+                        .HasForeignKey("ReferenceItemUnitId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ConvertedItemUnit");
+
+                    b.Navigation("ReferenceItemUnit");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ProductAttribute", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.AttributeInputType", "AttributeInputType")
-                        .WithMany("ProductAttributes")
+                        .WithMany()
                         .HasForeignKey("AttributeInputTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AttributeInputType");
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ProductAttributeValue", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ProductAttribute", "ProductAttribute")
-                        .WithMany("ProductAttributeValues")
+                        .WithMany()
                         .HasForeignKey("ProductAttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", "Product")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", null)
                         .WithMany("ProductAttributeValues")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Product");
-
                     b.Navigation("ProductAttribute");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ProductBarcode", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ItemUnit", "ItemUnit")
+                        .WithMany()
+                        .HasForeignKey("ItemUnitId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", null)
+                        .WithMany("ProductBarcodes")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ItemUnit");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ProductDepositor", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", "Depositor")
+                        .WithMany()
+                        .HasForeignKey("DepositorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", null)
+                        .WithMany("ProductDepositors")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Depositor");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ProductStockAttribute", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", null)
+                        .WithMany("ProductStockAttributes")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockAttribute", "StockAttribute")
+                        .WithMany()
+                        .HasForeignKey("StockAttributeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("StockAttribute");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.Receipt", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PurchaseOrder", "PurchaseOrder")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", "Depositor")
+                        .WithMany()
+                        .HasForeignKey("DepositorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PurchaseOrder", null)
                         .WithMany("Receipts")
                         .HasForeignKey("PurchaseOrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptType", "ReceiptType")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptType", null)
                         .WithMany("Receipts")
                         .HasForeignKey("ReceiptTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("PurchaseOrder");
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Navigation("ReceiptType");
+                    b.Navigation("Depositor");
+
+                    b.Navigation("DepositorCompany");
+
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptAttribute", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.AttributeInputType", "AttributeInputType")
-                        .WithMany("ReceiptAttributes")
+                        .WithMany()
                         .HasForeignKey("AttributeInputTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AttributeInputType");
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptAttributeValue", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptAttribute", "ReceiptAttribute")
-                        .WithMany("ReceiptAttributeValues")
+                        .WithMany()
                         .HasForeignKey("ReceiptAttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.Receipt", "Receipt")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.Receipt", null)
                         .WithMany("ReceiptAttributeValues")
                         .HasForeignKey("ReceiptId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Receipt");
 
                     b.Navigation("ReceiptAttribute");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptItem", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", "Product")
-                        .WithMany("ReceiptItems")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ItemUnit", "ItemUnit")
+                        .WithMany()
+                        .HasForeignKey("ItemUnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.Receipt", "Receipt")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.Receipt", null)
                         .WithMany("ReceiptItems")
                         .HasForeignKey("ReceiptId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", "Unit")
-                        .WithMany("ReceiptItems")
-                        .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("ItemUnit");
 
                     b.Navigation("Product");
 
-                    b.Navigation("Receipt");
-
-                    b.Navigation("Unit");
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptItemMemo", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptItem", "ReceiptItem")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptItem", null)
                         .WithMany("ReceiptItemMemos")
                         .HasForeignKey("ReceiptItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ReceiptItem");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptItmStockAttrValue", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.Receipt", null)
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptItem", null)
                         .WithMany("ReceiptItmStockAttrValues")
-                        .HasForeignKey("ReceiptId");
-
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptItem", "ReceiptItem")
-                        .WithMany()
                         .HasForeignKey("ReceiptItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockAttribute", "StockAttribute")
-                        .WithMany("ReceiptItmStockAttrValues")
+                        .WithMany()
                         .HasForeignKey("StockAttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("ReceiptItem");
 
                     b.Navigation("StockAttribute");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptMemo", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.Receipt", "Receipt")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.Receipt", null)
                         .WithMany("ReceiptMemos")
                         .HasForeignKey("ReceiptId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.Navigation("Receipt");
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptType", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.Return", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Customer", "Customer")
-                        .WithMany("Returns")
+                        .WithMany()
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnType", "ReturnType")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", "Depositor")
+                        .WithMany()
+                        .HasForeignKey("DepositorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnType", null)
                         .WithMany("Returns")
                         .HasForeignKey("ReturnTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Customer");
 
-                    b.Navigation("ReturnType");
+                    b.Navigation("Depositor");
+
+                    b.Navigation("DepositorCompany");
+
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnAttribute", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.AttributeInputType", "AttributeInputType")
-                        .WithMany("ReturnAttributes")
+                        .WithMany()
                         .HasForeignKey("AttributeInputTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AttributeInputType");
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnAttributeValue", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnAttribute", "ReturnAttribute")
-                        .WithMany("ReturnAttributeValues")
+                        .WithMany()
                         .HasForeignKey("ReturnAttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.Return", "Return")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.Return", null)
                         .WithMany("ReturnAttributeValues")
                         .HasForeignKey("ReturnId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Return");
 
                     b.Navigation("ReturnAttribute");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnItem", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", "Product")
-                        .WithMany("ReturnItems")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ItemUnit", "ItemUnit")
+                        .WithMany()
+                        .HasForeignKey("ItemUnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.Return", "Return")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.Return", null)
                         .WithMany("ReturnItems")
                         .HasForeignKey("ReturnId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", "Unit")
-                        .WithMany("ReturnItems")
-                        .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Status", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("ItemUnit");
 
                     b.Navigation("Product");
 
-                    b.Navigation("Return");
-
-                    b.Navigation("Unit");
+                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnItemMemo", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnItem", "ReturnItem")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnItem", null)
                         .WithMany("ReturnItemMemos")
                         .HasForeignKey("ReturnItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("ReturnItem");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnItmStockAttrValue", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnItem", "ReturnItem")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnItem", null)
                         .WithMany("ReturnItmStockAttrValues")
                         .HasForeignKey("ReturnItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockAttribute", "StockAttribute")
-                        .WithMany("ReturnItmStockAttrValues")
+                        .WithMany()
                         .HasForeignKey("StockAttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("ReturnItem");
 
                     b.Navigation("StockAttribute");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnMemo", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.Return", "Return")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.Return", null)
                         .WithMany("ReturnMemos")
                         .HasForeignKey("ReturnId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.Navigation("Return");
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnType", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.OrderShipItem", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderItem", "OrderItem")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderItem", null)
                         .WithMany("OrderShipItems")
                         .HasForeignKey("OrderItemId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.OrderShipment", null)
+                        .WithMany("OrderShipItems")
+                        .HasForeignKey("OrderShipmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.ProgressStatus", "ProgressStatus")
-                        .WithMany("OrderShipItems")
-                        .HasForeignKey("ProgressStatusId1");
-
-                    b.Navigation("OrderItem");
+                        .WithMany()
+                        .HasForeignKey("ProgressStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ProgressStatus");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.OrderShipItemStock", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.OrderShipItemTask", "OrderShipItemTask")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.OrderShipItemTask", null)
                         .WithMany("OrderShipItemStocks")
                         .HasForeignKey("OrderShipItemTaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("OrderShipItemTask");
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.Stock", "Stock")
+                        .WithMany()
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockPackType", "StockPackType")
+                        .WithMany()
+                        .HasForeignKey("StockPackTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Stock");
+
+                    b.Navigation("StockPackType");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.OrderShipItemTask", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.OrderShipItem", "OrderShipItem")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.OrderShipItem", null)
                         .WithMany("OrderShipItemTasks")
                         .HasForeignKey("OrderShipItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("OrderShipItem");
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.WorkTask", "WorkTask")
+                        .WithMany()
+                        .HasForeignKey("WorkTaskId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("WorkTask");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.OrderShipment", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.Order", "Order")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
                         .WithMany()
-                        .HasForeignKey("OrderId")
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.Order", "Order")
+                        .WithOne()
+                        .HasForeignKey("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.OrderShipment", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.ProgressStatus", "ProgressStatus")
-                        .WithMany("OrderShipments")
+                        .WithMany()
                         .HasForeignKey("ProgressStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.Shipment", "Shipment")
+                        .WithMany()
+                        .HasForeignKey("ShipmentId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
 
                     b.Navigation("Order");
 
                     b.Navigation("ProgressStatus");
+
+                    b.Navigation("Shipment");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.Shipment", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Branch", "Branch")
-                        .WithMany("Shipments")
+                        .WithMany()
                         .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Disturbitor", "Disturbitor")
-                        .WithMany("Shipments")
-                        .HasForeignKey("DisturbitorId");
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.ShipmentType", "ShipmentType")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", "Depositor")
+                        .WithMany()
+                        .HasForeignKey("DepositorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Distributor", "Distributor")
+                        .WithMany()
+                        .HasForeignKey("DistributorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.ShipmentType", null)
                         .WithMany("Shipments")
                         .HasForeignKey("ShipmentTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Branch");
 
-                    b.Navigation("Disturbitor");
+                    b.Navigation("Depositor");
 
-                    b.Navigation("ShipmentType");
+                    b.Navigation("DepositorCompany");
+
+                    b.Navigation("Distributor");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.ShipmentAttribute", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.AttributeInputType", "AttributeInputType")
-                        .WithMany("ShipmentAttributes")
+                        .WithMany()
                         .HasForeignKey("AttributeInputTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AttributeInputType");
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.ShipmentAttributeValue", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.ShipmentAttribute", "ShipmentAttribute")
-                        .WithMany("ShipmentAttributeValues")
+                        .WithMany()
                         .HasForeignKey("ShipmentAttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.Shipment", "Shipment")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.Shipment", null)
                         .WithMany("ShipmentAttributeValues")
                         .HasForeignKey("ShipmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Shipment");
 
                     b.Navigation("ShipmentAttribute");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.ShipmentMemo", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.Shipment", "Shipment")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.Shipment", null)
                         .WithMany("ShipmentMemos")
                         .HasForeignKey("ShipmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.Navigation("Shipment");
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.ShipmentType", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.Stock", b =>
                 {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", "Depositor")
+                        .WithMany()
+                        .HasForeignKey("DepositorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", "Location")
-                        .WithMany("Stocks")
+                        .WithMany()
                         .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", "Product")
-                        .WithMany("Stocks")
+                        .WithMany()
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.Receipt", "Receipt")
                         .WithMany()
-                        .HasForeignKey("ReceiptId");
+                        .HasForeignKey("ReceiptId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.Return", "Return")
                         .WithMany()
-                        .HasForeignKey("ReturnId");
+                        .HasForeignKey("ReturnId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockContainer", "StockContainer")
-                        .WithMany("Stocks")
+                        .WithMany()
                         .HasForeignKey("StockContainerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", "Unit")
-                        .WithMany("Stocks")
-                        .HasForeignKey("UnitId1");
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Depositor");
+
+                    b.Navigation("DepositorCompany");
 
                     b.Navigation("Location");
 
@@ -5613,29 +8695,35 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockAttribute", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.AttributeInputType", "AttributeInputType")
-                        .WithMany("StockAttributes")
+                        .WithMany()
                         .HasForeignKey("AttributeInputTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AttributeInputType");
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockAttributeValue", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockAttribute", "StockAttribute")
-                        .WithMany("StockAttributeValues")
+                        .WithMany()
                         .HasForeignKey("StockAttributeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.Stock", "Stock")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.Stock", null)
                         .WithMany("StockAttributeValues")
                         .HasForeignKey("StockId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Stock");
 
                     b.Navigation("StockAttribute");
                 });
@@ -5644,18 +8732,37 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.ContainerUnit", "ContainerUnit")
                         .WithMany()
-                        .HasForeignKey("ContainerUnitId1");
+                        .HasForeignKey("ContainerUnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ContainerUnit");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockMemo", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.Stock", "Stock")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.Stock", null)
                         .WithMany("StockMemos")
                         .HasForeignKey("StockId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockPackType", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ItemUnit", "ItemUnit")
+                        .WithMany()
+                        .HasForeignKey("ItemUnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.Stock", "Stock")
+                        .WithMany()
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ItemUnit");
 
                     b.Navigation("Stock");
                 });
@@ -5663,37 +8770,33 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockReserveReason", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.ReserveReason", "ReserveReason")
-                        .WithMany("StockReserveReasons")
+                        .WithMany()
                         .HasForeignKey("ReserveReasonId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.Stock", "Stock")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.Stock", null)
                         .WithMany("StockReserveReasons")
                         .HasForeignKey("StockId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ReserveReason");
-
-                    b.Navigation("Stock");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockUnsuitReason", b =>
                 {
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.Stock", "Stock")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.Stock", null)
                         .WithMany("StockUnsuitReasons")
                         .HasForeignKey("StockId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.UnsuitReason", "UnsuitReason")
-                        .WithMany("StockUnsuitReasons")
+                        .WithMany()
                         .HasForeignKey("UnsuitReasonId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Stock");
 
                     b.Navigation("UnsuitReason");
                 });
@@ -5701,45 +8804,132 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.TaskStock", b =>
                 {
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.Stock", "Stock")
-                        .WithMany("TaskStocks")
+                        .WithMany()
                         .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.WorkTask", "WorkTask")
+                        .WithMany()
+                        .HasForeignKey("WorkTaskId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Stock");
+
+                    b.Navigation("WorkTask");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.TaskCodeFormat", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.TransactionType", "TransactionType")
+                        .WithMany()
+                        .HasForeignKey("TransactionTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
+
+                    b.Navigation("TransactionType");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.TaskList", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", "Depositor")
+                        .WithMany()
+                        .HasForeignKey("DepositorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Depositor");
+
+                    b.Navigation("DepositorCompany");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.TransactionType", b =>
+                {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DepositorCompany");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.WorkTask", b =>
                 {
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", "DepositorCompany")
+                        .WithMany()
+                        .HasForeignKey("DepositorCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", "Depositor")
+                        .WithMany()
+                        .HasForeignKey("DepositorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", "FromLocation")
+                        .WithMany()
+                        .HasForeignKey("FromLocationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Status", "Status")
-                        .WithMany("WorkTasks")
+                        .WithMany()
                         .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.Stock", "Stock")
-                        .WithMany("WorkTasks")
+                        .WithMany()
                         .HasForeignKey("StockId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.TaskList", "TaskList")
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.TaskList", null)
                         .WithMany("WorkTasks")
                         .HasForeignKey("TaskListId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", "ToLocation")
+                        .WithMany()
+                        .HasForeignKey("ToLocationId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.TransactionType", "TransactionType")
-                        .WithMany("WorkTasks")
+                        .WithMany()
                         .HasForeignKey("TransactionTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Depositor");
+
+                    b.Navigation("DepositorCompany");
+
+                    b.Navigation("FromLocation");
 
                     b.Navigation("Status");
 
                     b.Navigation("Stock");
 
-                    b.Navigation("TaskList");
+                    b.Navigation("ToLocation");
 
                     b.Navigation("TransactionType");
                 });
@@ -5800,128 +8990,56 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                 {
                     b.Navigation("BarcodeAreas");
 
-                    b.Navigation("Printers");
+                    b.Navigation("BarcodePrinters");
                 });
 
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.AttributeInputType", b =>
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Depositor", b =>
                 {
-                    b.Navigation("OrderAttributes");
-
-                    b.Navigation("PoAttributes");
-
-                    b.Navigation("ProductAttributes");
-
-                    b.Navigation("ReceiptAttributes");
-
-                    b.Navigation("ReturnAttributes");
-
-                    b.Navigation("ShipmentAttributes");
-
-                    b.Navigation("StockAttributes");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.ProgressStatus", b =>
-                {
-                    b.Navigation("OrderShipItems");
-
-                    b.Navigation("OrderShipments");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.ReserveReason", b =>
-                {
-                    b.Navigation("LogStockReserveReasons");
-
-                    b.Navigation("StockReserveReasons");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Status", b =>
-                {
-                    b.Navigation("Orders");
-
-                    b.Navigation("WorkTasks");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit", b =>
-                {
-                    b.Navigation("ReceiptItems");
-
-                    b.Navigation("ReturnItems");
-
-                    b.Navigation("Stocks");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.UnsuitReason", b =>
-                {
-                    b.Navigation("LogStockUnsuitReasons");
-
-                    b.Navigation("StockUnsuitReasons");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Branch", b =>
-                {
-                    b.Navigation("Shipments");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Company", b =>
-                {
-                    b.Navigation("Customers");
-
-                    b.Navigation("Disturbitors");
-
-                    b.Navigation("Suppliers");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Customer", b =>
-                {
-                    b.Navigation("Orders");
-
-                    b.Navigation("Returns");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.DepositorCompany", b =>
-                {
-                    b.Navigation("Depositors");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Disturbitor", b =>
-                {
-                    b.Navigation("Branches");
-
-                    b.Navigation("Shipments");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities.Supplier", b =>
-                {
-                    b.Navigation("PurchaseOrders");
+                    b.Navigation("DepositorFeature")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Building", b =>
                 {
-                    b.Navigation("Branches");
+                    b.Navigation("BuildingDimension");
 
-                    b.Navigation("Customers");
-
-                    b.Navigation("Depositors");
-
-                    b.Navigation("Disturbitors");
-
-                    b.Navigation("Receivers");
-
-                    b.Navigation("Sites");
-
-                    b.Navigation("Suppliers");
+                    b.Navigation("StorageSystems");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Location", b =>
                 {
-                    b.Navigation("LogStocks");
+                    b.Navigation("LocationCodeFormat");
 
-                    b.Navigation("Stocks");
+                    b.Navigation("LocationCoordinate");
+
+                    b.Navigation("LocationDepositors");
+
+                    b.Navigation("LocationDimension");
+
+                    b.Navigation("LocationFeature");
+
+                    b.Navigation("LocationLockReason");
+
+                    b.Navigation("LocationPickingType");
+
+                    b.Navigation("LocationPriority");
+
+                    b.Navigation("LocationProductAttributes");
+
+                    b.Navigation("LocationProductConstraints");
+
+                    b.Navigation("LocationProducts");
+
+                    b.Navigation("LocationStockAttributes");
+
+                    b.Navigation("LocationUnitConstraints");
+
+                    b.Navigation("LocationZones");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.Site", b =>
                 {
-                    b.Navigation("StorageSystems");
+                    b.Navigation("SiteDepositors");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.LocationEntities.StorageSystem", b =>
@@ -5952,13 +9070,6 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                     b.Navigation("OrderItems");
 
                     b.Navigation("OrderMemos");
-
-                    b.Navigation("TransactionLogs");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderAttribute", b =>
-                {
-                    b.Navigation("OrderAttributeValues");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.OrderEntities.OrderItem", b =>
@@ -5975,11 +9086,6 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PoAttribute", b =>
-                {
-                    b.Navigation("PoAttributeValues");
-                });
-
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.POEntities.PoType", b =>
                 {
                     b.Navigation("PurchaseOrders");
@@ -5994,24 +9100,27 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                     b.Navigation("Receipts");
                 });
 
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", b =>
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ItemUnit", b =>
                 {
-                    b.Navigation("LogStocks");
-
-                    b.Navigation("OrderItems");
-
-                    b.Navigation("ProductAttributeValues");
-
-                    b.Navigation("ReceiptItems");
-
-                    b.Navigation("ReturnItems");
-
-                    b.Navigation("Stocks");
+                    b.Navigation("ItemPackTypes");
                 });
 
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ProductAttribute", b =>
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.Product", b =>
                 {
+                    b.Navigation("ItemUnits");
+
                     b.Navigation("ProductAttributeValues");
+
+                    b.Navigation("ProductBarcodes");
+
+                    b.Navigation("ProductDepositors");
+
+                    b.Navigation("ProductStockAttributes");
+                });
+
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ProductEntities.ProductBarcode", b =>
+                {
+                    b.Navigation("BarcodeSuppliers");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.Receipt", b =>
@@ -6020,21 +9129,14 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
 
                     b.Navigation("ReceiptItems");
 
-                    b.Navigation("ReceiptItmStockAttrValues");
-
                     b.Navigation("ReceiptMemos");
-
-                    b.Navigation("TransactionLogs");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptAttribute", b =>
-                {
-                    b.Navigation("ReceiptAttributeValues");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptItem", b =>
                 {
                     b.Navigation("ReceiptItemMemos");
+
+                    b.Navigation("ReceiptItmStockAttrValues");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities.ReceiptType", b =>
@@ -6049,13 +9151,6 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                     b.Navigation("ReturnItems");
 
                     b.Navigation("ReturnMemos");
-
-                    b.Navigation("TransactionLogs");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnAttribute", b =>
-                {
-                    b.Navigation("ReturnAttributeValues");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities.ReturnItem", b =>
@@ -6080,16 +9175,16 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                     b.Navigation("OrderShipItemStocks");
                 });
 
+            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.OrderShipment", b =>
+                {
+                    b.Navigation("OrderShipItems");
+                });
+
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.Shipment", b =>
                 {
                     b.Navigation("ShipmentAttributeValues");
 
                     b.Navigation("ShipmentMemos");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.ShipmentAttribute", b =>
-                {
-                    b.Navigation("ShipmentAttributeValues");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities.ShipmentType", b =>
@@ -6106,45 +9201,11 @@ namespace Monstersoft.VennWms.Main.Persistance.Migrations
                     b.Navigation("StockReserveReasons");
 
                     b.Navigation("StockUnsuitReasons");
-
-                    b.Navigation("TaskStocks");
-
-                    b.Navigation("WorkTasks");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockAttribute", b =>
-                {
-                    b.Navigation("LogStockAttributeValues");
-
-                    b.Navigation("OrderItemStockAttrValues");
-
-                    b.Navigation("ReceiptItmStockAttrValues");
-
-                    b.Navigation("ReturnItmStockAttrValues");
-
-                    b.Navigation("StockAttributeValues");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.StockEntities.StockContainer", b =>
-                {
-                    b.Navigation("Stocks");
                 });
 
             modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.TaskList", b =>
                 {
                     b.Navigation("WorkTasks");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.TransactionType", b =>
-                {
-                    b.Navigation("LogStocks");
-
-                    b.Navigation("WorkTasks");
-                });
-
-            modelBuilder.Entity("Monstersoft.VennWms.Main.Domain.Entities.TaskEntities.WorkTask", b =>
-                {
-                    b.Navigation("TransactionLogs");
                 });
 
             modelBuilder.Entity("Orhanization.Core.Security.Entities.OperationClaim", b =>

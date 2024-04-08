@@ -2,12 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using Orhanization.Core.Security.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Orhanization.Core.Application.Pipelines.Caching;
 
@@ -31,10 +27,12 @@ public class CacheRemovingBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
 
         TResponse response = await next();
 
-        if (request.CacheGroupKey != null)
+        string cacheGroupWithLocality = request.CacheGroupKey + _httpContextAccessor.HttpContext.User.GetUserLocalityId();
+
+        if (cacheGroupWithLocality != null)
         {
-            string cacheGroupWithLocality = request.CacheGroupKey + _httpContextAccessor.HttpContext.User.GetUserLocalityId();
-            byte[]? cachedGroup = await _cache.GetAsync(cacheGroupWithLocality, cancellationToken);
+            
+            byte[]? cachedGroup = await _cache.GetAsync(cacheGroupWithLocality!, cancellationToken);
             if (cachedGroup != null)
             {
                 HashSet<string> keysInGroup = JsonSerializer.Deserialize<HashSet<string>>(Encoding.Default.GetString(cachedGroup))!;

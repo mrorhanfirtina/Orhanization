@@ -23,12 +23,13 @@ public class OrderShipItemTaskConfiguration : IEntityTypeConfiguration<OrderShip
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.OrderShipItemId, p.WorkTaskId, p.Quantity, p.CreatedDate }, name: "IX_OrderShipItemTasks_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.OrderShipItem);
-        builder.HasMany(p => p.OrderShipItemStocks);
+        builder.HasMany(p => p.OrderShipItemStocks).WithOne().HasForeignKey(p => p.OrderShipItemTaskId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.WorkTask).WithMany().HasForeignKey(p => p.WorkTaskId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

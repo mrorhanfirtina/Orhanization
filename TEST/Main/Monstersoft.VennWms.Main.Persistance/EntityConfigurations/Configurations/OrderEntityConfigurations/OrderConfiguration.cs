@@ -1,12 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.POEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Persistance.EntityConfigurations.Configurations.OrderEntityConfigurations;
 
@@ -22,6 +16,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(p => p.Id).HasColumnName("Id").IsRequired();
         builder.Property(p => p.Code).HasColumnName("Code").HasMaxLength(30).IsRequired();
         builder.Property(p => p.DepositorId).HasColumnName("DepositorId").IsRequired();
+        builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.CustomerId).HasColumnName("CustomerId").IsRequired();
         builder.Property(p => p.ReceiverId).HasColumnName("ReceiverId").IsRequired();
         builder.Property(p => p.OrderTypeId).HasColumnName("OrderTypeId").IsRequired();
@@ -35,17 +30,19 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         #endregion
 
         #region Indexler
-        builder.HasIndex(indexExpression: p => p.Code, name: "UK_Orders_Code").IsUnique();
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.DepositorId, p.DepositorCompanyId, p.CustomerId, p.ReceiverId, p.OrderTypeId, p.StatusId, p.InputDate, p.ExpectedDate, p.ActualDate, p.CreatedDate }, name: "IX_Orders_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Status);
-        builder.HasOne(p => p.Customer);
-        builder.HasOne(p => p.OrderType);
-        builder.HasMany(p => p.OrderAttributeValues);
-        builder.HasMany(p => p.OrderItems);
-        builder.HasMany(p => p.OrderMemos);
-        builder.HasMany(p => p.TransactionLogs);
+        builder.HasOne(p => p.Customer).WithMany().HasForeignKey(p => p.CustomerId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(p => p.OrderAttributeValues).WithOne().HasForeignKey(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.OrderItems).WithOne().HasForeignKey(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.OrderMemos).WithOne().HasForeignKey(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.Depositor).WithMany().HasForeignKey(p => p.DepositorId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Receiver).WithMany().HasForeignKey(p => p.ReceiverId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Status).WithMany().HasForeignKey(p => p.StatusId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

@@ -23,12 +23,12 @@ public class ProductAttributeValueConfiguration : IEntityTypeConfiguration<Produ
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.ProductId, p.ProductAttributeId, p.Value, p.CreatedDate }, name: "IX_ProductAttributeValues_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Product);
-        builder.HasOne(p => p.ProductAttribute);
+        builder.HasOne(p => p.ProductAttribute).WithMany().HasForeignKey(p => p.ProductAttributeId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

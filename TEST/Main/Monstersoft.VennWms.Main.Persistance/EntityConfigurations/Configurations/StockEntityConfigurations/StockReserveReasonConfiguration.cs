@@ -22,12 +22,12 @@ public class StockReserveReasonConfiguration : IEntityTypeConfiguration<StockRes
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.StockId, p.ReserveReasonId, p.CreatedDate }, name: "IX_StockReserveReasons_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Stock);
-        builder.HasOne(p => p.ReserveReason);
+        builder.HasOne(p => p.ReserveReason).WithMany().HasForeignKey(p => p.ReserveReasonId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

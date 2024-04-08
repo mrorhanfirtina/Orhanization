@@ -24,12 +24,12 @@ public class LogStockAttributeValueConfiguration : IEntityTypeConfiguration<LogS
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.LogStockId, p.StockAttributeId, p.FromValue, p.ToValue, p.CreatedDate }, name: "IX_LogStockAttributeValues_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.LogStock);
-        builder.HasOne(p => p.StockAttribute);
+
         #endregion
 
         #region Filtreler

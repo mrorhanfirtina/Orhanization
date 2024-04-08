@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Customers.Constants;
+﻿namespace Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Customers.Constants;
 
 public static class CustomerOperationClaims
 {

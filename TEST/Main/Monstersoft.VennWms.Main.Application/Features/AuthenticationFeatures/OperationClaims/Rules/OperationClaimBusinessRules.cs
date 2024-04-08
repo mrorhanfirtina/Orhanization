@@ -1,13 +1,9 @@
 ﻿using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.OperationClaims.Constants;
 using Monstersoft.VennWms.Main.Application.Repositories.AuthenticationRepositories;
+using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
 using Orhanization.Core.Application.Rules;
 using Orhanization.Core.CrossCuttingConcerns.Exceptions.Types;
 using Orhanization.Core.Security.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.OperationClaims.Rules;
 
@@ -15,7 +11,7 @@ public class OperationClaimBusinessRules : BaseBusinessRules
 {
     private readonly IOperationClaimRepository _operationClaimRepository;
 
-    public OperationClaimBusinessRules(IOperationClaimRepository operationClaimRepository)
+    public OperationClaimBusinessRules(IOperationClaimRepository operationClaimRepository, IDepositorRepository depositorRepository)
     {
         _operationClaimRepository = operationClaimRepository;
     }

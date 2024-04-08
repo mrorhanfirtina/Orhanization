@@ -15,21 +15,20 @@ public class LogStockUnsuitReasonConfiguration : IEntityTypeConfiguration<LogSto
         #region Alan Tanımları
         builder.Property(p => p.Id).HasColumnName("Id").IsRequired();
         builder.Property(p => p.LogStockId).HasColumnName("LogStockId").IsRequired();
-        builder.Property(p => p.FromResaonId).HasColumnName("FromResaonId").IsRequired();
-        builder.Property(p => p.ToResaonId).HasColumnName("ToResaonId").IsRequired();
+        builder.Property(p => p.FromReasonId).HasColumnName("FromReasonId").IsRequired();
+        builder.Property(p => p.ToReasonId).HasColumnName("ToReasonId").IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
-        builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");      
+        builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.LogStockId, p.FromReasonId, p.ToReasonId, p.CreatedDate }, name: "IX_LogStockUnsuitReasons_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.LogStock);
-        builder.HasOne(p => p.FromReason);
-        builder.HasOne(p => p.ToResaon);
+
         #endregion
 
         #region Filtreler

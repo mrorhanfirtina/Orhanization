@@ -15,7 +15,6 @@ public class DepositorConfiguration : IEntityTypeConfiguration<Depositor>
         #region Alan Tanımları
         builder.Property(p => p.Id).HasColumnName("Id").IsRequired();
         builder.Property(p => p.Code).HasColumnName("Code").HasMaxLength(30).IsRequired();
-        builder.Property(p => p.BuildingId).HasColumnName("BuildingId").IsRequired();
         builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
@@ -23,12 +22,13 @@ public class DepositorConfiguration : IEntityTypeConfiguration<Depositor>
         #endregion
 
         #region Indexler
-        builder.HasIndex(indexExpression: p => p.Code, name: "UK_Depositors_Code").IsUnique();
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.DepositorCompanyId, p.CreatedDate }, name: "IX_Depositors_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Building);
-        builder.HasOne(p => p.DepositorCompany);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.DepositorFeature).WithOne().HasForeignKey<DepositorFeature>(p => p.DepositorId).OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Filtreler

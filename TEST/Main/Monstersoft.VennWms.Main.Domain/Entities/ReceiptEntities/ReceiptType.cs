@@ -1,10 +1,5 @@
 ﻿using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Persistence.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 
@@ -15,22 +10,23 @@ public class ReceiptType : Entity<Guid>
     public bool IsCodeGenerate { get; set; }
     public string Format { get; set; }
     public int Counter { get; set; }
-    public Guid DepositorId { get; set; }
+    public Guid DepositorCompanyId { get; set; }
     public virtual ICollection<Receipt> Receipts { get; set; }
+    public virtual DepositorCompany DepositorCompany { get; set; }
 
     public ReceiptType()
     {
         Receipts = new HashSet<Receipt>();
     }
 
-    public ReceiptType(Guid id, string code, string description, bool ısCodeGenerate, string format, int counter, Guid depositorId) : this()
+    public ReceiptType(Guid id, string code, string description, bool isCodeGenerate, string format, int counter, Guid depositorCompanyId) : this()
     {
         Id = id;
         Code = code;
         Description = description;
-        IsCodeGenerate = ısCodeGenerate;
+        IsCodeGenerate = isCodeGenerate;
         Format = format;
         Counter = counter;
-        DepositorId = depositorId;
+        DepositorCompanyId = depositorCompanyId;
     }
 }

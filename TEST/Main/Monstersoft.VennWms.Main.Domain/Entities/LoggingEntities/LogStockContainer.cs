@@ -1,10 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
-using Orhanization.Core.Persistence.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Orhanization.Core.Persistence.Repositories;
 
 namespace Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities;
 
@@ -15,13 +9,14 @@ public class LogStockContainer : Entity<Guid>
     public Guid ToContainerId { get; set; }
     public string FromContainerSSCC { get; set; }
     public string ToContainerSSCC { get; set; }
-    public virtual LogStock? LogStock { get; set; }
+    public int FromContainerTypeId { get; set; }
+    public int ToContainerTypeId { get; set; }
 
     public LogStockContainer()
     {
     }
 
-    public LogStockContainer(Guid id, Guid logStockId, Guid fromContainerId, Guid toContainerId, string fromContainerSSCC, string toContainerSSCC) : this()
+    public LogStockContainer(Guid id, Guid logStockId, Guid fromContainerId, Guid toContainerId, string fromContainerSSCC, string toContainerSSCC, int fromContainerTypeId, int toContainerTypeId) : this()
     {
         Id = id;
         LogStockId = logStockId;
@@ -29,5 +24,7 @@ public class LogStockContainer : Entity<Guid>
         ToContainerId = toContainerId;
         FromContainerSSCC = fromContainerSSCC;
         ToContainerSSCC = toContainerSSCC;
+        FromContainerTypeId = fromContainerTypeId;
+        ToContainerTypeId = toContainerTypeId;
     }
 }

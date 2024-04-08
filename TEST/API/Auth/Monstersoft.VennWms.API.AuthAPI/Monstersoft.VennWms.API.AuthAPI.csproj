@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Orhanization.Core\Orhanization.Core.csproj" />
-    <ProjectReference Include="..\..\..\Main\Monstersoft.VennWms.Main.Application\Monstersoft.VennWms.Main.Application.csproj" />
     <ProjectReference Include="..\..\..\Main\Monstersoft.VennWms.Main.Persistance\Monstersoft.VennWms.Main.Persistance.csproj" />
   </ItemGroup>
 

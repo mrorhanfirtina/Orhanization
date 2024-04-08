@@ -22,13 +22,13 @@ public class StatusConfiguration : IEntityTypeConfiguration<Status>
         #endregion
 
         #region Indexler
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.Description, p.CreatedDate }, name: "IX_Status_Areas");
         builder.HasIndex(indexExpression: p => p.Code, name: "UK_Status_Code").IsUnique();
         builder.HasIndex(indexExpression: p => p.Description, name: "UK_Status_Description").IsUnique();
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.Orders);
-        builder.HasMany(p => p.WorkTasks);
         #endregion
 
         #region Filtreler

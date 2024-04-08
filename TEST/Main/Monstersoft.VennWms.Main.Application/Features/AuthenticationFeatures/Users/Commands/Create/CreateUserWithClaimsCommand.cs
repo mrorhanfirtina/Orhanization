@@ -1,23 +1,17 @@
-﻿using Amazon.Runtime.Internal;
+﻿using AutoMapper;
 using MediatR;
-using Orhanization.Core.Application.Pipelines.Authorization;
-using static Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Users.Constants.UsersOperationClaims;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Monstersoft.VennWms.Main.Application.Repositories.AuthenticationRepositories;
-using Orhanization.Core.Security.Entities;
 using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.OperationClaims.Rules;
-using AutoMapper;
 using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Users.Rules;
-using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.UserOperationClaims.Rules;
-using Orhanization.Core.Security.Hashing;
-using Orhanization.Core.Application.Pipelines.Transaction;
-using Orhanization.Core.Application.Pipelines.Locality;
+using Monstersoft.VennWms.Main.Application.Repositories.AuthenticationRepositories;
+using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
+using Orhanization.Core.Application.Pipelines.Locality;
+using Orhanization.Core.Application.Pipelines.Transaction;
+using Orhanization.Core.Security.Entities;
+using Orhanization.Core.Security.Hashing;
 using System.Text.Json.Serialization;
+using static Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Users.Constants.UsersOperationClaims;
 
 namespace Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Users.Commands.Create;
 
@@ -28,6 +22,7 @@ public class CreateUserWithClaimsCommand : IRequest<CreatedUserWithClaimsRespons
     public string Email { get; set; }
     public string Password { get; set; }
     public int[] ClaimIds { get; set; }
+    public Guid[] DepositorIds { get; set; }
     [JsonIgnore]
     public UserRequestInfo UserRequestInfo { get; set; }
 
@@ -45,17 +40,24 @@ public class CreateUserWithClaimsCommandHandler : IRequestHandler<CreateUserWith
     private readonly IMapper _mapper;
     private readonly UserBusinessRules _userBusinessRules;
     private readonly OperationClaimBusinessRules _operationClaimBusinessRules;
+    private readonly IUserDepositorRepository _userDepositorRepository;
+
+    public CreateUserWithClaimsCommandHandler(IUserDepositorRepository userDepositorRepository)
+    {
+        _userDepositorRepository = userDepositorRepository;
+    }
 
     public CreateUserWithClaimsCommandHandler(IUserRepository userRepository,
         IUserOperationClaimRepository userOperationClaimRepository, IMapper mapper,
-        UserBusinessRules userBusinessRules, 
-        OperationClaimBusinessRules operationClaimBusinessRules)
+        UserBusinessRules userBusinessRules,
+        OperationClaimBusinessRules operationClaimBusinessRules, IUserDepositorRepository userDepositorRepository)
     {
         _userRepository = userRepository;
         _userOperationClaimRepository = userOperationClaimRepository;
         _mapper = mapper;
         _userBusinessRules = userBusinessRules;
         _operationClaimBusinessRules = operationClaimBusinessRules;
+        _userDepositorRepository = userDepositorRepository;
     }
 
     public async Task<CreatedUserWithClaimsResponse> Handle(CreateUserWithClaimsCommand request, CancellationToken cancellationToken)
@@ -68,6 +70,8 @@ public class CreateUserWithClaimsCommandHandler : IRequestHandler<CreateUserWith
         await _userBusinessRules.EmailShouldBeUnique(request.Email);
         // User şifresinin güçlü olup olmadığını kontrol et
         await _userBusinessRules.PasswordShouldBeStrong(request.Password);
+
+        await _userBusinessRules.DepositorIdsShouldExistWhenSelected(request.DepositorIds);
 
         // Gelen isteği User nesnesine map et
         User mappedUser = _mapper.Map<User>(request);
@@ -96,6 +100,22 @@ public class CreateUserWithClaimsCommandHandler : IRequestHandler<CreateUserWith
 
         // UserOperationClaim nesnesini oluştur
         CreatedUserWithClaimsResponse createdUserDto = _mapper.Map<CreatedUserWithClaimsResponse>(createdUser);
+        createdUserDto.UserDepositors = new List<UserDepositor>();
+
+        foreach (var depositorId in request.DepositorIds)
+        {
+            Guid newId = Guid.NewGuid();
+            UserDepositor userDepositor = new(id: newId, userId: createdUser.Id, depositorId: depositorId);
+
+            UserDepositor createdUserDepositor = await _userDepositorRepository.AddAsync(userDepositor);
+
+            createdUserDepositor.Depositor = null;
+            createdUserDepositor.User = null;
+
+            createdUserDto.UserDepositors.Add(createdUserDepositor);
+        }
+
+        
         return createdUserDto;
 
 

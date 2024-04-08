@@ -23,12 +23,12 @@ public class PoAttributeValueConfiguration : IEntityTypeConfiguration<PoAttribut
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.PurchaseOrderId, p.PoAttributeId, p.Value, p.CreatedDate }, name: "IX_PoAttributeValues_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.PurchaseOrder);
-        builder.HasOne(p => p.PoAttribute);
+        builder.HasOne(p => p.PoAttribute).WithMany().HasForeignKey(p => p.PoAttributeId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

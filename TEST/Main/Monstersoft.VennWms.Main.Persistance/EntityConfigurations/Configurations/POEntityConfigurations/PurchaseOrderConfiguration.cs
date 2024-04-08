@@ -16,6 +16,7 @@ public class PurchaseOrderConfiguration : IEntityTypeConfiguration<PurchaseOrder
         builder.Property(p => p.Id).HasColumnName("Id").IsRequired();
         builder.Property(p => p.Code).HasColumnName("Code").HasMaxLength(30).IsRequired();
         builder.Property(p => p.DepositorId).HasColumnName("DepositorId").IsRequired();
+        builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.SupplierId).HasColumnName("SupplierId").IsRequired();
         builder.Property(p => p.PoTypeId).HasColumnName("PoTypeId").IsRequired();
         builder.Property(p => p.StatusId).HasColumnName("StatusId").IsRequired();
@@ -25,15 +26,18 @@ public class PurchaseOrderConfiguration : IEntityTypeConfiguration<PurchaseOrder
         #endregion
 
         #region Indexler
-        builder.HasIndex(indexExpression: p => p.Code, name: "UK_PurchaseOrders_Code").IsUnique();
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.DepositorId, p.DepositorCompanyId, p.SupplierId, p.PoTypeId, p.StatusId, p.CreatedDate }, name: "IX_PurchaseOrders_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Supplier);
-        builder.HasOne(p => p.PoType);
-        builder.HasMany(p => p.PoAttributeValues);
-        builder.HasMany(p => p.PoMemos);
-        builder.HasMany(p => p.Receipts);
+        builder.HasOne(p => p.Supplier).WithMany().HasForeignKey(p => p.SupplierId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(p => p.PoAttributeValues).WithOne().HasForeignKey(p => p.PurchaseOrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.PoMemos).WithOne().HasForeignKey(p => p.PurchaseOrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.Receipts).WithOne().HasForeignKey(p => p.PurchaseOrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.Depositor).WithMany().HasForeignKey(p => p.DepositorId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Status).WithMany().HasForeignKey(p => p.StatusId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

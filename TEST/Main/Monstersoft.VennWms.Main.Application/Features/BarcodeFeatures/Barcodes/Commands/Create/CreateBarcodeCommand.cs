@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Commands.Create.CreateDtos;
+using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.BarcodeDtos;
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Rules;
-using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Rules;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
 using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Caching;
@@ -27,73 +24,54 @@ public class CreateBarcodeCommand : IRequest<CreatedBarcodeResponse>, ITransacti
     public string[] Roles => [Admin, User, Add, Write];
 
 
-    public string Code { get; set; }
-    public int Copy { get; set; }
-    public string Query { get; set; }
-    public string Text { get; set; }
-    public virtual ICollection<CreateBarcodeBarcodeAreaDto>? BarcodeAreas { get; set; }
-    public virtual ICollection<CreateBarcodePrinterDto>? Printers { get; set; }
-    
+    public CreateBarcodeDto Barcode { get; set; }
 }
 
 public class CreateBarcodeCommandHandler : IRequestHandler<CreateBarcodeCommand, CreatedBarcodeResponse>
 {
     private readonly IBarcodeRepository _barcodeRepository;
-    private readonly IMapper _mapper;
     private readonly BarcodeBusinessRules _barcodeBusinessRules;
-    private readonly DepositorBusinessRules _depositorBusinessRules;
-    private readonly PrinterBusinessRules _printerBusinessRules;
+    private readonly IMapper _mapper;
 
-    public CreateBarcodeCommandHandler(IBarcodeRepository barcodeRepository, IMapper mapper, BarcodeBusinessRules barcodeBusinessRules, DepositorBusinessRules depositorBusinessRules, PrinterBusinessRules printerBusinessRules)
+    public CreateBarcodeCommandHandler(IBarcodeRepository barcodeRepository, IMapper mapper, BarcodeBusinessRules barcodeBusinessRules)
     {
         _barcodeRepository = barcodeRepository;
-        _mapper = mapper;
         _barcodeBusinessRules = barcodeBusinessRules;
-        _depositorBusinessRules = depositorBusinessRules;
-        _printerBusinessRules = printerBusinessRules;
+        _mapper = mapper;
+        
     }
 
     public async Task<CreatedBarcodeResponse> Handle(CreateBarcodeCommand request, CancellationToken cancellationToken)
     {
-        //Önce user ile gelen depositor id gerçekten var mı ve aktif mi kontrol edilir.
-        Guid depositorId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
-        Depositor? depositor = await _depositorBusinessRules.DepositorIdMustBeValid(depositorId);
 
-        //Barkod kodunun mevcut depositor içinde halihazırda bulunup bulunmadığı kontrol edilir.
-        await _barcodeBusinessRules.BarcodeCodeCannotBeDuplicatedWhenInsert(request.Code, depositor.Id);
-        
-        //İstekte gelen alanlar yeni bir Barcode sınıfına maplenir.
-        Barcode barcode = _mapper.Map<Barcode>(request);
+        _barcodeBusinessRules.CreateRequest()
+            .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
+            .CheckCodeExistenceWhenCreate(request.Barcode.Code)
+            .CheckPrinterIdIsDuplicateInRequest(request.Barcode?.BarcodePrinters?.Select(x => x.PrinterId)?.ToArray() ?? new Guid[0]);
 
-        //Gelen requestte printer verisinde mükerrer kod olup olmadığı kontrol edilir.
-        await _printerBusinessRules.PrinterCodeCannotBeDuplicatedWhenInsert(barcode.Printers);
-
-        //Kontrollerden geçtikten sonra Barkod nesnesi düzenlenir.
-        barcode.DepositorId = depositor.Id;
+        Barcode barcode = _mapper.Map<Barcode>(request.Barcode);
         barcode.Id = Guid.NewGuid();
+        barcode.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
         barcode.CreatedDate = DateTime.Now;
 
-        //BarkodArea sınıfları düzenlenir.
-        foreach (var barcodeArea in barcode.BarcodeAreas)
+        foreach (var item in barcode.BarcodeAreas)
         {
-            barcodeArea.CreatedDate = DateTime.Now;
+            BarcodeArea barcodeArea = _mapper.Map<BarcodeArea>(item);
             barcodeArea.Id = Guid.NewGuid();
             barcodeArea.BarcodeId = barcode.Id;
+            barcodeArea.CreatedDate = DateTime.Now;
         }
 
-        //Printer sınıfları düzenlenir.
-        foreach (var printer in barcode.Printers)
+        foreach (var item in barcode.BarcodePrinters)
         {
-            printer.CreatedDate = DateTime.Now;
-            printer.Id = Guid.NewGuid();
-            printer.BarcodeId = barcode.Id;
+            _barcodeBusinessRules.CheckPrinterIdExistence(item.PrinterId);
+
+            BarcodePrinter barcodePrinter = _mapper.Map<BarcodePrinter>(item);
+            barcodePrinter.Id = Guid.NewGuid();
+            barcodePrinter.BarcodeId = barcode.Id;
+            barcodePrinter.CreatedDate = DateTime.Now;
         }
 
-        //Ekleme işlemi yapılır ve gelen veri response nesnesine maplenir. Depositor kod eklenir.
-        var response = _mapper.Map<CreatedBarcodeResponse>(await _barcodeRepository.AddAsync(barcode));
-        response.DepositorCode = depositor.Code;
-
-        //Cevap dönülür.
-        return response;
+        return _mapper.Map<CreatedBarcodeResponse>(await _barcodeRepository.AddAsync(barcode));
     }
 }

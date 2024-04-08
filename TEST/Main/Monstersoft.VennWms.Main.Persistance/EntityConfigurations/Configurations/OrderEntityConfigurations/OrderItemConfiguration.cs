@@ -16,7 +16,7 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.Property(p => p.Id).HasColumnName("Id").IsRequired();
         builder.Property(p => p.OrderId).HasColumnName("OrderId").IsRequired();
         builder.Property(p => p.ProductId).HasColumnName("ProductId").IsRequired();
-        builder.Property(p => p.UnitId).HasColumnName("UnitId").IsRequired();
+        builder.Property(p => p.ItemUnitId).HasColumnName("ItemUnitId").IsRequired();
         builder.Property(p => p.Quantity).HasColumnName("Quantity").HasColumnType("DECIMAL(18,6)").IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
@@ -24,16 +24,15 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.OrderId, p.ProductId, p.ItemUnitId, p.Quantity, p.CreatedDate }, name: "IX_OrderItems_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Order);
-        builder.HasOne(p => p.Product);
-        builder.HasOne(p => p.Unit);
-        builder.HasMany(p => p.OrderItemMemos);
-        builder.HasMany(p => p.OrderItemStockAttrValues);
-        builder.HasMany(p => p.OrderShipItems);
+        builder.HasMany(p => p.OrderItemMemos).WithOne().HasForeignKey(p => p.OrderItemId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.OrderItemStockAttrValues).WithOne().HasForeignKey(p => p.OrderItemId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.OrderShipItems).WithOne().HasForeignKey(p => p.OrderItemId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(p => p.Product).WithMany().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

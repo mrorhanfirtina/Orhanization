@@ -25,11 +25,11 @@ public class PoMemoConfiguration : IEntityTypeConfiguration<PoMemo>
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.PurchaseOrderId, p.Description, p.InputDate, p.Text, p.EditDate, p.CreatedDate }, name: "IX_PoMemos_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.PurchaseOrder);
         #endregion
 
         #region Filtreler

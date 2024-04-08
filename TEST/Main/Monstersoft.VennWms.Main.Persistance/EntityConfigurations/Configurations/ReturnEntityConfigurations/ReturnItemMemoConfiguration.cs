@@ -25,11 +25,11 @@ public class ReturnItemMemoConfiguration : IEntityTypeConfiguration<ReturnItemMe
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.ReturnItemId, p.Description, p.Text, p.InputDate, p.EditDate, p.CreatedDate }, name: "IX_ReturnItemMemos_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.ReturnItem);
         #endregion
 
         #region Filtreler

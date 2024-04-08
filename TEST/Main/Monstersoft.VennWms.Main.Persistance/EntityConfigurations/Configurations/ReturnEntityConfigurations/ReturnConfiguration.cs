@@ -18,6 +18,7 @@ public class ReturnConfiguration : IEntityTypeConfiguration<Return>
         builder.Property(p => p.CustomerId).HasColumnName("CustomerId").IsRequired();
         builder.Property(p => p.StatusId).HasColumnName("StatusId").IsRequired();
         builder.Property(p => p.DepositorId).HasColumnName("DepositorId").IsRequired();
+        builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.ReturnTypeId).HasColumnName("ReturnTypeId").IsRequired();
         builder.Property(p => p.InputDate).HasColumnName("InputDate").IsRequired();
         builder.Property(p => p.ExpectedDate).HasColumnName("ExpectedDate");
@@ -28,16 +29,18 @@ public class ReturnConfiguration : IEntityTypeConfiguration<Return>
         #endregion
 
         #region Indexler
-        builder.HasIndex(indexExpression: p => p.Code, name: "UK_Returns_Code").IsUnique();
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.CustomerId, p.StatusId, p.DepositorCompanyId, p.DepositorId, p.ReturnTypeId, p.InputDate, p.ExpectedDate, p.ReceiveDate, p.CreatedDate }, name: "IX_Returns_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Customer);
-        builder.HasOne(p => p.ReturnType);
-        builder.HasMany(p => p.TransactionLogs);
-        builder.HasMany(p => p.ReturnAttributeValues);
-        builder.HasMany(p => p.ReturnItems);
-        builder.HasMany(p => p.ReturnMemos);
+        builder.HasOne(p => p.Customer).WithMany().HasForeignKey(p => p.CustomerId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(p => p.ReturnAttributeValues).WithOne().HasForeignKey(p => p.ReturnId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ReturnItems).WithOne().HasForeignKey(p => p.ReturnId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ReturnMemos).WithOne().HasForeignKey(p => p.ReturnId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.Status).WithMany().HasForeignKey(p => p.StatusId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Depositor).WithMany().HasForeignKey(p => p.DepositorId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

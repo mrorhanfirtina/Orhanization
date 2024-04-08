@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
-using System.ComponentModel;
 
 namespace Monstersoft.VennWms.Main.Persistance.EntityConfigurations.Configurations.CommonEntityConfigurations;
 
@@ -21,15 +20,16 @@ public class ContainerUnitConfiguration : IEntityTypeConfiguration<ContainerUnit
         builder.Property(p => p.CountryCode).HasColumnName("CountryCode").HasMaxLength(2).IsRequired();
         builder.Property(p => p.ProducerCode).HasColumnName("ProducerCode").HasMaxLength(7).IsRequired();
         builder.Property(p => p.Counter).HasColumnName("Counter").HasMaxLength(7).IsRequired();
-        builder.Property(p => p.DepositorId).HasColumnName("DepositorId").IsRequired();
+        builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.Description, p.FirstDigit, p.CountryCode, p.ProducerCode, p.Counter , p.DepositorCompanyId, p.CreatedDate }, name: "IX_ContainerUnits_Areas");
         #endregion
 
         #region İlişki Tanımları
-        
+        builder.HasOne(p => p.DepositorCompany);
         #endregion
 
         #region Filtreler

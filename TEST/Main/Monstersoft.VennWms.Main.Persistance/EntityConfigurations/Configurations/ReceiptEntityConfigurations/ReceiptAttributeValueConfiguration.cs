@@ -23,12 +23,12 @@ public class ReceiptAttributeValueConfiguration : IEntityTypeConfiguration<Recei
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.ReceiptId, p.ReceiptAttributeId, p.Value, p.CreatedDate }, name: "IX_ReceiptAttributeValues_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Receipt);
-        builder.HasOne(p => p.ReceiptAttribute);
+        builder.HasOne(p => p.ReceiptAttribute).WithMany().HasForeignKey(p => p.ReceiptAttributeId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

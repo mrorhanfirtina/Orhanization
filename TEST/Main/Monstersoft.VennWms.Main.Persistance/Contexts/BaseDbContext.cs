@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Configuration;
 using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
@@ -14,14 +13,9 @@ using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.TaskEntities;
-using Orhanization.Core.Persistence.Repositories;
+using Monstersoft.VennWms.Main.Persistance.Repositories.LocationRepositories;
 using Orhanization.Core.Security.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Persistance.Contexts;
 
@@ -44,6 +38,7 @@ public class BaseDbContext : DbContext
     public DbSet<Barcode> Barcodes { get; set; }
     public DbSet<BarcodeArea> BarcodeAreas { get; set; }
     public DbSet<Printer> Printers { get; set; }
+    public DbSet<BarcodePrinter> BarcodePrinters { get; set; }
 
     //Common Entities
     public DbSet<AttributeInputType> AttributeInputTypes { get; set; }
@@ -53,6 +48,9 @@ public class BaseDbContext : DbContext
     public DbSet<Status> Status { get; set; }
     public DbSet<Unit> Units { get; set; }
     public DbSet<UnsuitReason> UnsuitReasons { get; set;}
+    public DbSet<LockReason> LockReasons { get; set;}
+    public DbSet<PickingType> PickingTypes { get; set;}
+    public DbSet<LocationCodeComponent> LocationCodeComponents { get; set;}
 
     //Depositor Entities
     public DbSet<Branch> Branches { get; set; }
@@ -60,15 +58,36 @@ public class BaseDbContext : DbContext
     public DbSet<DepositorCompany> DepositorCompanies { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Depositor> Depositors { get; set;}
-    public DbSet<Disturbitor> Disturbitors { get; set; }
+    public DbSet<DepositorFeature> DepositorFeatures { get; set;}
+    public DbSet<UserDepositor> UserDepositors { get; set;}
+    public DbSet<Distributor> Distributors { get; set; }
     public DbSet<Receiver> Receivers { get; set; }
     public DbSet<Supplier> Suppliers { get; set; }
+    public DbSet<Address> Addresses { get; set; }
 
     //Location Entities
     public DbSet<Building> Buildings { get; set; }
     public DbSet<Location> Locations { get; set; }
     public DbSet<Site> Sites { get; set; }
     public DbSet<StorageSystem> StorageSystems { get; set; }
+    public DbSet<LocationProduct> LocationProducts { get; set; }
+    public DbSet<LocationStockAttribute> LocationStockAttributes { get; set; }
+    public DbSet<LocationProductAttribute> LocationProductAttributes { get; set; }
+    public DbSet<LocationZone> LocationZones { get; set; }
+    public DbSet<Zone> Zones { get; set; }
+    public DbSet<SiteDepositor> SiteDepositors { get; set; }
+    public DbSet<LocationLockReason> LocationLockReasons { get; set; }
+    public DbSet<LocationPickingType> LocationPickingTypes { get; set; }
+    public DbSet<LocationUnitConstraint> LocationUnitConstraints { get; set; }
+    public DbSet<LocationProductConstraint> LocationProductConstraints { get; set; }
+    public DbSet<LocationDimension> LocationDimensions { get; set; }
+    public DbSet<LocationFeature> LocationFeatures { get; set; }
+    public DbSet<LocationPriority> LocationPriorities { get; set; }
+    public DbSet<LocationDepositor> LocationDepositors { get; set; }
+    public DbSet<LocationCodeFormat> LocationCodeFormats { get; set; }
+    public DbSet<BuildingDimension> BuildingDimensions { get; set; }
+    public DbSet<LocationCoordinate> LocationCoordinates { get; set; }
+
 
     //Logging Entities
     public DbSet<LogStock> LogStocks { get; set; }
@@ -99,6 +118,15 @@ public class BaseDbContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductAttribute> ProductAttributes { get; set; }
     public DbSet<ProductAttributeValue> ProductAttributeValues { get; set; }
+    public DbSet<ProductBarcode> ProductBarcodes { get; set; }
+    public DbSet<BarcodeSupplier> BarcodeSuppliers { get; set; }
+    public DbSet<ItemUnit> ItemUnits { get; set; }
+    public DbSet<ItemUnitConversion> ItemUnitConversions { get; set; }
+    public DbSet<ItemPackType> ItemPackTypes { get; set; }
+    public DbSet<ProductStockAttribute> ProductStockAttributes { get; set; }
+    public DbSet<ProductDepositor> ProductDepositors { get; set; }
+
+
 
     //Receipt Entities
     public DbSet<Receipt> Receipts { get; set; }
@@ -140,11 +168,13 @@ public class BaseDbContext : DbContext
     public DbSet<StockReserveReason> StockReserveReasons { get; set;}
     public DbSet<StockUnsuitReason> StockUnsuitReasons { get;set; }
     public DbSet<TaskStock> TaskStocks { get; set; }
+    public DbSet<StockPackType> StockPackTypes { get; set; }
 
     //Task Entities
     public DbSet<TaskList> TaskLists { get; set; }
     public DbSet<TransactionType> TransactionTypes { get; set; }
     public DbSet<WorkTask> WorkTasks { get; set; }
+    public DbSet<TaskCodeFormat> TaskCodeFormats { get; set; }
 
     //Authentication Entities
     public DbSet<EmailAuthenticator> EmailAuthenticators { get; set; }

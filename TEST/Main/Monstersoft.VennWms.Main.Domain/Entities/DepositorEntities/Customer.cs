@@ -1,38 +1,30 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
-using Orhanization.Core.Persistence.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Orhanization.Core.Persistence.Repositories;
 
 namespace Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 
 public class Customer : Entity<Guid>
 {
     public string Code { get; set; }
-    public Guid BuildingId { get; set; }
+    public string Name { get; set; }
     public Guid CompanyId { get; set; }
-    public Guid DepositorId { get; set; }
-    public virtual Building? Building { get; set; }
-    public virtual Company? Company { get; set; }
-    public virtual ICollection<Order> Orders { get; set; }
-    public virtual ICollection<Return> Returns { get; set; }
+    public Guid DepositorCompanyId { get; set; }
+    public Guid AddressId { get; set; }
+    public virtual Address Address { get; set; }
+    public virtual DepositorCompany DepositorCompany { get; set; }
+    public virtual Company Company { get; set; }
 
     public Customer()
     {
-        Orders = new HashSet<Order>();
-        Returns = new HashSet<Return>();
+
     }
 
-    public Customer(Guid id, string code, Guid buildingId, Guid companyId, Guid depositorId) : this()
+    public Customer(Guid id, string code, string name, Guid companyId, Guid addressId, Guid depositorCompanyId) : this()
     {
         Id = id;
         Code = code;
-        BuildingId = buildingId;
+        Name = name;
         CompanyId = companyId;
-        DepositorId = depositorId;
+        AddressId = addressId;
+        DepositorCompanyId = depositorCompanyId;
     }
 }

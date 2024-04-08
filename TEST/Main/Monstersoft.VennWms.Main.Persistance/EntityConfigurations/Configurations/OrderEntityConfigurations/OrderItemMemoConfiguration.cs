@@ -25,11 +25,11 @@ public class OrderItemMemoConfiguration : IEntityTypeConfiguration<OrderItemMemo
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.OrderItemId, p.Description, p.Text, p.CreatedDate }, name: "IX_OrderItemMemos_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.OrderItem);
         #endregion
 
         #region Filtreler

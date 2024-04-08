@@ -17,6 +17,7 @@ public class OrderShipmentConfiguration : IEntityTypeConfiguration<OrderShipment
         builder.Property(p => p.Code).HasColumnName("Code").HasMaxLength(30).IsRequired();
         builder.Property(p => p.OrderId).HasColumnName("OrderId").IsRequired();
         builder.Property(p => p.ShipmentId).HasColumnName("ShipmentId").IsRequired();
+        builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.ProgressStatusId).HasColumnName("ProgressStatusId").IsRequired();
         builder.Property(p => p.LastMoveDate).HasColumnName("LastMoveDate");
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
@@ -25,12 +26,17 @@ public class OrderShipmentConfiguration : IEntityTypeConfiguration<OrderShipment
         #endregion
 
         #region Indexler
-        builder.HasIndex(indexExpression: p => p.Code, name: "UK_OrderShipments_Code").IsUnique();
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.OrderId, p.ShipmentId, p.ProgressStatusId, p.LastMoveDate, p.CreatedDate }, name: "IX_OrderShipments_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Order);
-        builder.HasOne(p => p.ProgressStatus);
+        builder.HasMany(p => p.OrderShipItems).WithOne().HasForeignKey(p => p.OrderShipmentId).OnDelete(DeleteBehavior.Cascade);
+        //builder.HasOne(p => p.Order).WithMany().HasForeignKey(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.Order).WithOne().HasForeignKey<OrderShipment>(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.Shipment).WithMany().HasForeignKey(p => p.ShipmentId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.ProgressStatus).WithMany().HasForeignKey(p => p.ProgressStatusId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

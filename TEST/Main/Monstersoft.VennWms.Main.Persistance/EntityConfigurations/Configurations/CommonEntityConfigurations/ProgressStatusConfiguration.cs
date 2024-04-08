@@ -22,13 +22,14 @@ public class ProgressStatusConfiguration : IEntityTypeConfiguration<ProgressStat
         #endregion
 
         #region Indexler
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.Description, p.CreatedDate }, name: "IX_ProgressStatuses_Areas");
         builder.HasIndex(indexExpression: p => p.Code, name: "UK_ProgressStatuses_Code").IsUnique();
         builder.HasIndex(indexExpression: p => p.Description, name: "UK_ProgressStatuses_Description").IsUnique();
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.OrderShipItems);
-        builder.HasMany(p => p.OrderShipments);
+
         #endregion
 
         #region Filtreler

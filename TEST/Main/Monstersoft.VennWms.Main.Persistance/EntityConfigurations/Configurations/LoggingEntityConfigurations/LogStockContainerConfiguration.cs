@@ -19,17 +19,20 @@ public class LogStockContainerConfiguration : IEntityTypeConfiguration<LogStockC
         builder.Property(p => p.ToContainerId).HasColumnName("ToContainerId").IsRequired();
         builder.Property(p => p.FromContainerSSCC).HasColumnName("FromContainerSSCC").HasMaxLength(30).IsRequired();
         builder.Property(p => p.ToContainerSSCC).HasColumnName("ToContainerSSCC").HasMaxLength(30).IsRequired();
+        builder.Property(p => p.FromContainerTypeId).HasColumnName("FromContainerTypeId").IsRequired();
+        builder.Property(p => p.ToContainerTypeId).HasColumnName("ToContainerTypeId").IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
         builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.LogStockId, p.FromContainerId, p.ToContainerId, p.FromContainerSSCC, p.ToContainerSSCC, p.FromContainerTypeId, p.ToContainerTypeId, p.CreatedDate }, name: "IX_LogStockContainers_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.LogStock);
+
         #endregion
 
         #region Filtreler

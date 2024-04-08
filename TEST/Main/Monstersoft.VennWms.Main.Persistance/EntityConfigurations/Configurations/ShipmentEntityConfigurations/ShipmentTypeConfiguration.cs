@@ -18,19 +18,20 @@ public class ShipmentTypeConfiguration : IEntityTypeConfiguration<ShipmentType>
         builder.Property(p => p.Description).HasColumnName("Description").HasMaxLength(60).IsRequired();
         builder.Property(p => p.Format).HasColumnName("Format").HasMaxLength(20).IsRequired();
         builder.Property(p => p.Counter).HasColumnName("Counter").IsRequired();
-        builder.Property(p => p.DepositorId).HasColumnName("DepositorId").IsRequired();
+        builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
         builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
         #endregion
 
         #region Indexler
-        builder.HasIndex(indexExpression: p => p.Code, name: "UK_ShipmentTypes_Code").IsUnique();
-        builder.HasIndex(indexExpression: p => p.Description, name: "UK_ShipmentTypes_Description").IsUnique();
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.Code, p.Description, p.Format, p.Counter, p.DepositorCompanyId, p.CreatedDate }, name: "IX_ShipmentTypes_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.Shipments);
+        builder.HasMany(p => p.Shipments).WithOne().HasForeignKey(p => p.ShipmentTypeId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

@@ -1,12 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Persistance.EntityConfigurations.Configurations.LoggingEntityConfigurations;
 
@@ -33,15 +27,11 @@ public class LogStockConfiguration : IEntityTypeConfiguration<LogStock>
         #endregion
 
         #region Indexler
-        
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.TransactionLogId, p.StockId, p.ProductId, p.FromLocaitonId, p.ToLocationId, p.TransactionTypeId, p.Quantity, p.CreatedDate }, name: "IX_LogStocks_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.TransactionLog);
-        builder.HasOne(p => p.Product);
-        builder.HasOne(p => p.FromLocation);
-        builder.HasOne(p => p.ToLocation);
-        builder.HasOne(p => p.TransactionType);
         builder.HasMany(p => p.LogStockAttributeValues);
         builder.HasMany(p => p.LogStockContainers);
         builder.HasMany(p => p.LogStockReserveReasons);

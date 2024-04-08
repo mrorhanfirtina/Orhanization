@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Commands.Update.UpdateDtos;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.BarcodeDtos;
+using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Rules;
-using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Rules;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
 using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Caching;
@@ -24,15 +24,10 @@ public class UpdateBarcodeCommand : IRequest<UpdatedBarcodeResponse>, ITransacti
     public bool ByPassCache => false;
     public string? CacheGroupKey => $"GetBarcodes";
     public UserRequestInfo? UserRequestInfo { get; set; }
-    public string[] Roles => [Admin, User, Add, Write];
+    public string[] Roles => [Admin, User, BarcodesOperationClaims.Update, Write];
 
 
-    public string Code { get; set; }
-    public int Copy { get; set; }
-    public string Query { get; set; }
-    public string Text { get; set; }
-    public virtual ICollection<UpdateBarcodeBarcodeAreaDto>? BarcodeAreas { get; set; }
-    public virtual ICollection<UpdateBarcodePrinterDto>? Printers { get; set; }
+    public UpdateBarcodeDto Barcode { get; set; }
 }
 
 
@@ -40,71 +35,49 @@ public class UpdateBarcodeCommandHandler : IRequestHandler<UpdateBarcodeCommand,
 {
     private readonly IMapper _mapper;
     private readonly IBarcodeRepository _barcodeRepository;
-    private readonly DepositorBusinessRules _depositorBusinessRules;
     private readonly BarcodeBusinessRules _barcodeBusinessRules;
-    private readonly PrinterBusinessRules _printerBusinessRules;
 
     public UpdateBarcodeCommandHandler(IMapper mapper, IBarcodeRepository barcodeRepository, 
-        DepositorBusinessRules depositorBusinessRules, BarcodeBusinessRules barcodeBusinessRules, 
-        PrinterBusinessRules printerBusinessRules)
+        BarcodeBusinessRules barcodeBusinessRules)
     {
         _mapper = mapper;
         _barcodeRepository = barcodeRepository;
-        _depositorBusinessRules = depositorBusinessRules;
         _barcodeBusinessRules = barcodeBusinessRules;
-        _printerBusinessRules = printerBusinessRules;
     }
 
     public async Task<UpdatedBarcodeResponse> Handle(UpdateBarcodeCommand request, CancellationToken cancellationToken)
     {
-        //Önce depositor kodunu doğrulayıp depositor kaydını aldık.
-        Guid depositorId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
-        Depositor depositor = await _depositorBusinessRules.DepositorIdMustBeValid(depositorId);
+        _barcodeBusinessRules.UpdateRequest()
+            .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
+            .CheckCodeExistenceWhenUpdate(request.Barcode.Code, request.Barcode.Id)
+            .CheckIdExistence(request.Barcode.Id)
+            .CheckPrinterIdIsDuplicateInRequest(request.Barcode?.BarcodePrinters?.Select(x => x.PrinterId)?.ToArray() ?? new Guid[0]);
 
-        //Barkodu doğrulayıp barkodu aldık.
-        Barcode oldBarcode = await _barcodeBusinessRules.BarcodeCodeMustBeValidWhenUpdate(request.Code, depositor.Id);
 
-        //Mevcut barkod kaydını ve bağlı tabloları kalıcı olarak sildik.
-        await _barcodeRepository.DeleteAsync(oldBarcode, permanent: true);
+        var currentBarcode = await _barcodeRepository.GetAsync(predicate: x => x.Id == request.Barcode.Id && !x.DeletedDate.HasValue);
 
-        //Tekrar insert etmeden önce barkod kodunun çoklayıp çoklamadığına baktık.
-        await _barcodeBusinessRules.BarcodeCodeCannotBeDuplicatedWhenInsert(request.Code, depositor.Id);
-
-        //İstekte gelen yeni bilgiler oluşturulan Barcode sınıfına maplenir.
-        Barcode barcode = _mapper.Map<Barcode>(request);
-
-        //Gelen kayıt içinde yazıcı kodlarının çoklayıp çoklamadığına bakılacak.
-        await _printerBusinessRules.PrinterCodeCannotBeDuplicatedWhenInsert(barcode.Printers);
-
-        //Request ile gelen Barkod alanları duzenlenir.
-        barcode.DepositorId = depositor.Id;
-        barcode.Id = oldBarcode.Id;
-        barcode.CreatedDate = oldBarcode.CreatedDate;
+        Barcode? barcode = _mapper.Map(request.Barcode, currentBarcode);
         barcode.UpdatedDate = DateTime.Now;
 
-        //Request ile gelen yeni barkod alanları düzenlenir.
-        foreach (var barcodeArea in barcode.BarcodeAreas)
+        await _barcodeRepository.DeleteAsync(currentBarcode, permanent: true);
+
+        foreach (var newBarcodeArea in barcode.BarcodeAreas)
         {
-            barcodeArea.CreatedDate = oldBarcode.CreatedDate;
-            barcodeArea.UpdatedDate = DateTime.Now;
-            barcodeArea.Id = Guid.NewGuid();
-            barcodeArea.BarcodeId = barcode.Id;
+                newBarcodeArea.CreatedDate = barcode.CreatedDate;
+                newBarcodeArea.UpdatedDate = DateTime.Now;
+                newBarcodeArea.Id = Guid.NewGuid();
+                newBarcodeArea.BarcodeId = barcode.Id;
         }
 
-        //Request ile gelen yeni printer alanları düzenlenir.
-        foreach (var printer in barcode.Printers)
+        foreach (var newBarcodePrinter in barcode.BarcodePrinters)
         {
-            printer.CreatedDate = oldBarcode.CreatedDate;
-            printer.UpdatedDate = DateTime.Now;
-            printer.Id = Guid.NewGuid();
-            printer.BarcodeId = barcode.Id;
+            _barcodeBusinessRules.CheckPrinterIdExistence(newBarcodePrinter.PrinterId);
+            newBarcodePrinter.Id = Guid.NewGuid();
+            newBarcodePrinter.BarcodeId = barcode.Id;
+            newBarcodePrinter.CreatedDate = barcode.CreatedDate;
+            newBarcodePrinter.UpdatedDate = DateTime.Now;
         }
 
-        //Yeni barkod eklenir ve depositor kodu alanı depositordan gelen koda göre düzenlenir.
-        var response = _mapper.Map<UpdatedBarcodeResponse>(await _barcodeRepository.AddAsync(barcode));
-        response.DepositorCode = depositor.Code;
-
-        //Cevap dönülür.
-        return response;
+        return _mapper.Map<UpdatedBarcodeResponse>(await _barcodeRepository.AddAsync(barcode));
     }
 }

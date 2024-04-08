@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Rules;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
 using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
 using Orhanization.Core.Application.Dtos;
@@ -30,41 +29,36 @@ public class GetListBarcodeQuery : IRequest<GetListResponse<GetListBarcodeListIt
 
 
     public PageRequest PageRequest { get; set; }
-}
 
-public class GetListBarcodeQueryHandler : IRequestHandler<GetListBarcodeQuery, GetListResponse<GetListBarcodeListItemDto>>
-{
-    private readonly IBarcodeRepository _barcodeRepository;
-    private readonly BarcodeBusinessRules _barcodeBusinessRules;
-    private readonly DepositorBusinessRules _depositorBusinessRules;
-    private readonly IMapper _mapper;
 
-    public GetListBarcodeQueryHandler(IBarcodeRepository barcodeRepository, IMapper mapper, BarcodeBusinessRules barcodeBusinessRules, DepositorBusinessRules depositorBusinessRules)
+    public class GetListBarcodeQueryHandler : IRequestHandler<GetListBarcodeQuery, GetListResponse<GetListBarcodeListItemDto>>
     {
-        _barcodeRepository = barcodeRepository;
-        _mapper = mapper;
-        _barcodeBusinessRules = barcodeBusinessRules;
-        _depositorBusinessRules = depositorBusinessRules;
+        private readonly IBarcodeRepository _barcodeRepository;
+        private readonly BarcodeBusinessRules _barcodeBusinessRules;
+        private readonly IMapper _mapper;
+
+        public GetListBarcodeQueryHandler(IBarcodeRepository barcodeRepository, IMapper mapper, BarcodeBusinessRules barcodeBusinessRules)
+        {
+            _barcodeRepository = barcodeRepository;
+            _mapper = mapper;
+            _barcodeBusinessRules = barcodeBusinessRules;
+        }
+
+        public async Task<GetListResponse<GetListBarcodeListItemDto>> Handle(GetListBarcodeQuery request, CancellationToken cancellationToken)
+        {
+            _barcodeBusinessRules.GetRequest()
+            .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
+
+            Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
+
+            Paginate<Barcode> barcodeList = await _barcodeRepository.GetListAsync(
+            predicate: m => m.DepositorCompanyId == depositorCompanyId,
+            index: request.PageRequest.PageIndex,
+            include: m => m.Include(m => m.BarcodeAreas).Include(m => m.BarcodePrinters),
+            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+            return _mapper.Map<GetListResponse<GetListBarcodeListItemDto>>(barcodeList);
+        }
     }
 
-    public async Task<GetListResponse<GetListBarcodeListItemDto>> Handle(GetListBarcodeQuery request, CancellationToken cancellationToken)
-    {
-        //User ile gelen token bilgisinden depositor id numarası çekilir.
-        Guid depositorId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
-
-        //Depositor id gerçekten var mı ve aktif mi kontrol edilir.
-        await _depositorBusinessRules.DepositorIdMustBeValid(depositorId);
-        // Depositorun herhangi bir barkodu var mı kontrol edilir.
-        await _barcodeBusinessRules.IsDepositorHaveAnyBarcode(depositorId);
-
-        // Depositorun barkodları çekilir.
-        Paginate<Barcode> barcodes = await _barcodeRepository.GetListAsync(
-                predicate: m => m.DepositorId == depositorId,
-                include: m => m.Include(m => m.BarcodeAreas).Include(m => m.Printers),
-                index: request.PageRequest.PageIndex,
-                size: request.PageRequest.PageSize);
-
-        // Sonuç döner.
-        return _mapper.Map<GetListResponse<GetListBarcodeListItemDto>>(barcodes);
-    }
 }

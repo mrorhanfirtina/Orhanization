@@ -1,57 +1,148 @@
-﻿using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Constants;
-using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Constants;
+﻿using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Constants;
 using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
-using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
-using Nest;
+using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Domain.Enums;
 using Orhanization.Core.Application.Rules;
 using Orhanization.Core.CrossCuttingConcerns.Exceptions.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Rules;
 
 public class PrinterBusinessRules : BaseBusinessRules
 {
+    private readonly IDepositorCompanyRepository _depositorCompanyRepository;
     private readonly IPrinterRepository _printerRepository;
-
-    public PrinterBusinessRules(IPrinterRepository printerRepository)
+    private readonly IBarcodeRepository _barcodeRepository;
+    public PrinterBusinessRules(IDepositorCompanyRepository depositorCompanyRepository, IPrinterRepository printerRepository, IBarcodeRepository barcodeRepository)
     {
+        _depositorCompanyRepository = depositorCompanyRepository;
         _printerRepository = printerRepository;
+        _barcodeRepository = barcodeRepository;
     }
+    #region BASE RULES
+    public RequestType CurrentRequest { get; set; } = RequestType.Null;
+    public Guid DepositorCompanyId { get; set; } = Guid.Empty;
 
-    //Printer update işlemi sırasında barkod içinde printer kodu mükkerrer mi?
-    public async Task PrinterCodeCannotBeDuplicatedWhenUpdate(string code, Guid barcodeId)
+    // Burada depositorComapnyId yi miras alan siniflarda kullanmak için Guid e çevirip sakliyoruz.
+    public PrinterBusinessRules CheckDepositorCompany(string localityId)
     {
-        Printer? result = await _printerRepository.GetAsync(predicate: p => p.Code == code
-                                                       && p.BarcodeId == barcodeId);
+        Guid depositorCompanyId = Guid.Parse(localityId);
 
-        if (result != null)
+        if (depositorCompanyId == Guid.Empty)
         {
-            throw new BusinessException(PrinterMessages.PrinterCodeExists);
+            throw new BusinessException(PrinterMessages.EmptyLocalityId);
         }
+
+        var isExists = _depositorCompanyRepository.Any(predicate: x => x.Id == depositorCompanyId && !x.DeletedDate.HasValue);
+
+        if (!isExists)
+        {
+            throw new BusinessException(PrinterMessages.LocalityIdNotFound);
+        }
+
+        var isNotActive = _depositorCompanyRepository.Any(predicate: x => x.Id == depositorCompanyId && x.DeletedDate != null, withDeleted: true);
+
+        if (isNotActive)
+        {
+            throw new BusinessException(PrinterMessages.LocalityIdNotActive);
+        }
+
+        DepositorCompanyId = depositorCompanyId;
+
+        return this;
     }
 
-    //Printer insert işlemi öncesi gelen veride aynı kodda başka printer kaydı var mı?(Mükkerrer kayıt mı?)
-    public async Task PrinterCodeCannotBeDuplicatedWhenInsert(ICollection<Printer> printers)
+    // Istek tipini sakliyoruz.
+    private void SetRequestType(RequestType requestType)
     {
-        var groupedByCode = from p in printers
-                            group p by p.Code into g
-                            select new
-                            {
-                                Code = g.Key,
-                                BCount = g.Count()
-                            };
+        CurrentRequest = requestType;
+    }
 
+    // Istek tipini Get olarak ayarliyoruz.
+    public PrinterBusinessRules GetRequest()
+    {
+        SetRequestType(RequestType.Get);
+        return this;
+    }
 
-        foreach (var item in groupedByCode)
+    // Istek tipini Create olarak ayarliyoruz.
+    public PrinterBusinessRules CreateRequest()
+    {
+        SetRequestType(RequestType.Create);
+        return this;
+    }
+
+    // Istek tipini Update olarak ayarliyoruz.
+    public PrinterBusinessRules UpdateRequest()
+    {
+        SetRequestType(RequestType.Update);
+        return this;
+    }
+
+    // Istek tipini Delete olarak ayarliyoruz.
+    public PrinterBusinessRules DeleteRequest()
+    {
+        SetRequestType(RequestType.Delete);
+        return this;
+    }
+
+    // Istek tipini Null olarak ayarliyoruz.
+    public PrinterBusinessRules NullRequest()
+    {
+        SetRequestType(RequestType.Null);
+        return this;
+    }
+    #endregion
+
+    #region ID RULES
+    public PrinterBusinessRules CheckIdExistence(Guid id)
+    {
+        var isExists = _printerRepository.Any(predicate: x => x.Id == id && !x.DeletedDate.HasValue);
+
+        if (CurrentRequest == RequestType.Create && isExists)
         {
-            if (item.BCount > 1)
+            throw new BusinessException(PrinterMessages.IdExistsError);
+        }
+        else if (CurrentRequest == RequestType.Update && !isExists)
+        {
+            throw new BusinessException(PrinterMessages.IdNotExistsError);
+        }
+        else if (CurrentRequest == RequestType.Delete && !isExists)
+        {
+            throw new BusinessException(PrinterMessages.IdNotExistsError);
+        }
+
+        return this;
+    }
+    #endregion
+
+    #region CODE RULES
+    public PrinterBusinessRules CheckCodeExistenceWhenCreate(string code)
+    {
+        if (CurrentRequest == RequestType.Create)
+        {
+            var isExists = _printerRepository.Any(predicate: x => x.DepositorCompanyId == DepositorCompanyId && x.Code == code && !x.DeletedDate.HasValue);
+            if (isExists)
             {
-                throw new BusinessException(PrinterMessages.PrinterCodeExists);
+                throw new BusinessException(PrinterMessages.CodeExistsError);
             }
         }
+
+        return this;
     }
+
+    public PrinterBusinessRules CheckCodeExistenceWhenUpdate(string code, Guid id)
+    {
+        if (CurrentRequest == RequestType.Update)
+        {
+            var isExists = _printerRepository.Any(predicate: x => x.DepositorCompanyId == DepositorCompanyId && x.Code == code && x.Id != id && !x.DeletedDate.HasValue);
+            if (isExists)
+            {
+                throw new BusinessException(PrinterMessages.CodeExistsError);
+            }
+        }
+
+        return this;
+    }
+    #endregion
+
 }

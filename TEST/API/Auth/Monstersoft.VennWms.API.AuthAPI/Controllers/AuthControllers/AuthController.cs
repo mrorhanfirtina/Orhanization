@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Monstersoft.VennWms.API.AuthAPI.Controllers.Base;
 using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Auth.Commands.EnableEmailAuthenticator;

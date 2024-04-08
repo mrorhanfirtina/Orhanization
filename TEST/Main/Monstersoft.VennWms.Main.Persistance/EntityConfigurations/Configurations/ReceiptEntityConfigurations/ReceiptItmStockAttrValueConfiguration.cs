@@ -23,12 +23,12 @@ public class ReceiptItmStockAttrValueConfiguration : IEntityTypeConfiguration<Re
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.ReceiptItemId, p.StockAttributeId, p.Value, p.CreatedDate }, name: "IX_ReceiptItmStockAttrValues_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.ReceiptItem);
-        builder.HasOne(p => p.StockAttribute);
+        builder.HasOne(p => p.StockAttribute).WithMany().HasForeignKey(p => p.StockAttributeId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

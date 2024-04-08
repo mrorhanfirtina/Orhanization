@@ -23,12 +23,13 @@ public class ReturnItmStockAttrValueConfiguration : IEntityTypeConfiguration<Ret
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.ReturnItemId, p.StockAttributeId, p.Value, p.CreatedDate }, name: "IX_ReturnItmStockAttrValues_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.ReturnItem);
-        builder.HasOne(p => p.StockAttribute);
+        builder.HasOne(p => p.StockAttribute).WithMany().HasForeignKey(p => p.StockAttributeId).OnDelete(DeleteBehavior.Restrict);
+
         #endregion
 
         #region Filtreler

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿    using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 
@@ -25,11 +25,11 @@ public class OrderMemoConfiguration : IEntityTypeConfiguration<OrderMemo>
         #endregion
 
         #region Indexler
-
+        builder.HasIndex(p => p.Id).IsUnique();
+        builder.HasIndex(p => new { p.OrderId, p.Description, p.Text, p.EditDate, p.InputDate, p.CreatedDate }, name: "IX_OrderMemos_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Order);
         #endregion
 
         #region Filtreler

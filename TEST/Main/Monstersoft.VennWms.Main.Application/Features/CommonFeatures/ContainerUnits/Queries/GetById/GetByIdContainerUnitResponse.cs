@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Queries.GetById;
+﻿namespace Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Queries.GetById;
 
 public class GetByIdContainerUnitResponse
 {
@@ -15,5 +9,5 @@ public class GetByIdContainerUnitResponse
     public string CountryCode { get; set; }
     public string ProducerCode { get; set; }
     public string Counter { get; set; }
-    public string DepositorCode { get; set; }
+    public Guid DepositorCompanyId { get; set; }
 }
