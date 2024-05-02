@@ -17,6 +17,7 @@ public interface IAsyncRepository<TEntity, TEntityId> : IQuery<TEntity> where TE
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
         bool withDeleted = false,
         bool enableTracking = true,
+        bool autoinclude = false,
         CancellationToken cancellationToken = default);
 
     Task<Paginate<TEntity>> GetListAsync(
@@ -27,6 +28,7 @@ public interface IAsyncRepository<TEntity, TEntityId> : IQuery<TEntity> where TE
         int size = 10,
         bool withDeleted = false,
         bool enableTracking = true,
+        bool autoinclude = false,
         CancellationToken cancellationToken = default);
 
     Task<IQueryable<TEntity>> GetListNoPaginateAsync(
@@ -35,6 +37,7 @@ public interface IAsyncRepository<TEntity, TEntityId> : IQuery<TEntity> where TE
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
         bool withDeleted = false,
         bool enableTracking = true,
+        bool autoinclude = false,
         CancellationToken cancellationToken = default);
 
     Task<Paginate<TEntity>> GetListByDynamicAsync(
@@ -46,6 +49,7 @@ public interface IAsyncRepository<TEntity, TEntityId> : IQuery<TEntity> where TE
         int size = 10,
         bool withDeleted = false,
         bool enableTracking = true,
+        bool autoinclude = false,
         CancellationToken cancellationToken = default);
 
     Task<bool> AnyAsync(

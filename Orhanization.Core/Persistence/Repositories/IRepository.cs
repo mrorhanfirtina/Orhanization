@@ -17,6 +17,7 @@ public interface IRepository<TEntity, TEntityId> : IQuery<TEntity> where TEntity
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
         bool withDeleted = false,
         bool enableTracking = true,
+        bool autoinclude = false,
         CancellationToken cancellationToken = default);
 
     Paginate<TEntity> GetList(
@@ -27,6 +28,7 @@ public interface IRepository<TEntity, TEntityId> : IQuery<TEntity> where TEntity
         int size = 10,
         bool withDeleted = false,
         bool enableTracking = true,
+        bool autoinclude = false,
         CancellationToken cancellationToken = default);
 
     Paginate<TEntity> GetListByDynamic(
@@ -38,6 +40,7 @@ public interface IRepository<TEntity, TEntityId> : IQuery<TEntity> where TEntity
         int size = 10,
         bool withDeleted = false,
         bool enableTracking = true,
+        bool autoinclude = false,
         CancellationToken cancellationToken = default);
 
     bool Any(

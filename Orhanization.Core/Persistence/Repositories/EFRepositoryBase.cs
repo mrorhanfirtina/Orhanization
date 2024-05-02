@@ -40,7 +40,7 @@ public class EFRepositoryBase<TEntity, TEntityId, TContext> : IAsyncRepository<T
         return entities;
     }
 
-    public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>>? predicate = null, bool withDeleted = false, bool enableTracking = true, bool autoInclude = false, CancellationToken cancellationToken = default)
+    public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>>? predicate = null, bool withDeleted = false, bool enableTracking = true, CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> queryable = Query();
         if (!enableTracking)
@@ -56,11 +56,6 @@ public class EFRepositoryBase<TEntity, TEntityId, TContext> : IAsyncRepository<T
         if (predicate != null)
         {
             queryable = queryable.Where(predicate);
-        }
-
-        if (!autoInclude)
-        {
-            queryable.IgnoreAutoIncludes();
         }
 
         return await queryable.AnyAsync(cancellationToken);
@@ -431,7 +426,7 @@ public class EFRepositoryBase<TEntity, TEntityId, TContext> : IAsyncRepository<T
         return queryable.ToPaginate(index, size, cancellationToken);
     }
 
-    public bool Any(Expression<Func<TEntity, bool>>? predicate = null, bool withDeleted = false, bool enableTracking = true, bool autoInclude = false, CancellationToken cancellationToken = default)
+    public bool Any(Expression<Func<TEntity, bool>>? predicate = null, bool withDeleted = false, bool enableTracking = true, CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> queryable = Query();
         if (!enableTracking)
@@ -442,11 +437,6 @@ public class EFRepositoryBase<TEntity, TEntityId, TContext> : IAsyncRepository<T
         if (!withDeleted)
         {
             queryable = queryable.IgnoreQueryFilters();
-        }
-
-        if (!autoInclude)
-        {
-            queryable.IgnoreAutoIncludes();
         }
 
         if (predicate != null)
