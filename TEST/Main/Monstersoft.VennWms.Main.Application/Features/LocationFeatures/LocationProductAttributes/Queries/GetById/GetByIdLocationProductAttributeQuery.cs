@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProductAttributes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProductAttributes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -18,6 +23,7 @@ public class GetByIdLocationProductAttributeQuery : IRequest<GetByIdLocationProd
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public LocationProductAttributeDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdLocationProductAttributeQueryHandler : IRequestHandler<GetByIdLocationProductAttributeQuery, GetByIdLocationProductAttributeResponse>
@@ -39,7 +45,41 @@ public class GetByIdLocationProductAttributeQuery : IRequest<GetByIdLocationProd
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdLocationProductAttributeResponse>(await _locationProductAttributeRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdLocationProductAttributeResponse>(await _locationProductAttributeRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<LocationProductAttribute> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeLocation)
+                    {
+                        query = query.Include(y => y.Location);
+                    }
+
+                    if (detailLevel.IncludeProductAttribute)
+                    {
+                        query = query.Include(y => y.ProductAttribute);
+
+                        if (detailLevel.ProductAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.ProductAttribute).ThenInclude(m => m.AttributeInputType);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<LocationProductAttribute, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdLocationProductAttributeResponse>(await _locationProductAttributeRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.ProductDtos;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributes.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributes.Constants;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributes.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,8 @@ public class UpdateProductAttributeCommand : IRequest<UpdatedProductAttributeRes
     public string? CacheGroupKey => "GetProductAttributes";
 
     public UpdateProductAttributeDto ProductAttribute { get; set; }
+    public ProductAttributeDetailLevel DetailLevel { get; set; }
+
 
 
     public class UpdateProductAttributeCommandHandler : IRequestHandler<UpdateProductAttributeCommand, UpdatedProductAttributeResponse>
@@ -54,8 +60,42 @@ public class UpdateProductAttributeCommand : IRequest<UpdatedProductAttributeRes
             ProductAttribute? productAttribute = _mapper.Map(request.ProductAttribute, currentProductAttribute);
             productAttribute.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedProductAttributeResponse>(await _productAttributeRepository.UpdateAsync(productAttribute));
+            await _productAttributeRepository.UpdateAsync(productAttribute);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _productAttributeRepository.GetAsync(predicate: x => x.Id == productAttribute.Id,
+                include: x =>
+                {
+                    IQueryable<ProductAttribute> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAttributeInputType)
+                    {
+                        query = query.Include(y => y.AttributeInputType);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<ProductAttribute, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedProductAttributeResponse>(response);
+            }
+            else
+            {
+                var response = await _productAttributeRepository.GetAsync(predicate: x => x.Id == productAttribute.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedProductAttributeResponse>(response);
+            }
         }
     }
 }

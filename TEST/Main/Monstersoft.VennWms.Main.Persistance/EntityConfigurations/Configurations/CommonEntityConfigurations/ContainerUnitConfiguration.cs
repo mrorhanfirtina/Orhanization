@@ -9,7 +9,7 @@ public class ContainerUnitConfiguration : IEntityTypeConfiguration<ContainerUnit
     public void Configure(EntityTypeBuilder<ContainerUnit> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("ContainerUnits").HasKey(p => p.Id);
+        builder.ToTable("ContainerUnits", "common").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -29,7 +29,7 @@ public class ContainerUnitConfiguration : IEntityTypeConfiguration<ContainerUnit
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.DepositorCompany);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

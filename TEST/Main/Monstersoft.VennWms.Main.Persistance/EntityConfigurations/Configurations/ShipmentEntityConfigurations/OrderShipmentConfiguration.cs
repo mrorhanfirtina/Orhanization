@@ -9,7 +9,7 @@ public class OrderShipmentConfiguration : IEntityTypeConfiguration<OrderShipment
     public void Configure(EntityTypeBuilder<OrderShipment> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("OrderShipments").HasKey(p => p.Id);
+        builder.ToTable("OrderShipments", "shipment").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -33,7 +33,6 @@ public class OrderShipmentConfiguration : IEntityTypeConfiguration<OrderShipment
         #region İlişki Tanımları
         builder.HasMany(p => p.OrderShipItems).WithOne().HasForeignKey(p => p.OrderShipmentId).OnDelete(DeleteBehavior.Cascade);
         //builder.HasOne(p => p.Order).WithMany().HasForeignKey(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(p => p.Order).WithOne().HasForeignKey<OrderShipment>(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(p => p.Shipment).WithMany().HasForeignKey(p => p.ShipmentId).OnDelete(DeleteBehavior.NoAction);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.ProgressStatus).WithMany().HasForeignKey(p => p.ProgressStatusId).OnDelete(DeleteBehavior.Restrict);

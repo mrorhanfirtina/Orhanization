@@ -9,7 +9,7 @@ public class TaskListConfiguration : IEntityTypeConfiguration<TaskList>
     public void Configure(EntityTypeBuilder<TaskList> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("TaskLists").HasKey(p => p.Id);
+        builder.ToTable("TaskLists", "task").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

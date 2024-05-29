@@ -9,7 +9,7 @@ public class OrderShipItemTaskConfiguration : IEntityTypeConfiguration<OrderShip
     public void Configure(EntityTypeBuilder<OrderShipItemTask> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("OrderShipItemTasks").HasKey(p => p.Id);
+        builder.ToTable("OrderShipItemTasks", "shipment").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

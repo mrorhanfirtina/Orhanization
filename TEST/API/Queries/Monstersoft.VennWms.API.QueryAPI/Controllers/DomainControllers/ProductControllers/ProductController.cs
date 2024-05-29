@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Monstersoft.VennWms.API.QueryAPI.Controllers.Base;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Queries.GetByCode;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Queries.GetById;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Queries.GetList;
@@ -42,11 +43,16 @@ public class ProductController : BaseController
     }
 
     [HttpPost("GetListByDynamic")]
-    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] DynamicQuery? dynamicQuery = null)
+    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] DynamicModel? dynamicModel = null)
     {
-        GetListByDynamicProductQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicQuery };
+        GetListByDynamicProductQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicModel.DynamicQuery, DetailLevel = dynamicModel.DetailLevel };
         GetListResponse<GetListByDynamicProductListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }
+}
 
+public class DynamicModel()
+{
+    public DynamicQuery? DynamicQuery { get; set; }
+    public ProductDetailLevel? DetailLevel { get; set; }
 }

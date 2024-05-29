@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +28,7 @@ public class GetListByDynamicSiteQuery : IRequest<GetListResponse<GetListByDynam
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public SiteDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicSiteQueryHandler : IRequestHandler<GetListByDynamicSiteQuery, GetListResponse<GetListByDynamicSiteListItemDto>>
@@ -47,13 +51,54 @@ public class GetListByDynamicSiteQuery : IRequest<GetListResponse<GetListByDynam
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<Site> siteList = await _siteRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: x => x.Include(y => y.SiteDepositors),
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<Site> siteList = await _siteRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<Site> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicSiteListItemDto>>(siteList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeBuilding)
+                    {
+                        query = query.Include(y => y.Buildings);
+                    }
+
+                    if (detailLevel.IncludeSiteDepositor)
+                    {
+                        query = query.Include(y => y.SiteDepositors);
+
+                        if (detailLevel.SiteDepositorDetailLevel.IncludeDepositor)
+                        {
+                            query = query.Include(y => y.SiteDepositors).ThenInclude(y => y.Depositor);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<Site, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicSiteListItemDto>>(siteList);
+            }
+            else
+            {
+                Paginate<Site> siteList = await _siteRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicSiteListItemDto>>(siteList);
+            }
         }
     }
 

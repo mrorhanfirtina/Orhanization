@@ -9,7 +9,7 @@ public class StatusConfiguration : IEntityTypeConfiguration<Status>
     public void Configure(EntityTypeBuilder<Status> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("Status").HasKey(p => p.Id);
+        builder.ToTable("Status", "common").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

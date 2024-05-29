@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationZones.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationZones.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -18,6 +23,7 @@ public class GetByIdLocationZoneQuery : IRequest<GetByIdLocationZoneResponse>, I
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public LocationZoneDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdLocationZoneQueryHandler : IRequestHandler<GetByIdLocationZoneQuery, GetByIdLocationZoneResponse>
@@ -39,7 +45,36 @@ public class GetByIdLocationZoneQuery : IRequest<GetByIdLocationZoneResponse>, I
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdLocationZoneResponse>(await _locationZoneRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdLocationZoneResponse>(await _locationZoneRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<LocationZone> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeLocation)
+                    {
+                        query = query.Include(y => y.Location);
+                    }
+
+                    if (detailLevel.IncludeZone)
+                    {
+                        query = query.Include(y => y.Zone);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<LocationZone, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdLocationZoneResponse>(await _locationZoneRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

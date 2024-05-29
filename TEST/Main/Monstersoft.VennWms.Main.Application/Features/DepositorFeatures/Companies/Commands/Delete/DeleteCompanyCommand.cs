@@ -2,13 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Companies.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Companies.Rules;
-using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Buildings.Commands.Delete;
-using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Buildings.Constants;
-using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Buildings.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
-using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Caching;
@@ -35,13 +30,11 @@ public class DeleteCompanyCommand : IRequest<DeletedCompanyResponse>, ITransacti
     {
         private readonly ICompanyRepository _companyRepository;
         private readonly CompanyBusinessRules _companyBusinessRules;
-        private readonly IAddressRepository _addressRepository;
 
-        public DeleteCompanyCommandHandler(ICompanyRepository companyRepository, CompanyBusinessRules companyBusinessRules, IAddressRepository addressRepository)
+        public DeleteCompanyCommandHandler(ICompanyRepository companyRepository, CompanyBusinessRules companyBusinessRules)
         {
             _companyRepository = companyRepository;
             _companyBusinessRules = companyBusinessRules;
-            _addressRepository = addressRepository;
         }
 
         public async Task<DeletedCompanyResponse> Handle(DeleteCompanyCommand request, CancellationToken cancellationToken)
@@ -52,13 +45,14 @@ public class DeleteCompanyCommand : IRequest<DeletedCompanyResponse>, ITransacti
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Company company = await _companyRepository.GetAsync(predicate: x => x.Id == request.Id && !x.DeletedDate.HasValue,
+            Company? company = await _companyRepository.GetAsync(predicate: x => x.Id == request.Id && !x.DeletedDate.HasValue,
             include: x => x.Include(y => y.Address),
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
+            company.Address.DeletedDate = DateTime.Now;
+
             await _companyRepository.DeleteAsync(company);
-            await _addressRepository.DeleteAsync(company.Address);
 
             return new DeletedCompanyResponse
             {

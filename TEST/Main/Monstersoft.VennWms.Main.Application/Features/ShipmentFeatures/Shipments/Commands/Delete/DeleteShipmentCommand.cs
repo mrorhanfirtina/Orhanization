@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.Shipments.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.Shipments.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
@@ -45,8 +46,10 @@ public class DeleteShipmentCommand : IRequest<DeletedShipmentResponse>, ITransac
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
             Shipment shipment = await _shipmentRepository.GetAsync(predicate: x => x.Id == request.Id,
+            include: x => x.Include(y => y.ShipmentMemos)
+            .Include(y => y.ShipmentAttributeValues),
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
             await _shipmentRepository.DeleteAsync(shipment);

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using Monstersoft.VennWms.Main.Application.Dtos.DtoValidators.UpdateDtoValidators.UpdateDtoRootValidators.LocationDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProducts.Commands.Update;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProducts.Dtos.DtoValidators;
 
 namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProducts.Validators;
 

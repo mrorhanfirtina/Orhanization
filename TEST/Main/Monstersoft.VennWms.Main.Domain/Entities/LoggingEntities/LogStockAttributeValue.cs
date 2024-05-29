@@ -1,4 +1,5 @@
-﻿using Orhanization.Core.Persistence.Repositories;
+﻿using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
+using Orhanization.Core.Persistence.Repositories;
 
 namespace Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities;
 
@@ -8,6 +9,8 @@ public class LogStockAttributeValue : Entity<Guid>
     public Guid StockAttributeId { get; set; }
     public string? FromValue { get; set; }
     public string? ToValue { get; set; }
+    public virtual LogStock? LogStock { get; set; }
+    public virtual StockAttribute? StockAttribute { get; set; }
 
     public LogStockAttributeValue()
     {

@@ -9,7 +9,7 @@ public class LocationPriorityConfiguration : IEntityTypeConfiguration<LocationPr
     public void Configure(EntityTypeBuilder<LocationPriority> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("LocationPriorities").HasKey(p => p.Id);
+        builder.ToTable("LocationPriorities", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

@@ -13,7 +13,7 @@ public class Company : Entity<Guid>
     public string? FaxNumber { get; set; }
     public Guid AddressId { get; set; }
     public Guid DepositorCompanyId { get; set; }
-    public virtual Address Address { get; set; }
+    public virtual Address? Address { get; set; }
     public virtual DepositorCompany DepositorCompany { get; set; }
 
     public Company()

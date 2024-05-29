@@ -13,6 +13,7 @@ public class BuildingDimension : Entity<Guid>
     public decimal? Length { get; set; }
     public int? VolumeUnitId { get; set; }
     public decimal? Volume { get; set; }
+    public Building? Building { get; set; }
     public virtual Unit? LenghtUnit { get; set; }
     public virtual Unit? VolumeUnit { get; set; }
 

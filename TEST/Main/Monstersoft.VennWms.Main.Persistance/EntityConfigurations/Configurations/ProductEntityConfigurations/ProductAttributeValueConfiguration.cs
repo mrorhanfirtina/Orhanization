@@ -9,7 +9,7 @@ public class ProductAttributeValueConfiguration : IEntityTypeConfiguration<Produ
     public void Configure(EntityTypeBuilder<ProductAttributeValue> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("ProductAttributeValues").HasKey(p => p.Id);
+        builder.ToTable("ProductAttributeValues", "product").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

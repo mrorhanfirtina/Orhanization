@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -18,6 +23,7 @@ public class GetByIdPrinterQuery : IRequest<GetByIdPrinterResponse>, ITransactio
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public PrinterDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdPrinterQueryHandler : IRequestHandler<GetByIdPrinterQuery, GetByIdPrinterResponse>
@@ -39,7 +45,33 @@ public class GetByIdPrinterQuery : IRequest<GetByIdPrinterResponse>, ITransactio
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdPrinterResponse>(await _printerRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdPrinterResponse>(await _printerRepository.GetAsync(x => x.Id == request.Id,
+                    include: x =>
+                    {
+                        IQueryable<Printer> query = x;
+
+                        var detailLevel = request.DetailLevel;
+
+                        if (detailLevel.IncludeDepositorCompany)
+                        {
+                            query = query.Include(y => y.DepositorCompany);
+                        }
+
+                        var includableQuery = query as IIncludableQueryable<Printer, object>;
+                        return includableQuery;
+                    },
+                    withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdPrinterResponse>(await _printerRepository.GetAsync(x => x.Id == request.Id,
+                    withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+
+                
         }
     }
 

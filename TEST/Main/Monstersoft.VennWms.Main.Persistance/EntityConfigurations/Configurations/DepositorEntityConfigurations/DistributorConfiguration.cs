@@ -9,7 +9,7 @@ public class DistributorConfiguration : IEntityTypeConfiguration<Distributor>
     public void Configure(EntityTypeBuilder<Distributor> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("Distributors").HasKey(p => p.Id);
+        builder.ToTable("Distributors", "depositor").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -30,7 +30,7 @@ public class DistributorConfiguration : IEntityTypeConfiguration<Distributor>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Address).WithOne().HasForeignKey<Distributor>(p => p.AddressId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.Address).WithOne().HasForeignKey<Distributor>(p => p.AddressId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Company).WithMany().HasForeignKey(p => p.CompanyId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion

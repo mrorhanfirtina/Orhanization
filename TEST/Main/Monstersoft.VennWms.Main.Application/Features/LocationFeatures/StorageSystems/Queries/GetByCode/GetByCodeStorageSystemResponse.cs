@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Queries.GetByCode;
+﻿using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Queries.GetByCode;
 
 public class GetByCodeStorageSystemResponse
 {
@@ -9,6 +11,9 @@ public class GetByCodeStorageSystemResponse
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public StorageSystemBuildingResponseDto? Building { get; set; }
+    public StorageSystemDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public ICollection<StorageSystemLocationResponseDto>? Locations { get; set; }
 
 }
 

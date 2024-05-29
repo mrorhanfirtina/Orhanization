@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.ProductDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributes.Constants;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributes.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributes.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +30,8 @@ public class CreateProductAttributeCommand : IRequest<CreatedProductAttributeRes
     public string? CacheGroupKey => "GetProductAttributes";
 
     public CreateProductAttributeDto ProductAttribute { get; set; }
+    public ProductAttributeDetailLevel DetailLevel { get; set; }
+
 
 
     public class CreateProductAttributeCommandHandler : IRequestHandler<CreateProductAttributeCommand, CreatedProductAttributeResponse>
@@ -50,7 +58,42 @@ public class CreateProductAttributeCommand : IRequest<CreatedProductAttributeRes
             productAttribute.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
             productAttribute.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedProductAttributeResponse>(await _productAttributeRepository.AddAsync(productAttribute));
+            await _productAttributeRepository.AddAsync(productAttribute);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _productAttributeRepository.GetAsync(predicate: x => x.Id == productAttribute.Id,
+                include: x =>
+                {
+                    IQueryable<ProductAttribute> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAttributeInputType)
+                    {
+                        query = query.Include(y => y.AttributeInputType);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<ProductAttribute, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedProductAttributeResponse>(response);
+            }
+            else
+            {
+                var response = await _productAttributeRepository.GetAsync(predicate: x => x.Id == productAttribute.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedProductAttributeResponse>(response);
+            }
         }
     }
 }

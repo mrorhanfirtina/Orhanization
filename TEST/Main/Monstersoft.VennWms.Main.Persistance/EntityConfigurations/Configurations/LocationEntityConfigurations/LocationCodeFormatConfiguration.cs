@@ -9,7 +9,7 @@ public class LocationCodeFormatConfiguration : IEntityTypeConfiguration<Location
     public void Configure(EntityTypeBuilder<LocationCodeFormat> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("LocationCodeFormats").HasKey(p => p.Id);
+        builder.ToTable("LocationCodeFormats", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

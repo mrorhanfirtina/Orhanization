@@ -7,7 +7,8 @@ public class ProductDepositor : Entity<Guid>
 {
     public Guid ProductId { get; set; }
     public Guid DepositorId { get; set; }
-    public virtual Depositor Depositor { get; set; }
+    public virtual Depositor? Depositor { get; set; }
+    public virtual Product? Product { get; set; }
 
     public ProductDepositor()
     {

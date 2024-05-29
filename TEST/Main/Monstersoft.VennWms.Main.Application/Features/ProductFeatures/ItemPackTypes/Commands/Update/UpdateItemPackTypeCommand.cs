@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.ProductDtos;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Constants;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,7 @@ public class UpdateItemPackTypeCommand : IRequest<UpdatedItemPackTypeResponse>, 
     public string? CacheGroupKey => "GetItemPackTypes";
 
     public UpdateItemPackTypeDto ItemPackType { get; set; }
+    public ItemPackTypeDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateItemPackTypeCommandHandler : IRequestHandler<UpdateItemPackTypeCommand, UpdatedItemPackTypeResponse>
@@ -56,8 +61,59 @@ public class UpdateItemPackTypeCommand : IRequest<UpdatedItemPackTypeResponse>, 
             ItemPackType? itemPackType = _mapper.Map(request.ItemPackType, currentItemPackType);
             itemPackType.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedItemPackTypeResponse>(await _itemPackTypeRepository.UpdateAsync(itemPackType));
+            await _itemPackTypeRepository.UpdateAsync(itemPackType);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _itemPackTypeRepository.GetAsync(predicate: x => x.Id == itemPackType.Id,
+                include: x =>
+                {
+                    IQueryable<ItemPackType> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeLenghtUnit)
+                    {
+                        query = query.Include(y => y.LenghtUnit);
+                    }
+
+                    if (detailLevel.IncludeVolumeUnit)
+                    {
+                        query = query.Include(y => y.VolumeUnit);
+                    }
+
+                    if (detailLevel.IncludeWeightUnit)
+                    {
+                        query = query.Include(y => y.WeightUnit);
+                    }
+
+                    if (detailLevel.IncludeItemUnit)
+                    {
+                        query = query.Include(y => y.ItemUnit);
+                        if (detailLevel.ItemUnitDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.ItemUnit).ThenInclude(m => m.Unit);
+                        }
+                        if (detailLevel.ItemUnitDetailLevel.IncludeUnit)
+                        {
+                            query = query.Include(y => y.ItemUnit).ThenInclude(m => m.Unit);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ItemPackType, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedItemPackTypeResponse>(response);
+            }
+            else
+            {
+                var response = await _itemPackTypeRepository.GetAsync(predicate: x => x.Id == itemPackType.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedItemPackTypeResponse>(response);
+            }
         }
     }
 }

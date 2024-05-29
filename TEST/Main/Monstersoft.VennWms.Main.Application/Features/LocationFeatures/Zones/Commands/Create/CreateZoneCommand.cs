@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.LocationDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Zones.Constants;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Zones.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Zones.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -23,6 +29,7 @@ public class CreateZoneCommand : IRequest<CreatedZoneResponse>, ITransactionalRe
     public string? CacheGroupKey => "GetZones";
 
     public CreateZoneDto Zone { get; set; }
+    public ZoneDetailLevel DetailLevel { get; set; }
 
 
     public class CreateZoneCommandHandler : IRequestHandler<CreateZoneCommand, CreatedZoneResponse>
@@ -50,7 +57,41 @@ public class CreateZoneCommand : IRequest<CreatedZoneResponse>, ITransactionalRe
             zone.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
             zone.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedZoneResponse>(await _zoneRepository.AddAsync(zone));
+            await _zoneRepository.AddAsync(zone);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _zoneRepository.GetAsync(predicate: x => x.Id == zone.Id,
+                include: x =>
+                {
+                    IQueryable<Zone> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeBuilding)
+                    {
+                        query = query.Include(y => y.Building);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<Zone, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedZoneResponse>(response);
+            }
+            else
+            {
+                var response = await _zoneRepository.GetAsync(predicate: x => x.Id == zone.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedZoneResponse>(response);
+            }
         }
     }
 

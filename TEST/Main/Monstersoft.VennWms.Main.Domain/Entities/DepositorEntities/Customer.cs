@@ -9,13 +9,14 @@ public class Customer : Entity<Guid>
     public Guid CompanyId { get; set; }
     public Guid DepositorCompanyId { get; set; }
     public Guid AddressId { get; set; }
-    public virtual Address Address { get; set; }
-    public virtual DepositorCompany DepositorCompany { get; set; }
-    public virtual Company Company { get; set; }
+    public virtual Address? Address { get; set; }
+    public virtual DepositorCompany? DepositorCompany { get; set; }
+    public virtual Company? Company { get; set; }
+    public virtual ICollection<Receiver>? Receivers { get; set; }
 
     public Customer()
     {
-
+        Receivers = new HashSet<Receiver>();
     }
 
     public Customer(Guid id, string code, string name, Guid companyId, Guid addressId, Guid depositorCompanyId) : this()

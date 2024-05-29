@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Companies.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Companies.Commands.Create;
 
@@ -15,6 +15,7 @@ public class CreatedCompanyResponse
     public Guid AddressId { get; set; }
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
-    public Address Address { get; set; }
+    public CompanyAddressResponseDto? Address { get; set; }
+    public CompanyDepositorCompanyResponseDto? DepositorCompany { get; set; }
 
 }

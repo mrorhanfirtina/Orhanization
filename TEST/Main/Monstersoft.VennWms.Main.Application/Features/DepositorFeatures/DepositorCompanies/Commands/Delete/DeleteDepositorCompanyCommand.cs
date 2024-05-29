@@ -29,13 +29,11 @@ public class DeleteDepositorCompanyCommand : IRequest<DeletedDepositorCompanyRes
     {
         private readonly IDepositorCompanyRepository _depositorCompanyRepository;
         private readonly DepositorCompanyBusinessRules _depositorCompanyBusinessRules;
-        private readonly IAddressRepository _addressRepository;
 
-        public DeleteDepositorCompanyCommandHandler(IDepositorCompanyRepository depositorCompanyRepository, DepositorCompanyBusinessRules depositorCompanyBusinessRules, IAddressRepository addressRepository)
+        public DeleteDepositorCompanyCommandHandler(IDepositorCompanyRepository depositorCompanyRepository, DepositorCompanyBusinessRules depositorCompanyBusinessRules)
         {
             _depositorCompanyRepository = depositorCompanyRepository;
             _depositorCompanyBusinessRules = depositorCompanyBusinessRules;
-            _addressRepository = addressRepository;
         }
 
         public async Task<DeletedDepositorCompanyResponse> Handle(DeleteDepositorCompanyCommand request, CancellationToken cancellationToken)
@@ -46,13 +44,14 @@ public class DeleteDepositorCompanyCommand : IRequest<DeletedDepositorCompanyRes
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            DepositorCompany depositorCompany = await _depositorCompanyRepository.GetAsync(predicate: x => x.Id == request.Id && !x.DeletedDate.HasValue,
+            DepositorCompany? depositorCompany = await _depositorCompanyRepository.GetAsync(predicate: x => x.Id == request.Id && !x.DeletedDate.HasValue,
             include: x => x.Include(y => y.Address),
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
+            depositorCompany.Address.DeletedDate = DateTime.Now;
+
             await _depositorCompanyRepository.DeleteAsync(depositorCompany);
-            await _addressRepository.DeleteAsync(depositorCompany.Address);
 
             return new DeletedDepositorCompanyResponse
             {

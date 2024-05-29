@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicPrinterQuery : IRequest<GetListResponse<GetListByDy
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public PrinterDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicPrinterQueryHandler : IRequestHandler<GetListByDynamicPrinterQuery, GetListResponse<GetListByDynamicPrinterListItemDto>>
@@ -46,12 +51,41 @@ public class GetListByDynamicPrinterQuery : IRequest<GetListResponse<GetListByDy
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<Printer> printerList = await _printerRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            
 
-            return _mapper.Map<GetListResponse<GetListByDynamicPrinterListItemDto>>(printerList);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<Printer> printerList = await _printerRepository.GetListByDynamicAsync(
+                        dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                        include: x =>
+                        {
+                            IQueryable<Printer> query = x;
+
+                            var detailLevel = request.DetailLevel;
+
+                            if (detailLevel.IncludeDepositorCompany)
+                            {
+                                query = query.Include(y => y.DepositorCompany);
+                            }
+
+                            var includableQuery = query as IIncludableQueryable<Printer, object>;
+                            return includableQuery;
+                        },
+                        index: request.PageRequest.PageIndex,
+                        size: request.PageRequest.PageSize, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicPrinterListItemDto>>(printerList);
+            }
+            else
+            {
+                Paginate<Printer> printerList = await _printerRepository.GetListByDynamicAsync(
+                        dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                        index: request.PageRequest.PageIndex,
+                        size: request.PageRequest.PageSize, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicPrinterListItemDto>>(printerList);
+            }
         }
     }
 

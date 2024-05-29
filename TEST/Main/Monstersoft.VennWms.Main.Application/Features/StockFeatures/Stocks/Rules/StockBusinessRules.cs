@@ -133,7 +133,7 @@ public class StockBusinessRules : BaseBusinessRules
     #region DEPOSITORID RULES
     public StockBusinessRules CheckDepositorIdExistence(Guid depositorId)
     {
-        var isExists = _depositorRepository.Any(predicate: x => x.Id == depositorId && !x.DeletedDate.HasValue);
+        var isExists = _depositorRepository.Any(predicate: x => x.Id == depositorId && x.DepositorCompanyId == DepositorCompanyId && !x.DeletedDate.HasValue);
 
         if (CurrentRequest == RequestType.Create && !isExists)
         {

@@ -19,7 +19,7 @@ public class DeleteBarcodePrinterCommand : IRequest<DeletedBarcodePrinterRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBarcodePrinters";
+    public string? CacheGroupKey => "GetBarcodes";
 
     public Guid Id { get; set; }
 

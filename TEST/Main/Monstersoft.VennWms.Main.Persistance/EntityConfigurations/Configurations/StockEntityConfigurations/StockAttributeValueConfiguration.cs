@@ -9,7 +9,7 @@ public class StockAttributeValueConfiguration : IEntityTypeConfiguration<StockAt
     public void Configure(EntityTypeBuilder<StockAttributeValue> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("StockAttributeValues").HasKey(p => p.Id);
+        builder.ToTable("StockAttributeValues", "stock").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using Monstersoft.VennWms.Main.Application.Dtos.DtoValidators.UpdateDtoValidators.UpdateDtoRootValidators.PurchaseOrderDtos;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Commands.Update;
+using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Dtos.DtoValidators;
 
 namespace Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Validators;
 

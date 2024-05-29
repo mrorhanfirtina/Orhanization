@@ -30,17 +30,12 @@ public class DeleteBarcodeCommand : IRequest<DeletedBarcodeResponse>, ITransacti
     public class DeleteBarcodeCommandHandler : IRequestHandler<DeleteBarcodeCommand, DeletedBarcodeResponse>
     {
         private readonly IBarcodeRepository _barcodeRepository;
-        private readonly IBarcodeAreaRepository _barcodeAreaRepository;
-        private readonly IBarcodePrinterRepository _barcodePrinterRepository;
         private readonly BarcodeBusinessRules _barcodeBusinessRules;
 
-        public DeleteBarcodeCommandHandler(IBarcodeRepository barcodeRepository, BarcodeBusinessRules barcodeBusinessRules, 
-            IBarcodePrinterRepository barcodePrinterRepository, IBarcodeAreaRepository barcodeAreaRepository)
+        public DeleteBarcodeCommandHandler(IBarcodeRepository barcodeRepository, BarcodeBusinessRules barcodeBusinessRules)
         {
             _barcodeRepository = barcodeRepository;
             _barcodeBusinessRules = barcodeBusinessRules;
-            _barcodePrinterRepository = barcodePrinterRepository;
-            _barcodeAreaRepository = barcodeAreaRepository;
         }
 
         public async Task<DeletedBarcodeResponse> Handle(DeleteBarcodeCommand request, CancellationToken cancellationToken)
@@ -54,12 +49,10 @@ public class DeleteBarcodeCommand : IRequest<DeletedBarcodeResponse>, ITransacti
             Barcode barcode = await _barcodeRepository.GetAsync(predicate: x => x.Id == request.Id,
             include: x => x.Include(y => y.BarcodeAreas).Include(y => y.BarcodePrinters),
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
             await _barcodeRepository.DeleteAsync(barcode);
-            await _barcodeAreaRepository.DeleteRangeAsync(barcode.BarcodeAreas);
-            await _barcodePrinterRepository.DeleteRangeAsync(barcode.BarcodePrinters);
 
             return new DeletedBarcodeResponse
             {

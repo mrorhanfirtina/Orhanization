@@ -9,7 +9,7 @@ public class ItemPackTypeConfiguration : IEntityTypeConfiguration<ItemPackType>
     public void Configure(EntityTypeBuilder<ItemPackType> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("ItemPackTypes").HasKey(p => p.Id);
+        builder.ToTable("ItemPackTypes", "product").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

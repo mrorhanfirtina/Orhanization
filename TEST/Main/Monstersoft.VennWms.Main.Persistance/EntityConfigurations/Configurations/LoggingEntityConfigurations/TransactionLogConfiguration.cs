@@ -9,7 +9,7 @@ public class TransactionLogConfiguration : IEntityTypeConfiguration<TransactionL
     public void Configure(EntityTypeBuilder<TransactionLog> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("TransactionLogs").HasKey(p => p.Id);
+        builder.ToTable("TransactionLogs", "logging").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -35,7 +35,10 @@ public class TransactionLogConfiguration : IEntityTypeConfiguration<TransactionL
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.LogStocks);
+        builder.HasMany(p => p.LogStocks).WithOne(p => p.TransactionLog).HasForeignKey(p => p.TransactionLogId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Depositor).WithMany().HasForeignKey(p => p.DepositorId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.User).WithMany().HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

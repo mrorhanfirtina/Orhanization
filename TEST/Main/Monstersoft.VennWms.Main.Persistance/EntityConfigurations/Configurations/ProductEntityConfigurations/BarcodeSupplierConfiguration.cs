@@ -9,7 +9,7 @@ public class BarcodeSupplierConfiguration : IEntityTypeConfiguration<BarcodeSupp
     public void Configure(EntityTypeBuilder<BarcodeSupplier> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("BarcodeSuppliers").HasKey(p => p.Id);
+        builder.ToTable("BarcodeSuppliers", "product").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

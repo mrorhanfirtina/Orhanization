@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.LocationDtos;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationStockAttributes.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationStockAttributes.Constants;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationStockAttributes.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationStockAttributes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,7 @@ public class UpdateLocationStockAttributeCommand : IRequest<UpdatedLocationStock
     public string? CacheGroupKey => "GetLocationStockAttributes";
 
     public UpdateLocationStockAttributeDto LocationStockAttribute { get; set; }
+    public LocationStockAttributeDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateLocationStockAttributeCommandHandler : IRequestHandler<UpdateLocationStockAttributeCommand, UpdatedLocationStockAttributeResponse>
@@ -54,8 +59,47 @@ public class UpdateLocationStockAttributeCommand : IRequest<UpdatedLocationStock
             LocationStockAttribute? locationStockAttribute = _mapper.Map(request.LocationStockAttribute, currentLocationStockAttribute);
             locationStockAttribute.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedLocationStockAttributeResponse>(await _locationStockAttributeRepository.UpdateAsync(locationStockAttribute));
+            await _locationStockAttributeRepository.UpdateAsync(locationStockAttribute);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _locationStockAttributeRepository.GetAsync(predicate: x => x.Id == locationStockAttribute.Id,
+                include: x =>
+                {
+                    IQueryable<LocationStockAttribute> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeLocation)
+                    {
+                        query = query.Include(y => y.Location);
+                    }
+
+                    if (detailLevel.IncludeStockAttribute)
+                    {
+                        query = query.Include(y => y.StockAttribute);
+
+                        if (detailLevel.StockAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.StockAttribute).ThenInclude(m => m.AttributeInputType);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<LocationStockAttribute, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedLocationStockAttributeResponse>(response);
+            }
+            else
+            {
+                var response = await _locationStockAttributeRepository.GetAsync(predicate: x => x.Id == locationStockAttribute.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedLocationStockAttributeResponse>(response);
+            }
         }
     }
 }

@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -27,6 +31,8 @@ public class GetListOrderAttributeQuery : IRequest<GetListResponse<GetListOrderA
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
+    public OrderAttributeDetailLevel DetailLevel { get; set; }
+
 
 
     public class GetListOrderAttributeQueryHandler : IRequestHandler<GetListOrderAttributeQuery, GetListResponse<GetListOrderAttributeListItemDto>>
@@ -49,12 +55,44 @@ public class GetListOrderAttributeQuery : IRequest<GetListResponse<GetListOrderA
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<OrderAttribute> orderAttributeList = await _orderAttributeRepository.GetListAsync(
-            predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<OrderAttribute> orderAttributeList = await _orderAttributeRepository.GetListAsync(
+                predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<OrderAttribute> query = x;
 
-            return _mapper.Map<GetListResponse<GetListOrderAttributeListItemDto>>(orderAttributeList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAttributeInputType)
+                    {
+                        query = query.Include(y => y.AttributeInputType);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<OrderAttribute, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListOrderAttributeListItemDto>>(orderAttributeList);
+            }
+            else
+            {
+                Paginate<OrderAttribute> orderAttributeList = await _orderAttributeRepository.GetListAsync(
+                predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListOrderAttributeListItemDto>>(orderAttributeList);
+            }
         }
     }
 

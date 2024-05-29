@@ -8,7 +8,7 @@ public class TaskList : Entity<Guid>
     public string Code { get; set; }
     public Guid DepositorId { get; set; }
     public Guid DepositorCompanyId { get; set; }
-    public virtual ICollection<WorkTask> WorkTasks { get; set; }
+    public virtual ICollection<WorkTask>? WorkTasks { get; set; }
     public virtual Depositor Depositor { get; set; }
     public virtual DepositorCompany DepositorCompany { get; set; }
 

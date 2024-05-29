@@ -30,13 +30,11 @@ public class DeleteDistributorCommand : IRequest<DeletedDistributorResponse>, IT
     {
         private readonly IDistributorRepository _disturbitorRepository;
         private readonly DistributorBusinessRules _disturbitorBusinessRules;
-        private readonly IAddressRepository _addressRepository;
 
-        public DeleteDisturbitorCommandHandler(IDistributorRepository disturbitorRepository, DistributorBusinessRules disturbitorBusinessRules, IAddressRepository addressRepository)
+        public DeleteDisturbitorCommandHandler(IDistributorRepository disturbitorRepository, DistributorBusinessRules disturbitorBusinessRules)
         {
             _disturbitorRepository = disturbitorRepository;
             _disturbitorBusinessRules = disturbitorBusinessRules;
-            _addressRepository = addressRepository;
         }
 
         public async Task<DeletedDistributorResponse> Handle(DeleteDistributorCommand request, CancellationToken cancellationToken)
@@ -47,13 +45,14 @@ public class DeleteDistributorCommand : IRequest<DeletedDistributorResponse>, IT
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Distributor disturbitor = await _disturbitorRepository.GetAsync(predicate: x => x.Id == request.Id && !x.DeletedDate.HasValue,
+            Distributor? disturbitor = await _disturbitorRepository.GetAsync(predicate: x => x.Id == request.Id && !x.DeletedDate.HasValue,
             include: x => x.Include(y => y.Address),
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
+            disturbitor.Address.DeletedDate = DateTime.Now;
+
             await _disturbitorRepository.DeleteAsync(disturbitor);
-            await _addressRepository.DeleteAsync(disturbitor.Address);
 
             return new DeletedDistributorResponse
             {

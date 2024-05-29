@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Queries.GetById;
+﻿using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Queries.GetById;
 
 public class GetByIdOrderItemMemoResponse
 {
@@ -10,6 +12,6 @@ public class GetByIdOrderItemMemoResponse
     public DateTime EditDate { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public OrderItemMemoOrderItemResponseDto? OrderItem { get; set; }
 }
 

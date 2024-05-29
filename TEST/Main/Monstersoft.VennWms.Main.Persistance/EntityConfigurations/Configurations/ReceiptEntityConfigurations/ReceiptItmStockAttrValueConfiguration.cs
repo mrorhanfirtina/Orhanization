@@ -9,7 +9,7 @@ public class ReceiptItmStockAttrValueConfiguration : IEntityTypeConfiguration<Re
     public void Configure(EntityTypeBuilder<ReceiptItmStockAttrValue> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("ReceiptItmStockAttrValues").HasKey(p => p.Id);
+        builder.ToTable("ReceiptItmStockAttrValues", "receipt").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

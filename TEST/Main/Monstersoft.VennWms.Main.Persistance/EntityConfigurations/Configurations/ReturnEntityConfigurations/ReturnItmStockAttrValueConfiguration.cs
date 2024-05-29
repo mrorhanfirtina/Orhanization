@@ -9,7 +9,7 @@ public class ReturnItmStockAttrValueConfiguration : IEntityTypeConfiguration<Ret
     public void Configure(EntityTypeBuilder<ReturnItmStockAttrValue> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("ReturnItmStockAttrValues").HasKey(p => p.Id);
+        builder.ToTable("ReturnItmStockAttrValues", "return").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

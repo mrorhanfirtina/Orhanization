@@ -1,4 +1,7 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Queries.GetByCode;
+﻿using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Dtos.ResponseDtos;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.DepositorCompanies.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Queries.GetByCode;
 
 public class GetByCodeContainerUnitResponse
 {
@@ -9,5 +12,7 @@ public class GetByCodeContainerUnitResponse
     public string CountryCode { get; set; }
     public string ProducerCode { get; set; }
     public string Counter { get; set; }
-    public Guid DepositorCompanyId { get; set; }
+    public ContainerUnitDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public DateTime UpdatedDate { get; set; }
 }

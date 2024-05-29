@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using Monstersoft.VennWms.Main.Application.Dtos.DtoValidators.UpdateDtoValidators.UpdateDtoRootValidators.WorkTaskDtos;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.WorkTasks.Commands.Update;
+using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.WorkTasks.Dtos.DtoValidators;
 
 namespace Monstersoft.VennWms.Main.Application.Features.TaskFeatures.WorkTasks.Validators;
 

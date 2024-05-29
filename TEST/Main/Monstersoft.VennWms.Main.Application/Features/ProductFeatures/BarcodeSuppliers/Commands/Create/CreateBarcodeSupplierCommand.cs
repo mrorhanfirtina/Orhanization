@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.ProductDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Constants;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +30,8 @@ public class CreateBarcodeSupplierCommand : IRequest<CreatedBarcodeSupplierRespo
     public string? CacheGroupKey => "GetBarcodeSuppliers";
 
     public CreateBarcodeSupplierDto BarcodeSupplier { get; set; }
+    public BarcodeSupplierDetailLevel DetailLevel { get; set; }
+
 
 
     public class CreateBarcodeSupplierCommandHandler : IRequestHandler<CreateBarcodeSupplierCommand, CreatedBarcodeSupplierResponse>
@@ -51,7 +59,52 @@ public class CreateBarcodeSupplierCommand : IRequest<CreatedBarcodeSupplierRespo
             barcodeSupplier.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
             barcodeSupplier.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedBarcodeSupplierResponse>(await _barcodeSupplierRepository.AddAsync(barcodeSupplier));
+            await _barcodeSupplierRepository.AddAsync(barcodeSupplier);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _barcodeSupplierRepository.GetAsync(predicate: x => x.Id == barcodeSupplier.Id,
+                include: x =>
+                {
+                    IQueryable<BarcodeSupplier> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeProductBarcode)
+                    {
+                        query = query.Include(y => y.ProductBarcode);
+                    }
+
+                    if (detailLevel.IncludeSupplier)
+                    {
+                        query = query.Include(y => y.Supplier);
+
+                        if (detailLevel.SupplierDetailLevel.IncludeCompany)
+                        {
+                            query = query.Include(y => y.Supplier).ThenInclude(m => m.Company);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<BarcodeSupplier, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedBarcodeSupplierResponse>(response);
+            }
+            else
+            {
+                var response = await _barcodeSupplierRepository.GetAsync(predicate: x => x.Id == barcodeSupplier.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedBarcodeSupplierResponse>(response);
+            }
         }
     }
 

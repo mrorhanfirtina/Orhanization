@@ -9,7 +9,7 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
     public void Configure(EntityTypeBuilder<OrderItem> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("OrderItems").HasKey(p => p.Id);
+        builder.ToTable("OrderItems", "order").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -29,10 +29,11 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.OrderItemMemos).WithOne().HasForeignKey(p => p.OrderItemId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.OrderItemStockAttrValues).WithOne().HasForeignKey(p => p.OrderItemId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.OrderItemMemos).WithOne(p => p.OrderItem).HasForeignKey(p => p.OrderItemId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.OrderItemStockAttrValues).WithOne(p => p.OrderItem).HasForeignKey(p => p.OrderItemId).OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(p => p.OrderShipItems).WithOne().HasForeignKey(p => p.OrderItemId).OnDelete(DeleteBehavior.NoAction);
         builder.HasOne(p => p.Product).WithMany().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.ItemUnit).WithMany().HasForeignKey(p => p.ItemUnitId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

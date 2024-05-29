@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Distributors.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Distributors.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -19,6 +23,7 @@ public class GetByCodeDistributorQuery : IRequest<GetByCodeDistributorResponse>,
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
+    public DistributorDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeDisturbitorQueryHandler : IRequestHandler<GetByCodeDistributorQuery, GetByCodeDistributorResponse>
@@ -41,10 +46,48 @@ public class GetByCodeDistributorQuery : IRequest<GetByCodeDistributorResponse>,
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            return _mapper.Map<GetByCodeDistributorResponse>(await _disturbitorRepository.GetAsync(
-            predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(m => m.Address),
-            withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByCodeDistributorResponse>(await _disturbitorRepository.GetAsync(
+                predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<Distributor> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeCompany)
+                    {
+                        query = query.Include(y => y.Company);
+                    }
+
+                    if (detailLevel.IncludeAddress)
+                    {
+                        query = query.Include(y => y.Address);
+                    }
+
+                    if (detailLevel.IncludeBranch)
+                    {
+                        query = query.Include(y => y.Branches);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<Distributor, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByCodeDistributorResponse>(await _disturbitorRepository.GetAsync(
+                predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

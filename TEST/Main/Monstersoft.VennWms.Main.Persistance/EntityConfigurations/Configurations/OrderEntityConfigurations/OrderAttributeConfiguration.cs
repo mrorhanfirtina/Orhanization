@@ -9,7 +9,7 @@ public class OrderAttributeConfiguration : IEntityTypeConfiguration<OrderAttribu
     public void Configure(EntityTypeBuilder<OrderAttribute> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("OrderAttributes").HasKey(p => p.Id);
+        builder.ToTable("OrderAttributes", "order").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -17,6 +17,7 @@ public class OrderAttributeConfiguration : IEntityTypeConfiguration<OrderAttribu
         builder.Property(p => p.Code).HasColumnName("Code").HasMaxLength(30).IsRequired();
         builder.Property(p => p.Description).HasColumnName("Description").HasMaxLength(60).IsRequired();
         builder.Property(p => p.AttributeInputTypeId).HasColumnName("AttributeInputTypeId").IsRequired();
+        builder.Property(p => p.IsNecessary).HasColumnName("IsNecessary").IsRequired();
         builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");

@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductDepositors.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductDepositors.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,8 @@ public class GetListByDynamicProductDepositorQuery : IRequest<GetListResponse<Ge
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public ProductDepositorDetailLevel DetailLevel { get; set; }
+
 
 
     public class GetListByDynamicProductDepositorQueryHandler : IRequestHandler<GetListByDynamicProductDepositorQuery, GetListResponse<GetListByDynamicProductDepositorListItemDto>>
@@ -44,12 +50,43 @@ public class GetListByDynamicProductDepositorQuery : IRequest<GetListResponse<Ge
             _productDepositorBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ProductDepositor> productDepositorList = await _productDepositorRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ProductDepositor> productDepositorList = await _productDepositorRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<ProductDepositor> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicProductDepositorListItemDto>>(productDepositorList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositor)
+                    {
+                        query = query.Include(y => y.Depositor);
+                    }
+
+                    if (detailLevel.IncludeProduct)
+                    {
+                        query = query.Include(y => y.Product);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ProductDepositor, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicProductDepositorListItemDto>>(productDepositorList);
+            }
+            else
+            {
+                Paginate<ProductDepositor> productDepositorList = await _productDepositorRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicProductDepositorListItemDto>>(productDepositorList);
+            }
         }
     }
 

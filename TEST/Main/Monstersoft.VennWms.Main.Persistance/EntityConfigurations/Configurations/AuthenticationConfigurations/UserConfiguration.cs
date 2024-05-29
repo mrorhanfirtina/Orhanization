@@ -1,11 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Orhanization.Core.Security.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Monstersoft.VennWms.Main.Persistance.EntityConfigurations.Configurations.AuthenticationConfigurations;
 
@@ -13,7 +8,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable("Users").HasKey(u => u.Id);
+        builder.ToTable("Users", "auth").HasKey(u => u.Id);
         builder.Property(u => u.Id).HasColumnName("Id").UseIdentityColumn(1, 1);
         builder.Property(u => u.FirstName).HasColumnName("FirstName");
         builder.Property(u => u.LastName).HasColumnName("LastName");

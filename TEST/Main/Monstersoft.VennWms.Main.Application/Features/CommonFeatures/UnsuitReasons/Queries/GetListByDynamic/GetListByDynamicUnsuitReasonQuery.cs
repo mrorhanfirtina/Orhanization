@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Constants;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicUnsuitReasonQuery : IRequest<GetListResponse<GetLis
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public UnsuitReasonsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicUnsuitReasonQueryHandler : IRequestHandler<GetListByDynamicUnsuitReasonQuery, GetListResponse<GetListByDynamicUnsuitReasonListItemDto>>
@@ -46,12 +51,39 @@ public class GetListByDynamicUnsuitReasonQuery : IRequest<GetListResponse<GetLis
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<UnsuitReason> unsuitReasonList = await _unsuitReasonRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<UnsuitReason> unsuitReasonList = await _unsuitReasonRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<UnsuitReason> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicUnsuitReasonListItemDto>>(unsuitReasonList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<UnsuitReason, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex,
+                size: request.PageRequest.PageSize, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicUnsuitReasonListItemDto>>(unsuitReasonList);
+            }
+            else
+            {
+                Paginate<UnsuitReason> unsuitReasonList = await _unsuitReasonRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex,
+                size: request.PageRequest.PageSize, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicUnsuitReasonListItemDto>>(unsuitReasonList);
+            }
         }
     }
 

@@ -6,7 +6,8 @@ public class BarcodePrinter : Entity<Guid>
 {
     public Guid BarcodeId { get; set; }
     public Guid PrinterId { get; set; }
-    public virtual Printer Printer { get; set; }
+    public virtual Printer? Printer { get; set; }
+    public virtual Barcode? Barcode { get; set; }
 
     public BarcodePrinter()
     {

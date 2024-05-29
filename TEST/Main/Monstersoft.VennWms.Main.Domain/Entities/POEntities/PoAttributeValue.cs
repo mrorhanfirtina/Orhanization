@@ -8,6 +8,7 @@ public class PoAttributeValue : Entity<Guid>
     public Guid PoAttributeId { get; set; }
     public string Value { get; set; }
     public virtual PoAttribute PoAttribute { get; set; }
+    public virtual PurchaseOrder PurchaseOrder { get; set; }
 
     public PoAttributeValue()
     {

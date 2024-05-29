@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.OrderDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Constants;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +30,7 @@ public class CreateOrderItemMemoCommand : IRequest<CreatedOrderItemMemoResponse>
     public string? CacheGroupKey => "GetOrderItemMemos";
 
     public CreateOrderItemMemoDto OrderItemMemo { get; set; }
+    public OrderItemMemoDetailLevel DetailLevel { get; set; }
 
 
     public class CreateOrderItemMemoCommandHandler : IRequestHandler<CreateOrderItemMemoCommand, CreatedOrderItemMemoResponse>
@@ -49,7 +56,57 @@ public class CreateOrderItemMemoCommand : IRequest<CreatedOrderItemMemoResponse>
             orderItemMemo.Id = Guid.NewGuid();
             orderItemMemo.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedOrderItemMemoResponse>(await _orderItemMemoRepository.AddAsync(orderItemMemo));
+            await _orderItemMemoRepository.AddAsync(orderItemMemo);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _orderItemMemoRepository.GetAsync(predicate: x => x.Id == orderItemMemo.Id,
+                include: x =>
+                {
+                    IQueryable<OrderItemMemo> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeOrderItem)
+                    {
+                        query = query.Include(y => y.OrderItem);
+
+                        if (detailLevel.OrderItemDetailLevel.IncludeOrder)
+                        {
+                            query = query.Include(y => y.OrderItem).ThenInclude(m => m.Order);
+
+                            if (detailLevel.OrderItemDetailLevel.OrderDetailLevel.IncludeCustomer)
+                            {
+                                query = query.Include(y => y.OrderItem).ThenInclude(m => m.Order).ThenInclude(n => n.Customer);
+                            }
+
+                            if (detailLevel.OrderItemDetailLevel.OrderDetailLevel.IncludeDepositor)
+                            {
+                                query = query.Include(y => y.OrderItem).ThenInclude(m => m.Order).ThenInclude(n => n.Depositor);
+                            }
+
+                            if (detailLevel.OrderItemDetailLevel.OrderDetailLevel.IncludeReceiver)
+                            {
+                                query = query.Include(y => y.OrderItem).ThenInclude(m => m.Order).ThenInclude(n => n.Receiver);
+                            }
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<OrderItemMemo, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedOrderItemMemoResponse>(response);
+            }
+            else
+            {
+                var response = await _orderItemMemoRepository.GetAsync(predicate: x => x.Id == orderItemMemo.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedOrderItemMemoResponse>(response);
+            }
         }
     }
 

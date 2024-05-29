@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationStockAttributes.Queries.GetById;
+﻿using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationStockAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationStockAttributes.Queries.GetById;
 
 public class GetByIdLocationStockAttributeResponse
 {
@@ -8,6 +10,8 @@ public class GetByIdLocationStockAttributeResponse
     public bool IsForbid { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public LocationStockAttributeLocationResponseDto? Location { get; set; }
+    public LocationStockAttributeStockAttributeResponseDto? StockAttribute { get; set; }
 
 }
 

@@ -9,6 +9,7 @@ public class OrderMemo : Entity<Guid>
     public string Text { get; set; }
     public DateTime InputDate { get; set; }
     public DateTime? EditDate { get; set; }
+    public virtual Order? Order { get; set; }
 
     public OrderMemo()
     {

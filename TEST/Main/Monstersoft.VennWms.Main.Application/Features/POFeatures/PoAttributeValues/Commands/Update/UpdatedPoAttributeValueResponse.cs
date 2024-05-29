@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Commands.Update;
 
 public class UpdatedPoAttributeValueResponse
 {
@@ -8,6 +10,8 @@ public class UpdatedPoAttributeValueResponse
     public string Value { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public PoAttributeValuePoAttributeResponseDto? PoAttribute { get; set; }
+    public PoAttributeValuePurchaseOrderResponseDto? PurchaseOrder { get; set; }
 
 }
 

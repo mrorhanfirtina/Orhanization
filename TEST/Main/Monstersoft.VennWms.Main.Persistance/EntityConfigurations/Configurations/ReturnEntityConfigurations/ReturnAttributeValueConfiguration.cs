@@ -9,7 +9,7 @@ public class ReturnAttributeValueConfiguration : IEntityTypeConfiguration<Return
     public void Configure(EntityTypeBuilder<ReturnAttributeValue> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("ReturnAttributeValues").HasKey(p => p.Id);
+        builder.ToTable("ReturnAttributeValues", "return").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

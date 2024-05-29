@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.PurchaseOrderDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Constants;
+using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.PORepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.POEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +30,7 @@ public class CreatePoAttributeValueCommand : IRequest<CreatedPoAttributeValueRes
     public string? CacheGroupKey => "GetPoAttributeValues";
 
     public CreatePoAttributeValueDto PoAttributeValue { get; set; }
+    public PoAttributeValueDetailLevel DetailLevel { get; set; }
 
 
     public class CreatePoAttributeValueCommandHandler : IRequestHandler<CreatePoAttributeValueCommand, CreatedPoAttributeValueResponse>
@@ -50,7 +57,47 @@ public class CreatePoAttributeValueCommand : IRequest<CreatedPoAttributeValueRes
             poAttributeValue.Id = Guid.NewGuid();
             poAttributeValue.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedPoAttributeValueResponse>(await _poAttributeValueRepository.AddAsync(poAttributeValue));
+            await _poAttributeValueRepository.AddAsync(poAttributeValue);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _poAttributeValueRepository.GetAsync(predicate: x => x.Id == poAttributeValue.Id,
+                include: x =>
+                {
+                    IQueryable<PoAttributeValue> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludePurchaseOrder)
+                    {
+                        query = query.Include(y => y.PurchaseOrder);
+                    }
+
+                    if (detailLevel.IncludePoAttribute)
+                    {
+                        query = query.Include(y => y.PoAttribute);
+
+                        if (detailLevel.PoAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.PoAttribute).ThenInclude(m => m.AttributeInputType);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<PoAttributeValue, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedPoAttributeValueResponse>(response);
+            }
+            else
+            {
+                var response = await _poAttributeValueRepository.GetAsync(predicate: x => x.Id == poAttributeValue.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedPoAttributeValueResponse>(response);
+            }
         }
     }
 

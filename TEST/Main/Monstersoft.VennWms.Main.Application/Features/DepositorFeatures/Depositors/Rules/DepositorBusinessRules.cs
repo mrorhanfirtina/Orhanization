@@ -117,9 +117,9 @@ public class DepositorBusinessRules : BaseBusinessRules
     #endregion
 
     #region DEPOSITORCOMPANYID RULES
-    public DepositorBusinessRules CheckDepositorCompanyIdExistence(Guid depositorCompanyId)
+    public DepositorBusinessRules CheckDepositorCompanyIdExistence()
     {
-        var isExists = _depositorCompanyRepository.Any(predicate: x => x.Id == depositorCompanyId && !x.DeletedDate.HasValue);
+        var isExists = _depositorCompanyRepository.Any(predicate: x => x.Id == DepositorCompanyId && !x.DeletedDate.HasValue);
 
         if (CurrentRequest == RequestType.Create && !isExists)
         {

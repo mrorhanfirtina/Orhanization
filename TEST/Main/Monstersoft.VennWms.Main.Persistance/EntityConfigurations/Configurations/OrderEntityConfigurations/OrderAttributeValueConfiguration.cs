@@ -9,7 +9,7 @@ public class OrderAttributeValueConfiguration : IEntityTypeConfiguration<OrderAt
     public void Configure(EntityTypeBuilder<OrderAttributeValue> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("OrderAttributeValues").HasKey(p => p.Id);
+        builder.ToTable("OrderAttributeValues", "order").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

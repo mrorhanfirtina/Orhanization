@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderTypes.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderTypes.Commands.Create;
 
@@ -12,5 +12,6 @@ public class CreatedOrderTypeResponse
     public Guid DepositorCompanyId { get; set; }
     public int Counter { get; set; }
     public DateTime CreatedDate { get; set; }
-    public ICollection<Order> Orders { get; set; }
+    public OrderTypeDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public ICollection<OrderTypeOrderResponseDto>? Orders { get; set; }
 }

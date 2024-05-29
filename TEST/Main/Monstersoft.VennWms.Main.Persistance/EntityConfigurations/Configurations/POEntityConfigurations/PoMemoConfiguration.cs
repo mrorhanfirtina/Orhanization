@@ -9,7 +9,7 @@ public class PoMemoConfiguration : IEntityTypeConfiguration<PoMemo>
     public void Configure(EntityTypeBuilder<PoMemo> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("PoMemos").HasKey(p => p.Id);
+        builder.ToTable("PoMemos", "po").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

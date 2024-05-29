@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoTypes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.PORepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.POEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +28,7 @@ public class GetListByDynamicPoTypeQuery : IRequest<GetListResponse<GetListByDyn
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public PoTypeDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicPoTypeQueryHandler : IRequestHandler<GetListByDynamicPoTypeQuery, GetListResponse<GetListByDynamicPoTypeListItemDto>>
@@ -47,13 +51,43 @@ public class GetListByDynamicPoTypeQuery : IRequest<GetListResponse<GetListByDyn
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<PoType> poTypeList = await _poTypeRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(x => x.PurchaseOrders),
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<PoType> poTypeList = await _poTypeRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<PoType> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicPoTypeListItemDto>>(poTypeList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludePurchaseOrder)
+                    {
+                        query = query.Include(y => y.PurchaseOrders);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<PoType, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicPoTypeListItemDto>>(poTypeList);
+            }
+            else
+            {
+                Paginate<PoType> poTypeList = await _poTypeRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicPoTypeListItemDto>>(poTypeList);
+            }
         }
     }
 

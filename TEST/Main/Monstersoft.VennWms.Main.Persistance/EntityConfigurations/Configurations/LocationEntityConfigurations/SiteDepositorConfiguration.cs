@@ -10,7 +10,7 @@ public class SiteDepositorConfiguration : IEntityTypeConfiguration<SiteDepositor
     {
 
         #region Tablo Tanımları
-        builder.ToTable("SiteDepositors").HasKey(p => p.Id);
+        builder.ToTable("SiteDepositors", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

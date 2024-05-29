@@ -1,4 +1,5 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Dtos.ResponseDtos;
+using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 
 namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Commands.Create;
@@ -17,9 +18,16 @@ public class CreatedOrderResponse
     public Guid OrderTypeId { get; set; }
     public int StatusId { get; set; }
     public DateTime CreatedDate { get; set; }
-    public Customer Customer { get; set; }
-    public OrderType OrderType { get; set; }
-    public ICollection<OrderAttributeValue> OrderAttributeValues { get; set; }
-    public ICollection<OrderItem> OrderItems { get; set; }
-    public ICollection<OrderMemo> OrderMemos { get; set; }
+    public OrderCustomerResponseDto? Customer { get; set; }
+    public OrderOrderPriorityResponseDto? OrderPriority { get; set; }
+    public OrderOrderShipmentResponseDto? OrderShipment { get; set; }
+    public OrderOrderTypeResponseDto? OrderType { get; set; }
+    public ICollection<OrderOrderAttributeValueResponseDto>? OrderAttributeValues { get; set; }
+    public ICollection<OrderOrderItemResponseDto>? OrderItems { get; set; }
+    public ICollection<OrderOrderMemoResponseDto>? OrderMemos { get; set; }
+    public OrderDepositorResponseDto? Depositor { get; set; }
+    public OrderDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public OrderReceiverResponseDto? Receiver { get; set; }
+    public OrderStatusResponseDto? Status { get; set; }
+
 }

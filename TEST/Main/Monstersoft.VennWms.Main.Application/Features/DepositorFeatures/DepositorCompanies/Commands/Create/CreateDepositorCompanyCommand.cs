@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.DepositorDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.DepositorCompanies.Constants;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.DepositorCompanies.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.DepositorCompanies.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -23,6 +27,7 @@ public class CreateDepositorCompanyCommand : IRequest<CreatedDepositorCompanyRes
     public string? CacheGroupKey => "GetDepositorCompanies";
 
     public CreateDepositorCompanyDto DepositorCompany { get; set; }
+    public DepositorCompanyDetailLevel DetailLevel { get; set; }
 
 
     public class CreateDepositorCompanyCommandHandler : IRequestHandler<CreateDepositorCompanyCommand, CreatedDepositorCompanyResponse>
@@ -47,9 +52,39 @@ public class CreateDepositorCompanyCommand : IRequest<CreatedDepositorCompanyRes
             depositorCompany.Id = Guid.NewGuid();
             depositorCompany.CreatedDate = DateTime.Now;
             depositorCompany.Address.CreatedDate = DateTime.Now;
-            depositorCompany.Address.Id = Guid.NewGuid();
 
-            return _mapper.Map<CreatedDepositorCompanyResponse>(await _depositorCompanyRepository.AddAsync(depositorCompany));
+            await _depositorCompanyRepository.AddAsync(depositorCompany);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _depositorCompanyRepository.GetAsync(predicate: x => x.Id == depositorCompany.Id,
+                include: x =>
+                {
+                    IQueryable<DepositorCompany> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeAddress)
+                    {
+                        query = query.Include(y => y.Address);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<DepositorCompany, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedDepositorCompanyResponse>(response);
+            }
+            else
+            {
+                var response = await _depositorCompanyRepository.GetAsync(predicate: x => x.Id == depositorCompany.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedDepositorCompanyResponse>(response);
+
+            }
         }
     }
 }

@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +28,7 @@ public class GetListByDynamicBarcodeQuery : IRequest<GetListResponse<GetListByDy
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public BarcodeDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicBarcodeQueryHandler : IRequestHandler<GetListByDynamicBarcodeQuery, GetListResponse<GetListByDynamicBarcodeListItemDto>>
@@ -47,13 +51,55 @@ public class GetListByDynamicBarcodeQuery : IRequest<GetListResponse<GetListByDy
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<Barcode> barcodeList = await _barcodeRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(m => m.BarcodeAreas).Include(m => m.BarcodePrinters),
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<Barcode> barcodeList = await _barcodeRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<Barcode> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicBarcodeListItemDto>>(barcodeList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeBarcodeAreas)
+                    {
+                        query = query.Include(y => y.BarcodeAreas);
+                    }
+
+                    if (detailLevel.IncludeBarcodePrinters)
+                    {
+                        query = query.Include(y => y.BarcodePrinters);
+
+                        if (detailLevel.BarcodePrinterDetailLevel.IncludePrinter)
+                        {
+                            query = query.Include(y => y.BarcodePrinters).ThenInclude(m => m.Printer);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<Barcode, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex,
+                size: request.PageRequest.PageSize, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicBarcodeListItemDto>>(barcodeList);
+            }
+            else
+            {
+                Paginate<Barcode> barcodeList = await _barcodeRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex,
+                size: request.PageRequest.PageSize, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicBarcodeListItemDto>>(barcodeList);
+            }
+
+            
         }
     }
 

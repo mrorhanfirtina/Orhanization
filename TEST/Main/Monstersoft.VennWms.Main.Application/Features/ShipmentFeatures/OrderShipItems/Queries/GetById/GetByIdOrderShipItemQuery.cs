@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItems.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
 using Orhanization.Core.Application.Dtos;
@@ -39,7 +40,10 @@ public class GetByIdOrderShipItemQuery : IRequest<GetByIdOrderShipItemResponse>,
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdOrderShipItemResponse>(await _orderShipItemRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+            return _mapper.Map<GetByIdOrderShipItemResponse>(await _orderShipItemRepository.GetAsync(x => x.Id == request.Id,
+                include: x => x.Include(y => y.OrderShipItemTasks)
+                           .Include(y => y.OrderShipItemTasks).ThenInclude(m => m.OrderShipItemStocks),
+                withDeleted: false, cancellationToken: cancellationToken));
         }
     }
 

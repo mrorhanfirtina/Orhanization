@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using Monstersoft.VennWms.Main.Application.Dtos.DtoValidators.CreateDtoValidators.CreateDtoRootValidators.CommonDtos;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Dtos.DtoValidators;
 
 namespace Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Validators;
 

@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.PurchaseOrderDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Constants;
+using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.PORepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.POEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +30,7 @@ public class CreatePoAttributeCommand : IRequest<CreatedPoAttributeResponse>, IT
     public string? CacheGroupKey => "GetPoAttributes";
 
     public CreatePoAttributeDto PoAttribute { get; set; }
+    public PoAttributeDetailLevel DetailLevel { get; set; }
 
 
     public class CreatePoAttributeCommandHandler : IRequestHandler<CreatePoAttributeCommand, CreatedPoAttributeResponse>
@@ -51,7 +58,42 @@ public class CreatePoAttributeCommand : IRequest<CreatedPoAttributeResponse>, IT
             poAttribute.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
             poAttribute.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedPoAttributeResponse>(await _poAttributeRepository.AddAsync(poAttribute));
+            await _poAttributeRepository.AddAsync(poAttribute);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _poAttributeRepository.GetAsync(predicate: x => x.Id == poAttribute.Id,
+                include: x =>
+                {
+                    IQueryable<PoAttribute> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeAttributeInputType)
+                    {
+                        query = query.Include(y => y.AttributeInputType);
+                    }
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<PoAttribute, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedPoAttributeResponse>(response);
+            }
+            else
+            {
+                var response = await _poAttributeRepository.GetAsync(predicate: x => x.Id == poAttribute.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedPoAttributeResponse>(response);
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Queries.GetById;
+﻿using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Queries.GetById;
 
 public class GetByIdPoAttributeResponse
 {
@@ -10,6 +12,8 @@ public class GetByIdPoAttributeResponse
     public bool IsNecessary { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public PoAttributeDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public PoAttributeAttributeInputTypeResponseDto? AttributeInputType { get; set; }
 
 }
 

@@ -9,7 +9,7 @@ public class BuildingDimensionConfiguration : IEntityTypeConfiguration<BuildingD
     public void Configure(EntityTypeBuilder<BuildingDimension> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("BuildingDimensions").HasKey(p => p.Id);
+        builder.ToTable("BuildingDimensions", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

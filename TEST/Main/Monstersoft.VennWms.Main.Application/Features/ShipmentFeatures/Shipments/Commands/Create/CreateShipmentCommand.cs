@@ -1,5 +1,8 @@
-﻿using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.ShipmentDtos;
+﻿using AutoMapper;
+using MediatR;
+using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.Shipments.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
+using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Caching;
@@ -20,4 +23,41 @@ public class CreateShipmentCommand : IRequest<CreatedShipmentResponse>, ITransac
     public string? CacheGroupKey => "GetShipments";
 
     public CreateShipmentDto Shipment { get; set; }
+
+    public class CreateShipmentCommandHandler : IRequestHandler<CreateShipmentCommand, CreatedShipmentResponse>
+    {
+        private readonly IShipmentRepository _shipmentRepository;
+        private readonly IMapper _mapper;
+        private readonly ShipmentBusinessRules _shipmentBusinessRules;
+
+        public CreateShipmentCommandHandler(IShipmentRepository shipmentRepository, IMapper mapper, ShipmentBusinessRules shipmentBusinessRules)
+        {
+            _shipmentRepository = shipmentRepository;
+            _mapper = mapper;
+            _shipmentBusinessRules = shipmentBusinessRules;
+        }
+
+        public async Task<CreatedShipmentResponse> Handle(CreateShipmentCommand request, CancellationToken cancellationToken)
+        {
+            _shipmentBusinessRules.CreateRequest()
+                .CheckDepositorCompany(request.UserRequestInfo!.RequestUserLocalityId);
+
+            Shipment? shipment = _mapper.Map<Shipment>(request.Shipment);
+
+            shipment.CreatedDate = DateTime.Now;
+            shipment.DepositorCompanyId = Guid.Parse(request.UserRequestInfo!.RequestUserLocalityId);
+
+            shipment.ShipmentMemos?.ToList().ForEach(x =>
+            {
+                x.CreatedDate = DateTime.Now;
+            });
+
+            shipment.ShipmentAttributeValues?.ToList().ForEach(x =>
+            {
+                x.CreatedDate = DateTime.Now;
+            });
+
+            return _mapper.Map<CreatedShipmentResponse>(await _shipmentRepository.AddAsync(shipment));
+        }
+    }
 }

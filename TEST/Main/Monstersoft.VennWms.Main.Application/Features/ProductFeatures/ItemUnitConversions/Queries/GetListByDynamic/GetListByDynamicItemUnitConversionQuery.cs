@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,8 @@ public class GetListByDynamicItemUnitConversionQuery : IRequest<GetListResponse<
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public ItemUnitConversionDetailLevel DetailLevel { get; set; }
+
 
 
     public class GetListByDynamicItemUnitConversionQueryHandler : IRequestHandler<GetListByDynamicItemUnitConversionQuery, GetListResponse<GetListByDynamicItemUnitConversionListItemDto>>
@@ -44,12 +50,64 @@ public class GetListByDynamicItemUnitConversionQuery : IRequest<GetListResponse<
             _itemUnitConversionBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ItemUnitConversion> itemUnitConversionList = await _itemUnitConversionRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ItemUnitConversion> itemUnitConversionList = await _itemUnitConversionRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<ItemUnitConversion> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicItemUnitConversionListItemDto>>(itemUnitConversionList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReferenceItemUnit)
+                    {
+                        query = query.Include(y => y.ReferenceItemUnit);
+
+                        if (detailLevel.ReferenceItemUnitDetailLevel.IncludeUnit)
+                        {
+                            query = query.Include(y => y.ReferenceItemUnit).ThenInclude(m => m.Unit);
+                        }
+
+                        if (detailLevel.ReferenceItemUnitDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.ReferenceItemUnit).ThenInclude(m => m.Product);
+                        }
+                    }
+
+                    if (detailLevel.IncludeConvertedItemUnit)
+                    {
+                        query = query.Include(y => y.ConvertedItemUnit);
+
+                        if (detailLevel.ConvertedItemUnitDetailLevel.IncludeUnit)
+                        {
+                            query = query.Include(y => y.ConvertedItemUnit).ThenInclude(m => m.Unit);
+                        }
+
+                        if (detailLevel.ConvertedItemUnitDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.ConvertedItemUnit).ThenInclude(m => m.Product);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<ItemUnitConversion, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicItemUnitConversionListItemDto>>(itemUnitConversionList);
+            }
+            else
+            {
+                Paginate<ItemUnitConversion> itemUnitConversionList = await _itemUnitConversionRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicItemUnitConversionListItemDto>>(itemUnitConversionList);
+            }
         }
     }
 }

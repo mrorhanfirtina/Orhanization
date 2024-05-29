@@ -9,7 +9,7 @@ public class StockContainerConfiguration : IEntityTypeConfiguration<StockContain
     public void Configure(EntityTypeBuilder<StockContainer> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("StockContainers").HasKey(p => p.Id);
+        builder.ToTable("StockContainers", "stock").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

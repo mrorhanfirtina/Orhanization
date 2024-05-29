@@ -9,7 +9,7 @@ public class StorageSystemConfiguration : IEntityTypeConfiguration<StorageSystem
     public void Configure(EntityTypeBuilder<StorageSystem> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("StorageSystems").HasKey(p => p.Id);
+        builder.ToTable("StorageSystems", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -30,7 +30,7 @@ public class StorageSystemConfiguration : IEntityTypeConfiguration<StorageSystem
 
         #region İlişki Tanımları
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasMany(p => p.Locations).WithOne().HasForeignKey(p => p.StorageSystemId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(p => p.Locations).WithOne(p => p.StorageSystem).HasForeignKey(p => p.StorageSystemId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

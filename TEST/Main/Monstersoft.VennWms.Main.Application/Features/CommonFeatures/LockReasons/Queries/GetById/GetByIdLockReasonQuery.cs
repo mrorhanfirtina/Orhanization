@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Constants;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -17,6 +22,7 @@ public class GetByIdLockReasonQuery : IRequest<GetByIdLockReasonResponse>, ITran
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public int Id { get; set; }
+    public LockReasonDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdLockReasonQueryHandler : IRequestHandler<GetByIdLockReasonQuery, GetByIdLockReasonResponse>
@@ -38,8 +44,35 @@ public class GetByIdLockReasonQuery : IRequest<GetByIdLockReasonResponse>, ITran
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdLockReasonResponse>(await _lockReasonRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, 
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdLockReasonResponse>(await _lockReasonRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<LockReason> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<LockReason, object>;
+                    return includableQuery;
+                },
+                withDeleted: false,
+                enableTracking: false,
                 cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdLockReasonResponse>(await _lockReasonRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false,
+                enableTracking: false,
+                cancellationToken: cancellationToken));
+            }
         }
     }
 }

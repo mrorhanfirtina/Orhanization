@@ -9,7 +9,7 @@ public class UserDepositorConfiguration : IEntityTypeConfiguration<UserDepositor
     public void Configure(EntityTypeBuilder<UserDepositor> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("UserDepositors").HasKey(p => p.Id);
+        builder.ToTable("UserDepositors", "depositor").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

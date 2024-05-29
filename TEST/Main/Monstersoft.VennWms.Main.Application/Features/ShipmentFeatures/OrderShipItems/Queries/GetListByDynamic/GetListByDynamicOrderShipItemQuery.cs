@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItems.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
 using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
@@ -45,6 +46,8 @@ public class GetListByDynamicOrderShipItemQuery : IRequest<GetListResponse<GetLi
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
             Paginate<OrderShipItem> orderShipItemList = await _orderShipItemRepository.GetListByDynamicAsync(
+            include: x => x.Include(y => y.OrderShipItemTasks)
+                           .Include(y => y.OrderShipItemTasks).ThenInclude(m => m.OrderShipItemStocks),
             dynamic: request.DynamicQuery,
             index: request.PageRequest.PageIndex,
             size: request.PageRequest.PageSize, cancellationToken: cancellationToken);

@@ -47,7 +47,7 @@ public class DeleteReturnCommand : IRequest<DeletedReturnResponse>, ITransaction
 
             Return returnEntity = await _returnRepository.GetAsync(predicate: x => x.Id == request.Id,
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
             await _returnRepository.DeleteAsync(returnEntity);

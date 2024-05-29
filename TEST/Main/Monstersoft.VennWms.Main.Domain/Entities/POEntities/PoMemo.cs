@@ -9,6 +9,7 @@ public class PoMemo : Entity<Guid>
     public string Text { get; set; }
     public DateTime InputDate { get; set; }
     public DateTime? EditDate { get; set; }
+    public virtual PurchaseOrder PurchaseOrder { get; set; }
 
     public PoMemo()
     {

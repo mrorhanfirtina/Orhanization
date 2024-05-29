@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.DepositorCompanies.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.DepositorCompanies.Queries.GetById;
 
@@ -12,9 +12,8 @@ public class GetByIdDepositorCompanyResponse
     public string TaxNumber { get; set; }
     public string PhoneNumber { get; set; }
     public string FaxNumber { get; set; }
-    public Guid AddressId { get; set; }
+    public DepositorCompanyAddressResponseDto? Address { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public Address Address { get; set; }
 
 }

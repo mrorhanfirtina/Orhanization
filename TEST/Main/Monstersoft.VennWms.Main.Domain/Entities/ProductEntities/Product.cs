@@ -9,12 +9,14 @@ public class Product : Entity<Guid>
     public string Description { get; set; }
     public string? AlternativeCode { get; set; }
     public Guid DepositorCompanyId { get; set; }
-    public virtual ICollection<ProductAttributeValue> ProductAttributeValues { get; set; }
-    public virtual ICollection<ProductBarcode> ProductBarcodes { get; set; }
-    public virtual ICollection<ProductDepositor> ProductDepositors { get; set; }
-    public virtual ICollection<ItemUnit> ItemUnits { get; set; }
-    public virtual ICollection<ProductStockAttribute> ProductStockAttributes { get; set; }
-    public virtual DepositorCompany DepositorCompany { get; set; }
+    public virtual ProductAbcCategory? ProductAbcCategory { get; set; }
+    public virtual ProductCategory? ProductCategory { get; set; }
+    public virtual ICollection<ProductAttributeValue>? ProductAttributeValues { get; set; }
+    public virtual ICollection<ProductBarcode>? ProductBarcodes { get; set; }
+    public virtual ICollection<ProductDepositor>? ProductDepositors { get; set; }
+    public virtual ICollection<ItemUnit>? ItemUnits { get; set; }
+    public virtual ICollection<ProductStockAttribute>? ProductStockAttributes { get; set; }
+    public virtual DepositorCompany? DepositorCompany { get; set; }
 
 
     public Product()

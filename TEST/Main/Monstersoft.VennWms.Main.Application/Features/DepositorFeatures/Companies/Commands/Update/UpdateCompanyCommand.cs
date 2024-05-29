@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.DepositorDtos;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Branches.Commands.Update;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Branches.Rules;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Companies.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Companies.Constants;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Companies.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Companies.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -28,6 +29,7 @@ public class UpdateCompanyCommand : IRequest<UpdatedCompanyResponse>, ITransacti
     public string? CacheGroupKey => "GetCompanies";
 
     public UpdateCompanyDto Company { get; set; }
+    public CompanyDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateCompanyCommandHandler : IRequestHandler<UpdateCompanyCommand, UpdatedCompanyResponse>
@@ -45,17 +47,53 @@ public class UpdateCompanyCommand : IRequest<UpdatedCompanyResponse>, ITransacti
         public async Task<UpdatedCompanyResponse> Handle(UpdateCompanyCommand request, CancellationToken cancellationToken)
         {
             _companyBusinessRules.UpdateRequest()
+                .CheckDepositorCompany(request.UserRequestInfo!.RequestUserLocalityId)
                 .CheckIdExistence(request.Company.Id)
-                .CheckAddressIdExistence(request.Company.AddressId)
                 .CheckCodeExistenceWhenUpdate(request.Company.Code, request.Company.Id);
 
-            Company currentCompany = await _companyRepository.GetAsync(predicate: x => x.Id == request.Company.Id && !x.DeletedDate.HasValue, include: x => x.Include(y => y.Address));
+            Company currentCompany = await _companyRepository.GetAsync(predicate: x => x.Id == request.Company.Id && !x.DeletedDate.HasValue, 
+                include: x => x.Include(y => y.Address));
 
             Company? company = _mapper.Map(request.Company, currentCompany);
             company.UpdatedDate = DateTime.Now;
             company.Address.UpdatedDate = DateTime.Now;
 
-            return _mapper.Map<UpdatedCompanyResponse>(await _companyRepository.UpdateAsync(company));
+            await _companyRepository.UpdateAsync(company);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _companyRepository.GetAsync(predicate: x => x.Id == company.Id,
+                include: x =>
+                {
+                    IQueryable<Company> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAddress)
+                    {
+                        query = query.Include(y => y.Address);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<Company, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedCompanyResponse>(response);
+            }
+            else
+            {
+                var response = await _companyRepository.GetAsync(predicate: x => x.Id == company.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedCompanyResponse>(response);
+            }
         }
     }
 }

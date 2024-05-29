@@ -9,7 +9,7 @@ public class ReturnTypeConfiguration : IEntityTypeConfiguration<ReturnType>
     public void Configure(EntityTypeBuilder<ReturnType> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("ReturnTypes").HasKey(p => p.Id);
+        builder.ToTable("ReturnTypes", "return").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

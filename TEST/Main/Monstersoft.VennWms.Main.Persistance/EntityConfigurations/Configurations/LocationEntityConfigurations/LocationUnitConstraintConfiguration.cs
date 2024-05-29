@@ -9,7 +9,7 @@ public class LocationUnitConstraintConfiguration : IEntityTypeConfiguration<Loca
     public void Configure(EntityTypeBuilder<LocationUnitConstraint> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("LocationUnitConstraints").HasKey(p => p.Id);
+        builder.ToTable("LocationUnitConstraints", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.LocationDtos;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Constants;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,7 @@ public class UpdateStorageSystemCommand : IRequest<UpdatedStorageSystemResponse>
     public string? CacheGroupKey => "GetStorageSystems";
 
     public UpdateStorageSystemDto StorageSystem { get; set; }
+    public StorageSystemDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateStorageSystemCommandHandler : IRequestHandler<UpdateStorageSystemCommand, UpdatedStorageSystemResponse>
@@ -54,8 +59,47 @@ public class UpdateStorageSystemCommand : IRequest<UpdatedStorageSystemResponse>
             StorageSystem? storageSystem = _mapper.Map(request.StorageSystem, currentStorageSystem);
             storageSystem.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedStorageSystemResponse>(await _storageSystemRepository.UpdateAsync(storageSystem));
+            await _storageSystemRepository.UpdateAsync(storageSystem);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _storageSystemRepository.GetAsync(predicate: x => x.Id == storageSystem.Id,
+                include: x =>
+                {
+                    IQueryable<StorageSystem> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeBuilding)
+                    {
+                        query = query.Include(y => y.Building);
+                    }
+
+                    if (detailLevel.IncludeLocation)
+                    {
+                        query = query.Include(y => y.Locations);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<StorageSystem, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedStorageSystemResponse>(response);
+            }
+            else
+            {
+                var response = await _storageSystemRepository.GetAsync(predicate: x => x.Id == storageSystem.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedStorageSystemResponse>(response);
+            }
         }
     }
 }

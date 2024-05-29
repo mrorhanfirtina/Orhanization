@@ -9,7 +9,7 @@ public class ItemUnitConversionConfiguration : IEntityTypeConfiguration<ItemUnit
     public void Configure(EntityTypeBuilder<ItemUnitConversion> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("ItemUnitConversions").HasKey(p => p.Id);
+        builder.ToTable("ItemUnitConversions", "product").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -28,7 +28,7 @@ public class ItemUnitConversionConfiguration : IEntityTypeConfiguration<ItemUnit
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.ReferenceItemUnit).WithMany().HasForeignKey(p => p.ReferenceItemUnitId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(p => p.ReferenceItemUnit).WithMany(m => m.ItemUnitConversions).HasForeignKey(p => p.ReferenceItemUnitId).OnDelete(DeleteBehavior.NoAction);
         builder.HasOne(p => p.ConvertedItemUnit).WithMany().HasForeignKey(p => p.ConvertedItemUnitId).OnDelete(DeleteBehavior.NoAction);
         #endregion
 

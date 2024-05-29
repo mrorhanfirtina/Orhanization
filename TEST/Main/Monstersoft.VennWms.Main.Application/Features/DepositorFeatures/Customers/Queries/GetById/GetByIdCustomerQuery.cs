@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Customers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Customers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -19,6 +22,7 @@ public class GetByIdCustomerQuery : IRequest<GetByIdCustomerResponse>, ITransact
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public CustomerDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdCustomerQueryHandler : IRequestHandler<GetByIdCustomerQuery, GetByIdCustomerResponse>
@@ -41,8 +45,37 @@ public class GetByIdCustomerQuery : IRequest<GetByIdCustomerResponse>, ITransact
             .CheckIdExistence(request.Id);
 
             return _mapper.Map<GetByIdCustomerResponse>(await _customerRepository.GetAsync(x => x.Id == request.Id,
-                include: m => m.Include(m => m.Address),
-                withDeleted: false, cancellationToken: cancellationToken));
+            include: x =>
+            {
+                IQueryable<Customer> query = x;
+
+                var detailLevel = request.DetailLevel;
+
+                if (detailLevel.IncludeDepositorCompany)
+                {
+                    query = query.Include(y => y.DepositorCompany);
+                }
+
+                if (detailLevel.IncludeCompany)
+                {
+                    query = query.Include(y => y.Company);
+                }
+
+                if (detailLevel.IncludeAddress)
+                {
+                    query = query.Include(y => y.Address);
+                }
+
+                if (detailLevel.IncludeReceiver)
+                {
+                    query = query.Include(y => y.Receivers);
+                }
+
+
+                var includableQuery = query as IIncludableQueryable<Customer, object>;
+                return includableQuery;
+            },
+            withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
         }
     }
 

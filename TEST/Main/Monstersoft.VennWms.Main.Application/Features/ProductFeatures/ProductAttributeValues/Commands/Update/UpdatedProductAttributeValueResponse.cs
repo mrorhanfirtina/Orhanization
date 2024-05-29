@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributeValues.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributeValues.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributeValues.Commands.Update;
 
 public class UpdatedProductAttributeValueResponse
 {
@@ -8,6 +10,8 @@ public class UpdatedProductAttributeValueResponse
     public string Value { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public ProductAttributeValueProductAttributeResponseDto? ProductAttribute { get; set; }
+    public ProductAttributeValueProductResponseDto? Product { get; set; }
 
 }
 

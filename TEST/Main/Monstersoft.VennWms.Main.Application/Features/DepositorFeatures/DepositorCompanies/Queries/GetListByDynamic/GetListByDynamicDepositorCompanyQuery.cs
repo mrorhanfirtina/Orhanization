@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.DepositorCompanies.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.DepositorCompanies.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +28,7 @@ public class GetListByDynamicDepositorCompanyQuery : IRequest<GetListResponse<Ge
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public DepositorCompanyDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicDepositorCompanyQueryHandler : IRequestHandler<GetListByDynamicDepositorCompanyQuery, GetListResponse<GetListByDynamicDepositorCompanyListItemDto>>
@@ -45,13 +49,39 @@ public class GetListByDynamicDepositorCompanyQuery : IRequest<GetListResponse<Ge
             _depositorCompanyBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<DepositorCompany> depositorCompanyList = await _depositorCompanyRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            include: m => m.Include(m => m.Address),
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<DepositorCompany> depositorCompanyList = await _depositorCompanyRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<DepositorCompany> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicDepositorCompanyListItemDto>>(depositorCompanyList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeAddress)
+                    {
+                        query = query.Include(y => y.Address);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<DepositorCompany, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicDepositorCompanyListItemDto>>(depositorCompanyList);
+            }
+            else
+            {
+                Paginate<DepositorCompany> depositorCompanyList = await _depositorCompanyRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicDepositorCompanyListItemDto>>(depositorCompanyList);
+            }
         }
     }
 

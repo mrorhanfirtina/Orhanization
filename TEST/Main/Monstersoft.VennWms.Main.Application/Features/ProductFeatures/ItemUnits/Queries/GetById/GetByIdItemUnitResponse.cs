@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnits.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnits.Queries.GetById;
 
@@ -10,6 +10,9 @@ public class GetByIdItemUnitResponse
     public bool IsCustomerUnit { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public ICollection<ItemPackType> ItemPackTypes { get; set; }
+    public ItemUnitProductResponseDto? Product { get; set; }
+    public ItemUnitUnitResponseDto? Unit { get; set; }
+    public ICollection<ItemUnitItemPackTypeResponseDto>? ItemPackTypes { get; set; }
+    public ICollection<ItemUnitItemUnitConversionResponseDto>? ItemUnitConversions { get; set; }
 
 }

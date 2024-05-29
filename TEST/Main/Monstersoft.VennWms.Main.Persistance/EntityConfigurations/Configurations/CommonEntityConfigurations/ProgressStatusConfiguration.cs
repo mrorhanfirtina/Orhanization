@@ -9,7 +9,7 @@ public class ProgressStatusConfiguration : IEntityTypeConfiguration<ProgressStat
     public void Configure(EntityTypeBuilder<ProgressStatus> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("ProgressStatuses").HasKey(p => p.Id);
+        builder.ToTable("ProgressStatuses", "common").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

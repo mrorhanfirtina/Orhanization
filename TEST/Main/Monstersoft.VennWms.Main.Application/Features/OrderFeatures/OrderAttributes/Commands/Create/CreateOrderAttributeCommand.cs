@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.OrderDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributes.Constants;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributes.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,8 @@ public class CreateOrderAttributeCommand : IRequest<CreatedOrderAttributeRespons
     public string? CacheGroupKey => "GetOrderAttributes";
 
     public CreateOrderAttributeDto OrderAttribute { get; set; }
+    public OrderAttributeDetailLevel DetailLevel { get; set; }
+
 
 
     public class CreateOrderAttributeCommandHandler : IRequestHandler<CreateOrderAttributeCommand, CreatedOrderAttributeResponse>
@@ -51,7 +57,42 @@ public class CreateOrderAttributeCommand : IRequest<CreatedOrderAttributeRespons
             orderAttribute.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
             orderAttribute.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedOrderAttributeResponse>(await _orderAttributeRepository.AddAsync(orderAttribute));
+            await _orderAttributeRepository.AddAsync(orderAttribute);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _orderAttributeRepository.GetAsync(predicate: x => x.Id == orderAttribute.Id,
+                include: x =>
+                {
+                    IQueryable<OrderAttribute> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAttributeInputType)
+                    {
+                        query = query.Include(y => y.AttributeInputType);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<OrderAttribute, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedOrderAttributeResponse>(response);
+            }
+            else
+            {
+                var response = await _orderAttributeRepository.GetAsync(predicate: x => x.Id == orderAttribute.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedOrderAttributeResponse>(response);
+            }
         }
     }
 

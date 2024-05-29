@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.LocationDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Constants;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +30,7 @@ public class CreateSiteCommand : IRequest<CreatedSiteResponse>, ITransactionalRe
     public string? CacheGroupKey => "GetSites";
 
     public CreateSiteDto Site { get; set; }
+    public SiteDetailLevel DetailLevel { get; set; }
 
 
     public class CreateSiteCommandHandler : IRequestHandler<CreateSiteCommand, CreatedSiteResponse>
@@ -50,15 +57,54 @@ public class CreateSiteCommand : IRequest<CreatedSiteResponse>, ITransactionalRe
             site.Id = Guid.NewGuid();
             site.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
             site.CreatedDate = DateTime.Now;
+            site.SiteDepositors.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; });
 
-            foreach (var siteDepositor in site.SiteDepositors)
+            await _siteRepository.AddAsync(site);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
             {
-                siteDepositor.SiteId = site.Id;
-                siteDepositor.Id = Guid.NewGuid();
-                siteDepositor.CreatedDate = DateTime.Now;
-            }
+                var response = await _siteRepository.GetAsync(predicate: x => x.Id == site.Id,
+                include: x =>
+                {
+                    IQueryable<Site> query = x;
 
-            return _mapper.Map<CreatedSiteResponse>(await _siteRepository.AddAsync(site));
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeBuilding)
+                    {
+                        query = query.Include(y => y.Buildings);
+                    }
+
+                    if (detailLevel.IncludeSiteDepositor)
+                    {
+                        query = query.Include(y => y.SiteDepositors);
+
+                        if (detailLevel.SiteDepositorDetailLevel.IncludeDepositor)
+                        {
+                            query = query.Include(y => y.SiteDepositors).ThenInclude(y => y.Depositor);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<Site, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedSiteResponse>(response);
+            }
+            else
+            {
+                var response = await _siteRepository.GetAsync(predicate: x => x.Id == site.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedSiteResponse>(response);
+            }
         }
     }
 

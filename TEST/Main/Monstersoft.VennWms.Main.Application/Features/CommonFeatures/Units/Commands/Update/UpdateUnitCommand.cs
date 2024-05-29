@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.CommonDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Constants;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
-using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Caching;
@@ -25,6 +28,7 @@ public class UpdateUnitCommand : IRequest<UpdatedUnitResponse>, ITransactionalRe
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public UpdateUnitDto Unit { get; set; }
+    public UnitDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateUnitCommandHandler : IRequestHandler<UpdateUnitCommand, UpdatedUnitResponse>
@@ -47,14 +51,64 @@ public class UpdateUnitCommand : IRequest<UpdatedUnitResponse>, ITransactionalRe
             .CheckIdExistence(request.Unit.Id)
             .CheckCodeExistenceWhenUpdate(request.Unit.Code, request.Unit.Id);
 
-            Unit? currentUnit = await _unitRepository.GetAsync(predicate: x => x.Id == request.Unit.Id);
+            Unit? currentUnit = await _unitRepository.GetAsync(predicate: x => x.Id == request.Unit.Id,
+                include: x => x.Include(y => y.ReferenceUnitConversions),
+                cancellationToken: cancellationToken,
+                withDeleted: false,
+                enableTracking: true
+                );
 
             //İstekle gelen Dto'dan mapleme id oluşturma ve oluşturma tarihi eklemesi yapılıyor.
             Unit? unit = _mapper.Map(request.Unit, currentUnit);
             unit.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedUnitResponse>(await _unitRepository.UpdateAsync(unit));
+            unit.ReferenceUnitConversions.ToList().ForEach(x =>
+            {
+                x.CreatedDate = unit.CreatedDate;
+                x.UpdatedDate = DateTime.Now;
+            });
+
+            await _unitRepository.UpdateAsync(unit);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _unitRepository.GetAsync(predicate: x => x.Id == unit.Id,
+                include: x =>
+                {
+                    IQueryable<Unit> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeReferenceUnit)
+                    {
+                        query = query.Include(y => y.ReferenceUnitConversions);
+
+                        if (detailLevel.ReferenceUnitDetailLevel.IncludeTargetUnit)
+                        {
+                            query = query.Include(y => y.ReferenceUnitConversions).ThenInclude(z => z.TargetUnit);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<Unit, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedUnitResponse>(response);
+            }
+            else
+            {
+                var response = await _unitRepository.GetAsync(predicate: x => x.Id == unit.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedUnitResponse>(response);
+            }
         }
     }
 }

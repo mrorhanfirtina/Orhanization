@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskLists.Constants;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskLists.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.TaskRepositories;
@@ -45,8 +46,9 @@ public class DeleteTaskListCommand : IRequest<DeletedTaskListResponse>, ITransac
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
             TaskList taskList = await _taskListRepository.GetAsync(predicate: x => x.Id == request.Id,
+            include: x => x.Include(y => y.WorkTasks),
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
             await _taskListRepository.DeleteAsync(taskList);

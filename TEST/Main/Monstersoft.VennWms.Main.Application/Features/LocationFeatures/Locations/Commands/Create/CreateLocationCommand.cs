@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.LocationDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Locations.Constants;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Locations.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Locations.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class CreateLocationCommand : IRequest<CreatedLocationResponse>, ITransac
     public string? CacheGroupKey => "GetLocations";
 
     public CreateLocationDto Location { get; set; }
+    public LocationDetailLevel DetailLevel { get; set; }
 
 
     public class CreateLocationCommandHandler : IRequestHandler<CreateLocationCommand, CreatedLocationResponse>
@@ -51,7 +56,258 @@ public class CreateLocationCommand : IRequest<CreatedLocationResponse>, ITransac
             location.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
             location.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedLocationResponse>(await _locationRepository.AddAsync(location));
+            if (location.LocationPickingType != null)
+                location.LocationPickingType.CreatedDate = DateTime.Now;
+            if (location.LocationFeature != null)
+                location.LocationFeature.CreatedDate = DateTime.Now;
+            if (location.LocationPriority != null)
+                location.LocationPriority.CreatedDate = DateTime.Now;
+            if (location.LocationDimension != null)
+                location.LocationDimension.CreatedDate = DateTime.Now;
+            if (location.LocationLockReason != null)
+                location.LocationLockReason.CreatedDate = DateTime.Now;
+            if (location.LocationCodeFormat != null)
+                location.LocationCodeFormat.CreatedDate = DateTime.Now;
+            if (location.LocationCoordinate != null)
+                location.LocationCoordinate.CreatedDate = DateTime.Now;
+
+            location.LocationZones?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; x.Id = Guid.NewGuid(); x.LocationId = location.Id; });
+            location.LocationProducts?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; x.Id = Guid.NewGuid(); x.LocationId = location.Id; });
+            location.LocationDepositors?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; x.Id = Guid.NewGuid(); x.LocationId = location.Id; });
+            location.LocationStockAttributes?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; x.Id = Guid.NewGuid(); x.LocationId = location.Id; });
+            location.LocationUnitConstraints?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; x.Id = Guid.NewGuid(); x.LocationId = location.Id; });
+            location.LocationProductAttributes?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; x.Id = Guid.NewGuid(); x.LocationId = location.Id; });
+            location.LocationProductConstraints?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; x.Id = Guid.NewGuid(); x.LocationId = location.Id; });
+            location.LocationProductCategories?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; x.Id = Guid.NewGuid(); x.LocationId = location.Id; });
+            location.LocationProductAbcCategories?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; x.Id = Guid.NewGuid(); x.LocationId = location.Id; });
+
+            await _locationRepository.AddAsync(location);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _locationRepository.GetAsync(predicate: x => x.Id == location.Id,
+                include: x =>
+                {
+                    IQueryable<Location> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeStorageSystem)
+                    {
+                        query = query.Include(y => y.StorageSystem);
+                    }
+
+                    if (detailLevel.IncludeLocationLockReason)
+                    {
+                        query = query.Include(y => y.LocationLockReason);
+
+                        if (detailLevel.LocationLockReasonDetailLevel.IncludeLockReason)
+                        {
+                            query = query.Include(y => y.LocationLockReason).ThenInclude(m => m.LockReason);
+                        }
+                    }
+
+                    if (detailLevel.IncludeLocationPickingType)
+                    {
+                        query = query.Include(y => y.LocationPickingType);
+
+                        if (detailLevel.LocationPickingTypeDetailLevel.IncludePickingType)
+                        {
+                            query = query.Include(y => y.LocationPickingType).ThenInclude(m => m.PickingType);
+                        }
+                    }
+
+                    if (detailLevel.IncludeLocationDimension)
+                    {
+                        query = query.Include(y => y.LocationDimension);
+
+                        if (detailLevel.LocationDimensionDetailLevel.IncludeLengthUnit)
+                        {
+                            query = query.Include(y => y.LocationDimension).ThenInclude(m => m.LengthUnit);
+                        }
+
+                        if (detailLevel.LocationDimensionDetailLevel.IncludeVolumeUnit)
+                        {
+                            query = query.Include(y => y.LocationDimension).ThenInclude(m => m.VolumeUnit);
+                        }
+
+                        if (detailLevel.LocationDimensionDetailLevel.IncludeWeightUnit)
+                        {
+                            query = query.Include(y => y.LocationDimension).ThenInclude(m => m.WeightUnit);
+                        }
+                    }
+
+                    if (detailLevel.IncludeLocationFeature)
+                    {
+                        query = query.Include(y => y.LocationFeature);
+                    }
+
+                    if (detailLevel.IncludeLocationPriority)
+                    {
+                        query = query.Include(y => y.LocationPriority);
+                    }
+
+                    if (detailLevel.IncludeLocationCodeFormat)
+                    {
+                        query = query.Include(y => y.LocationCodeFormat);
+                    }
+
+                    if (detailLevel.IncludeLocationCoordinate)
+                    {
+                        query = query.Include(y => y.LocationCoordinate);
+
+                        if (detailLevel.LocationCoordinateDetailLevel.IncludeBuilding)
+                        {
+                            query = query.Include(y => y.LocationCoordinate).ThenInclude(m => m.Building);
+
+                            if (detailLevel.LocationCoordinateDetailLevel.BuildingDetailLevel.IncludeBuildingDimension)
+                            {
+                                query = query.Include(y => y.LocationCoordinate).ThenInclude(m => m.Building).ThenInclude(l => l.BuildingDimension);
+
+                                if (detailLevel.LocationCoordinateDetailLevel.BuildingDetailLevel.BuildingDimensionDetailLevel.IncludeLengthUnit)
+                                {
+                                    query = query.Include(y => y.LocationCoordinate).ThenInclude(m => m.Building).ThenInclude(l => l.BuildingDimension).ThenInclude(b => b.LenghtUnitId);
+                                }
+
+                                if (detailLevel.LocationCoordinateDetailLevel.BuildingDetailLevel.BuildingDimensionDetailLevel.IncludeVolumeUnit)
+                                {
+                                    query = query.Include(y => y.LocationCoordinate).ThenInclude(m => m.Building).ThenInclude(l => l.BuildingDimension).ThenInclude(b => b.VolumeUnit);
+                                }
+                            }
+                        }
+                    }
+
+                    if (detailLevel.IncludeLocationZone)
+                    {
+                        query = query.Include(y => y.LocationZones);
+
+                        if (detailLevel.LocationZoneDetailLevel.IncludeZone)
+                        {
+                            query = query.Include(y => y.LocationZones).ThenInclude(m => m.Zone);
+                        }
+                    }
+
+                    if (detailLevel.IncludeLocationUnitConstraint)
+                    {
+                        query = query.Include(y => y.LocationUnitConstraints);
+
+                        if (detailLevel.LocationUnitConstraintDetailLevel.IncludeUnit)
+                        {
+                            query = query.Include(y => y.LocationUnitConstraints).ThenInclude(m => m.Unit);
+                        }
+                    }
+
+                    if (detailLevel.IncludeLocationProductCategory)
+                    {
+                        query = query.Include(y => y.LocationProductCategories);
+
+                        if (detailLevel.LocationProductCategoryDetailLevel.IncludeCategory)
+                        {
+                            query = query.Include(y => y.LocationProductCategories).ThenInclude(m => m.Category);
+                        }
+                    }
+
+                    if (detailLevel.IncludeLocationProductAbcCategory)
+                    {
+                        query = query.Include(y => y.LocationProductAbcCategories);
+
+                        if (detailLevel.LocationProductAbcCategoryDetailLevel.IncludeAbcCategory)
+                        {
+                            query = query.Include(y => y.LocationProductAbcCategories).ThenInclude(m => m.AbcCategory);
+                        }
+                    }
+
+                    if (detailLevel.IncludeLocationProductConstraint)
+                    {
+                        query = query.Include(y => y.LocationProductConstraints);
+
+                        if (detailLevel.LocationProductConstraintDetailLevel.IncludeItemUnit)
+                        {
+                            query = query.Include(y => y.LocationProductConstraints).ThenInclude(m => m.ItemUnit);
+
+                            if (detailLevel.LocationProductConstraintDetailLevel.ItemUnitDetailLevel.IncludeUnit)
+                            {
+                                query = query.Include(y => y.LocationProductConstraints).ThenInclude(m => m.ItemUnit).ThenInclude(y => y.Unit);
+                            }
+
+                            if (detailLevel.LocationProductConstraintDetailLevel.ItemUnitDetailLevel.IncludeProduct)
+                            {
+                                query = query.Include(y => y.LocationProductConstraints).ThenInclude(m => m.ItemUnit).ThenInclude(y => y.Product);
+                            }
+                        }
+                    }
+
+                    if (detailLevel.IncludeLocationDepositor)
+                    {
+                        query = query.Include(y => y.LocationDepositors);
+
+                        if (detailLevel.LocationDepositorDetailLevel.IncludeDepositor)
+                        {
+                            query = query.Include(y => y.LocationDepositors).ThenInclude(m => m.Depositor);
+                        }
+                    }
+
+                    if (detailLevel.IncludeLocationProduct)
+                    {
+                        query = query.Include(y => y.LocationProducts);
+
+                        if (detailLevel.LocationProductDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.LocationProducts).ThenInclude(m => m.Product);
+                        }
+                    }
+
+                    if (detailLevel.IncludeLocationStockAttribute)
+                    {
+                        query = query.Include(y => y.LocationStockAttributes);
+
+                        if (detailLevel.LocationStockAttributeDetailLevel.IncludeStockAttribute)
+                        {
+                            query = query.Include(y => y.LocationStockAttributes).ThenInclude(m => m.StockAttribute);
+
+                            if (detailLevel.LocationStockAttributeDetailLevel.StockAttributeDetailLevel.IncludeAttributeInputType)
+                            {
+                                query = query.Include(y => y.LocationStockAttributes).ThenInclude(m => m.StockAttribute).ThenInclude(y => y.AttributeInputType);
+                            }
+                        }
+                    }
+
+                    if (detailLevel.IncludeLocationProductAttribute)
+                    {
+                        query = query.Include(y => y.LocationProductAttributes);
+
+
+                        if (detailLevel.LocationProductAttributeDetailLevel.IncludeProductAttribute)
+                        {
+                            query = query.Include(y => y.LocationProductAttributes).ThenInclude(m => m.ProductAttribute);
+
+                            if (detailLevel.LocationProductAttributeDetailLevel.ProductAttributeDetailLevel.IncludeAttributeInputType)
+                            {
+                                query = query.Include(y => y.LocationProductAttributes).ThenInclude(m => m.ProductAttribute).ThenInclude(l => l.AttributeInputType);
+                            }
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<Location, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedLocationResponse>(response);
+            }
+            else
+            {
+                var response = await _locationRepository.GetAsync(predicate: x => x.Id == location.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedLocationResponse>(response);
+            }
         }
     }
 

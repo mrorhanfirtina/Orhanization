@@ -11,7 +11,7 @@ public class ShipmentType : Entity<Guid>
     public string Format { get; set; }
     public int Counter { get; set; }
     public Guid DepositorCompanyId { get; set; }
-    public virtual ICollection<Shipment> Shipments { get; set; }
+    public virtual ICollection<Shipment>? Shipments { get; set; }
     public virtual DepositorCompany DepositorCompany { get; set; }
 
     public ShipmentType()

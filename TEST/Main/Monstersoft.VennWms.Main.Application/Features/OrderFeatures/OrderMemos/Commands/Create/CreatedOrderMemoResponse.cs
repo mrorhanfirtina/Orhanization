@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderMemos.Commands.Create;
+﻿using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderMemos.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderMemos.Commands.Create;
 
 public class CreatedOrderMemoResponse
 {
@@ -9,6 +11,6 @@ public class CreatedOrderMemoResponse
     public DateTime InputDate { get; set; }
     public DateTime EditDate { get; set; }
     public DateTime CreatedDate { get; set; }
-
+    public OrderMemoOrderResponseDto? Order { get; set; }
 }
 

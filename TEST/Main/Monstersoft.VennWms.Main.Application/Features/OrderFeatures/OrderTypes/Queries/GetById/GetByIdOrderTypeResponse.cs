@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderTypes.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderTypes.Queries.GetById;
 
@@ -13,6 +13,7 @@ public class GetByIdOrderTypeResponse
     public int Counter { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public ICollection<Order> Orders { get; set; }
+    public OrderTypeDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public ICollection<OrderTypeOrderResponseDto>? Orders { get; set; }
 
 }

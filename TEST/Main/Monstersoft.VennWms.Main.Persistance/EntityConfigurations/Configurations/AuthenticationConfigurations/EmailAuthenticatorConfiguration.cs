@@ -8,7 +8,7 @@ public class EmailAuthenticatorConfiguration : IEntityTypeConfiguration<EmailAut
 {
     public void Configure(EntityTypeBuilder<EmailAuthenticator> builder)
     {
-        builder.ToTable("EmailAuthenticators").HasKey(e => e.Id);
+        builder.ToTable("EmailAuthenticators", "auth").HasKey(e => e.Id);
         builder.Property(e => e.UserId).HasColumnName("UserId");
         builder.Property(e => e.Id).HasColumnName("Id").UseIdentityColumn(1, 1);
         builder.Property(e => e.ActivationKey).HasColumnName("ActivationKey");

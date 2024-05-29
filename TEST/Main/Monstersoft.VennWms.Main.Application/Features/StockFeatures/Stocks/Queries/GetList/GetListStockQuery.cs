@@ -52,7 +52,12 @@ public class GetListStockQuery : IRequest<GetListResponse<GetListStockListItemDt
 
             Paginate<Stock> stockList = await _stockRepository.GetListAsync(
             predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(x => x.StockContainer).Include(x => x.StockAttributeValues).Include(x => x.StockMemos).Include(x => x.StockReserveReasons).Include(x => x.StockUnsuitReasons),
+            include: m => m.Include(x => x.StockAttributeValues)
+            .Include(x => x.StockMemos)
+            .Include(x => x.StockInbounds)
+            .Include(x => x.StockPackTypes)
+            .Include(x => x.StockReserveReasons)
+            .Include(x => x.StockUnsuitReasons),
             index: request.PageRequest.PageIndex,
             size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 

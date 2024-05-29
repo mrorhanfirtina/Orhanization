@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Branches.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Branches.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +27,7 @@ public class GetListByDynamicBranchQuery : IRequest<GetListResponse<GetListByDyn
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public BranchDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicBranchQueryHandler : IRequestHandler<GetListByDynamicBranchQuery, GetListResponse<GetListByDynamicBranchListItemDto>>
@@ -46,13 +50,53 @@ public class GetListByDynamicBranchQuery : IRequest<GetListResponse<GetListByDyn
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<Branch> branchList = await _branchRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(m => m.Address),
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<Branch> branchList = await _branchRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<Branch> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicBranchListItemDto>>(branchList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAddress)
+                    {
+                        query = query.Include(y => y.AddressId);
+                    }
+
+                    if (detailLevel.IncludeDistributor)
+                    {
+                        query = query.Include(y => y.Distributor);
+
+                        if (detailLevel.DistributorDetailLevel.IncludeCompany)
+                        {
+                            query = query.Include(y => y.Distributor).ThenInclude(m => m.Company);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<Branch, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicBranchListItemDto>>(branchList);
+            }
+            else
+            {
+                Paginate<Branch> branchList = await _branchRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicBranchListItemDto>>(branchList);
+            }
         }
     }
 

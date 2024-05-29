@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Commands.Create;
+﻿using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Commands.Create;
 
 public class CreatedItemPackTypeResponse
 {
@@ -14,6 +16,9 @@ public class CreatedItemPackTypeResponse
     public decimal NetWeight { get; set; }
     public int WeightUnitId { get; set; }
     public DateTime CreatedDate { get; set; }
-
+    public ItemPackTypeItemUnitResponseDto? ItemUnit { get; set; }
+    public ItemPackTypeLenghtUnitResponseDto? LenghtUnit { get; set; }
+    public ItemPackTypeVolumeUnitResponseDto? VolumeUnit { get; set; }
+    public ItemPackTypeWeightUnitResponseDto? WeightUnit { get; set; }
 
 }

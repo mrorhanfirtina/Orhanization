@@ -16,8 +16,8 @@ public class Shipment : Entity<Guid>
     public DateTime? ActualDate { get; set; }
     public virtual Distributor? Distributor { get; set; }
     public virtual Branch? Branch { get; set; }
-    public virtual ICollection<ShipmentAttributeValue> ShipmentAttributeValues { get; set; }
-    public virtual ICollection<ShipmentMemo> ShipmentMemos { get; set; }
+    public virtual ICollection<ShipmentAttributeValue>? ShipmentAttributeValues { get; set; }
+    public virtual ICollection<ShipmentMemo>? ShipmentMemos { get; set; }
     public virtual Depositor Depositor { get; set; }
     public virtual DepositorCompany DepositorCompany { get; set; }
 

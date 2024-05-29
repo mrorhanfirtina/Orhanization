@@ -9,7 +9,7 @@ public class StockReserveReasonConfiguration : IEntityTypeConfiguration<StockRes
     public void Configure(EntityTypeBuilder<StockReserveReason> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("StockReserveReasons").HasKey(p => p.Id);
+        builder.ToTable("StockReserveReasons", "stock").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

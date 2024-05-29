@@ -10,7 +10,6 @@ public class OrderAttribute : Entity<Guid>
     public string Description { get; set; }
     public int AttributeInputTypeId { get; set; }
     public bool IsNecessary { get; set; }
-    public bool IsItemAttribte { get; set; }
     public Guid DepositorCompanyId { get; set; }
     public virtual DepositorCompany DepositorCompany { get; set; }
     public virtual AttributeInputType AttributeInputType { get; set; }
@@ -18,14 +17,13 @@ public class OrderAttribute : Entity<Guid>
     {
     }
 
-    public OrderAttribute(Guid id,string code, string description, int attributeInputTypeId, bool isNecessary, bool isItemAttribte, Guid depositorCompanyId) : this()
+    public OrderAttribute(Guid id,string code, string description, int attributeInputTypeId, bool isNecessary, Guid depositorCompanyId) : this()
     {
         Id = id;
         Code = code;
         Description = description;
         AttributeInputTypeId = attributeInputTypeId;
         IsNecessary = isNecessary;
-        IsItemAttribte = isItemAttribte;
         DepositorCompanyId = depositorCompanyId;
     }
 }

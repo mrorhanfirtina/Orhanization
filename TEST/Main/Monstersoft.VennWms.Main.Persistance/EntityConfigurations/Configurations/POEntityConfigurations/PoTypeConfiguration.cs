@@ -9,7 +9,7 @@ public class PoTypeConfiguration : IEntityTypeConfiguration<PoType>
     public void Configure(EntityTypeBuilder<PoType> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("PoTypes").HasKey(p => p.Id);
+        builder.ToTable("PoTypes", "po").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -30,7 +30,7 @@ public class PoTypeConfiguration : IEntityTypeConfiguration<PoType>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.PurchaseOrders).WithOne().HasForeignKey(p => p.PoTypeId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(p => p.PurchaseOrders).WithOne(p => p.PoType).HasForeignKey(p => p.PoTypeId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 

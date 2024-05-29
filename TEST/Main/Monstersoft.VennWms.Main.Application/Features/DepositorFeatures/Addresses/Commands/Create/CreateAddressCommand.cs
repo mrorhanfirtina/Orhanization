@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.DepositorDtos;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Addresses.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Addresses.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;

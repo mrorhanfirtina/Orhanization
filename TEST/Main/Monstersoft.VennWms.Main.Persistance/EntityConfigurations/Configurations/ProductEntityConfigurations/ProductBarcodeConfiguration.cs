@@ -9,7 +9,7 @@ public class ProductBarcodeConfiguration : IEntityTypeConfiguration<ProductBarco
     public void Configure(EntityTypeBuilder<ProductBarcode> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("ProductBarcodes").HasKey(p => p.Id);
+        builder.ToTable("ProductBarcodes", "product").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -29,7 +29,7 @@ public class ProductBarcodeConfiguration : IEntityTypeConfiguration<ProductBarco
 
         #region İlişki Tanımları
         builder.HasOne(p => p.ItemUnit).WithMany().HasForeignKey(p => p.ItemUnitId).OnDelete(DeleteBehavior.NoAction);
-        builder.HasMany(p => p.BarcodeSuppliers).WithOne().HasForeignKey(p => p.ProductBarcodeId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.BarcodeSuppliers).WithOne(p => p.ProductBarcode).HasForeignKey(p => p.ProductBarcodeId).OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Filtreler

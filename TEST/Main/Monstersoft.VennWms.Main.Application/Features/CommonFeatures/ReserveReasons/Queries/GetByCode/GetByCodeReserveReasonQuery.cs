@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ReserveReasons.Constants;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ReserveReasons.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -17,6 +22,7 @@ public class GetByCodeReserveReasonQuery : IRequest<GetByCodeReserveReasonRespon
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public string Code { get; set; }
+    public ReserveReasonDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeReserveReasonQueryHandler : IRequestHandler<GetByCodeReserveReasonQuery, GetByCodeReserveReasonResponse>
@@ -39,10 +45,35 @@ public class GetByCodeReserveReasonQuery : IRequest<GetByCodeReserveReasonRespon
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            return _mapper.Map<GetByCodeReserveReasonResponse>(await _reserveReasonRepository.GetAsync(
-            predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
-            withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByCodeReserveReasonResponse>(await _reserveReasonRepository.GetAsync(
+                predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<ReserveReason> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<ReserveReason, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByCodeReserveReasonResponse>(await _reserveReasonRepository.GetAsync(
+                predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+
+            
         }
     }
-
 }

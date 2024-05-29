@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipments.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipments.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
@@ -45,8 +46,9 @@ public class DeleteOrderShipmentCommand : IRequest<DeletedOrderShipmentResponse>
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
             OrderShipment orderShipment = await _orderShipmentRepository.GetAsync(predicate: x => x.Id == request.Id,
+            include: x => x.Include(y => y.OrderShipItems),
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
             await _orderShipmentRepository.DeleteAsync(orderShipment);

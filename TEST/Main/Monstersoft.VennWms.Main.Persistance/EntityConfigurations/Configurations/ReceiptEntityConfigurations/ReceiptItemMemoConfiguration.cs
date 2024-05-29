@@ -9,7 +9,7 @@ public class ReceiptItemMemoConfiguration : IEntityTypeConfiguration<ReceiptItem
     public void Configure(EntityTypeBuilder<ReceiptItemMemo> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("ReceiptItemMemos").HasKey(p => p.Id);
+        builder.ToTable("ReceiptItemMemos", "receipt").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

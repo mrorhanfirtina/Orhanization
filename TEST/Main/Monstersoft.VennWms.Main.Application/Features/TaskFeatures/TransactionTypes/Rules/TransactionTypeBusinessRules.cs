@@ -137,34 +137,5 @@ public class TransactionTypeBusinessRules : BaseBusinessRules
     }
     #endregion
 
-    #region CODE RULES
-    public TransactionTypeBusinessRules CheckCodeExistenceWhenCreate(string code)
-    {
-        if (CurrentRequest == RequestType.Create)
-        {
-            var isExists = _transactionTypeRepository.Any(predicate: x => x.DepositorCompanyId == DepositorCompanyId && x.Code == code && !x.DeletedDate.HasValue);
-            if (isExists)
-            {
-                throw new BusinessException(TransactionTypeMessages.CodeExistsError);
-            }
-        }
-
-        return this;
-    }
-
-    public TransactionTypeBusinessRules CheckCodeExistenceWhenUpdate(string code, int id)
-    {
-        if (CurrentRequest == RequestType.Update)
-        {
-            var isExists = _transactionTypeRepository.Any(predicate: x => x.DepositorCompanyId == DepositorCompanyId && x.Code == code && x.Id != id && !x.DeletedDate.HasValue);
-            if (isExists)
-            {
-                throw new BusinessException(TransactionTypeMessages.CodeExistsError);
-            }
-        }
-
-        return this;
-    }
-    #endregion
 
 }

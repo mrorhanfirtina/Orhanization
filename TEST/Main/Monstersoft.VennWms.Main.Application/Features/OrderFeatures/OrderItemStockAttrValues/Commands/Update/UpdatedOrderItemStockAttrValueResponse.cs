@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Commands.Update;
 
 public class UpdatedOrderItemStockAttrValueResponse
 {
@@ -8,5 +10,7 @@ public class UpdatedOrderItemStockAttrValueResponse
     public string Value { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public OrderItemStockAttrValueOrderItemResponseDto? OrderItem { get; set; }
+    public OrderItemStockAttrValueStockAttributeResponseDto? StockAttribute { get; set; }
 
 }

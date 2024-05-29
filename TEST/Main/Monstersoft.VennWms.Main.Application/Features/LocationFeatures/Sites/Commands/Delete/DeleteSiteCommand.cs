@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
@@ -44,9 +45,10 @@ public class DeleteSiteCommand : IRequest<DeletedSiteResponse>, ITransactionalRe
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Site site = await _siteRepository.GetAsync(predicate: x => x.Id == request.Id,
+            Site? site = await _siteRepository.GetAsync(predicate: x => x.Id == request.Id,
+            include: x => x.Include(y => y.SiteDepositors),
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
             await _siteRepository.DeleteAsync(site);

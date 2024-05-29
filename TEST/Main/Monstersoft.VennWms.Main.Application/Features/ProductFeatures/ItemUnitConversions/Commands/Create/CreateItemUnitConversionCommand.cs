@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.ProductDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Constants;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,34 +30,91 @@ public class CreateItemUnitConversionCommand : IRequest<CreatedItemUnitConversio
     public string? CacheGroupKey => "GetItemUnitConversions";
 
     public CreateItemUnitConversionDto ItemUnitConversion { get; set; }
+    public ItemUnitConversionDetailLevel DetailLevel { get; set; }
+
 
 
     public class CreateItemUnitConversionCommandHandler : IRequestHandler<CreateItemUnitConversionCommand, CreatedItemUnitConversionResponse>
     {
-        private readonly IItemUnitConversionRepository _ıtemUnitConversionRepository;
-        private readonly ItemUnitConversionBusinessRules _ıtemUnitConversionBusinessRules;
+        private readonly IItemUnitConversionRepository _itemUnitConversionRepository;
+        private readonly ItemUnitConversionBusinessRules _itemUnitConversionBusinessRules;
         private readonly IMapper _mapper;
 
-        public CreateItemUnitConversionCommandHandler(IItemUnitConversionRepository ıtemUnitConversionRepository, IMapper mapper, ItemUnitConversionBusinessRules ıtemUnitConversionBusinessRules)
+        public CreateItemUnitConversionCommandHandler(IItemUnitConversionRepository itemUnitConversionRepository, IMapper mapper, ItemUnitConversionBusinessRules itemUnitConversionBusinessRules)
         {
-            _ıtemUnitConversionRepository = ıtemUnitConversionRepository;
+            _itemUnitConversionRepository = itemUnitConversionRepository;
             _mapper = mapper;
-            _ıtemUnitConversionBusinessRules = ıtemUnitConversionBusinessRules;
+            _itemUnitConversionBusinessRules = itemUnitConversionBusinessRules;
         }
 
         public async Task<CreatedItemUnitConversionResponse> Handle(CreateItemUnitConversionCommand request, CancellationToken cancellationToken)
         {
-            _ıtemUnitConversionBusinessRules.CreateRequest()
+            _itemUnitConversionBusinessRules.CreateRequest()
                 .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
                 .CheckReferenceItemUnitIdExistence(request.ItemUnitConversion.ReferenceItemUnitId)
                 .CheckConvertedItemUnitIdExistence(request.ItemUnitConversion.ConvertedItemUnitId);
             // Eğer iki id de daha önceden eklenmişse hata verecek.
 
-            ItemUnitConversion ıtemUnitConversion = _mapper.Map<ItemUnitConversion>(request.ItemUnitConversion);
-            ıtemUnitConversion.Id = Guid.NewGuid();
-            ıtemUnitConversion.CreatedDate = DateTime.Now;
+            ItemUnitConversion itemUnitConversion = _mapper.Map<ItemUnitConversion>(request.ItemUnitConversion);
+            itemUnitConversion.Id = Guid.NewGuid();
+            itemUnitConversion.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedItemUnitConversionResponse>(await _ıtemUnitConversionRepository.AddAsync(ıtemUnitConversion));
+            await _itemUnitConversionRepository.AddAsync(itemUnitConversion);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _itemUnitConversionRepository.GetAsync(predicate: x => x.Id == itemUnitConversion.Id,
+                include: x =>
+                {
+                    IQueryable<ItemUnitConversion> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReferenceItemUnit)
+                    {
+                        query = query.Include(y => y.ReferenceItemUnit);
+
+                        if (detailLevel.ReferenceItemUnitDetailLevel.IncludeUnit)
+                        {
+                            query = query.Include(y => y.ReferenceItemUnit).ThenInclude(m => m.Unit);
+                        }
+
+                        if (detailLevel.ReferenceItemUnitDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.ReferenceItemUnit).ThenInclude(m => m.Product);
+                        }
+                    }
+
+                    if (detailLevel.IncludeConvertedItemUnit)
+                    {
+                        query = query.Include(y => y.ConvertedItemUnit);
+
+                        if (detailLevel.ConvertedItemUnitDetailLevel.IncludeUnit)
+                        {
+                            query = query.Include(y => y.ConvertedItemUnit).ThenInclude(m => m.Unit);
+                        }
+
+                        if (detailLevel.ConvertedItemUnitDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.ConvertedItemUnit).ThenInclude(m => m.Product);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<ItemUnitConversion, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedItemUnitConversionResponse>(response);
+            }
+            else
+            {
+                var response = await _itemUnitConversionRepository.GetAsync(predicate: x => x.Id == itemUnitConversion.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedItemUnitConversionResponse>(response);
+            }
         }
     }
 }

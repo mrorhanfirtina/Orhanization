@@ -1,5 +1,9 @@
-﻿using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.ReceiptDtos;
+﻿using AutoMapper;
+using MediatR;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItems.Dtos.CreateDtos;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItems.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
+using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Caching;
@@ -20,4 +24,34 @@ public class CreateReceiptItemCommand : IRequest<CreatedReceiptItemResponse>, IT
     public string? CacheGroupKey => "GetReceiptItems";
 
     public CreateReceiptItemDto ReceiptItem { get; set; }
+
+
+    public class CreateReceiptItemCommandHandler : IRequestHandler<CreateReceiptItemCommand, CreatedReceiptItemResponse>
+    {
+        private readonly IReceiptItemRepository _receiptItemRepository;
+        private readonly IMapper _mapper;
+        private readonly ReceiptItemBusinessRules _receiptItemBusinessRules;
+
+        public CreateReceiptItemCommandHandler(IReceiptItemRepository receiptItemRepository, IMapper mapper, ReceiptItemBusinessRules receiptItemBusinessRules)
+        {
+            _receiptItemRepository = receiptItemRepository;
+            _mapper = mapper;
+            _receiptItemBusinessRules = receiptItemBusinessRules;
+        }
+
+        public async Task<CreatedReceiptItemResponse> Handle(CreateReceiptItemCommand request, CancellationToken cancellationToken)
+        {
+            _receiptItemBusinessRules.CreateRequest()
+                .CheckDepositorCompany(request.UserRequestInfo!.RequestUserLocalityId);
+
+            ReceiptItem? receiptItem = _mapper.Map<ReceiptItem>(request.ReceiptItem);
+
+            receiptItem.CreatedDate = DateTime.Now;
+
+            receiptItem.ReceiptItemMemos?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; });
+            receiptItem.ReceiptItmStockAttrValues?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; });
+
+            return _mapper.Map<CreatedReceiptItemResponse>(await _receiptItemRepository.AddAsync(receiptItem));
+        }
+    }
 }

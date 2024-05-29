@@ -9,7 +9,7 @@ public class LocationLockReasonConfiguration : IEntityTypeConfiguration<Location
     public void Configure(EntityTypeBuilder<LocationLockReason> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("LocationLockReasons").HasKey(p => p.Id);
+        builder.ToTable("LocationLockReasons", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

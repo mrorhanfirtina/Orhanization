@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.OrderDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Constants;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class CreateOrderItemStockAttrValueCommand : IRequest<CreatedOrderItemSto
     public string? CacheGroupKey => "GetOrderItemStockAttrValues";
 
     public CreateOrderItemStockAttrValueDto OrderItemStockAttrValue { get; set; }
+    public OrderItemStockAttrValueDetailLevel DetailLevel { get; set; }
 
 
     public class CreateOrderItemStockAttrValueCommandHandler : IRequestHandler<CreateOrderItemStockAttrValueCommand, CreatedOrderItemStockAttrValueResponse>
@@ -49,7 +54,57 @@ public class CreateOrderItemStockAttrValueCommand : IRequest<CreatedOrderItemSto
             orderItemStockAttrValue.Id = Guid.NewGuid();
             orderItemStockAttrValue.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedOrderItemStockAttrValueResponse>(await _orderItemStockAttrValueRepository.AddAsync(orderItemStockAttrValue));
+            await _orderItemStockAttrValueRepository.AddAsync(orderItemStockAttrValue);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _orderItemStockAttrValueRepository.GetAsync(predicate: x => x.Id == orderItemStockAttrValue.Id,
+                include: x =>
+                {
+                    IQueryable<OrderItemStockAttrValue> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeOrderItem)
+                    {
+                        query = query.Include(y => y.OrderItem);
+
+                        if (detailLevel.OrderItemDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.OrderItem).ThenInclude(y => y.Product);
+                        }
+
+                        if (detailLevel.OrderItemDetailLevel.IncludeOrder)
+                        {
+                            query = query.Include(y => y.OrderItem).ThenInclude(y => y.Order);
+                        }
+                    }
+
+                    if (detailLevel.IncludeStockAttribute)
+                    {
+                        query = query.Include(y => y.StockAttribute);
+
+                        if (detailLevel.StockAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.StockAttribute).ThenInclude(y => y.AttributeInputType);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<OrderItemStockAttrValue, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedOrderItemStockAttrValueResponse>(response);
+            }
+            else
+            {
+                var response = await _orderItemStockAttrValueRepository.GetAsync(predicate: x => x.Id == orderItemStockAttrValue.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedOrderItemStockAttrValueResponse>(response);
+            }
         }
     }
 

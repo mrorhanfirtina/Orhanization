@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.PurchaseOrderDtos;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.PORepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.POEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +28,7 @@ public class UpdatePoMemoCommand : IRequest<UpdatedPoMemoResponse>, ITransaction
     public string? CacheGroupKey => "GetPoMemos";
 
     public UpdatePoMemoDto PoMemo { get; set; }
+    public PoMemoDetailLevel DetailLevel { get; set; }
 
 
     public class UpdatePoMemoCommandHandler : IRequestHandler<UpdatePoMemoCommand, UpdatedPoMemoResponse>
@@ -53,8 +57,37 @@ public class UpdatePoMemoCommand : IRequest<UpdatedPoMemoResponse>, ITransaction
             PoMemo? poMemo = _mapper.Map(request.PoMemo, currentPoMemo);
             poMemo.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedPoMemoResponse>(await _poMemoRepository.UpdateAsync(poMemo));
+            await _poMemoRepository.UpdateAsync(poMemo);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _poMemoRepository.GetAsync(predicate: x => x.Id == poMemo.Id,
+                include: x =>
+                {
+                    IQueryable<PoMemo> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludePurchaseOrder)
+                    {
+                        query = query.Include(y => y.PurchaseOrder);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<PoMemo, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedPoMemoResponse>(response);
+            }
+            else
+            {
+                var response = await _poMemoRepository.GetAsync(predicate: x => x.Id == poMemo.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedPoMemoResponse>(response);
+            }
         }
     }
 }

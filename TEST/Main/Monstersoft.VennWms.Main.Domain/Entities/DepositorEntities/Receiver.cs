@@ -9,9 +9,9 @@ public class Receiver : Entity<Guid>
     public Guid CustomerId { get; set; }
     public Guid DepositorCompanyId { get; set; }
     public Guid AddressId { get; set; }
-    public virtual Address Address { get; set; }
-    public virtual Customer Customer { get; set; }
-    public virtual DepositorCompany DepositorCompany { get; set; }
+    public virtual Address? Address { get; set; }
+    public virtual Customer? Customer { get; set; }
+    public virtual DepositorCompany? DepositorCompany { get; set; }
 
     public Receiver()
     {

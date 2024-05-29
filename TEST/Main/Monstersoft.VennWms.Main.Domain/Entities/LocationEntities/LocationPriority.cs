@@ -7,6 +7,7 @@ public class LocationPriority : Entity<Guid>
     public Guid LocationId { get; set; }
     public int InboundPriority { get; set; }
     public int OutboundPriority { get; set; }
+    public Location? Location { get; set; }
 
     public LocationPriority()
     {

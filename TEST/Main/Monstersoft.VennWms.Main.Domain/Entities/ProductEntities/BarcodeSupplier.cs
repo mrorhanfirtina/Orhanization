@@ -8,8 +8,9 @@ public class BarcodeSupplier : Entity<Guid>
     public Guid ProductBarcodeId { get; set; }
     public Guid SupplierId { get; set; }
     public Guid DepositorCompanyId { get; set; }
-    public virtual Supplier Supplier { get; set; }
-    public virtual DepositorCompany DepositorCompany { get; set; }
+    public virtual Supplier? Supplier { get; set; }
+    public virtual DepositorCompany? DepositorCompany { get; set; }
+    public virtual ProductBarcode? ProductBarcode { get; set; }
 
     public BarcodeSupplier()
     {

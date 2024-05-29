@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Commands.Update;
 
 public class UpdatedContainerUnitResponse
 {
@@ -10,6 +12,7 @@ public class UpdatedContainerUnitResponse
     public string ProducerCode { get; set; }
     public string Counter { get; set; }
     public Guid DepositorCompanyId { get; set; }
+    public ContainerUnitDepositorCompanyResponseDto? DepositorCompany { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
 

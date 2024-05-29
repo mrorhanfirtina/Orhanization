@@ -9,7 +9,8 @@ public class LocationStockAttribute : Entity<Guid>
     public Guid StockAttributeId { get; set; }
     public string Value { get; set; }
     public bool IsForbid { get; set; }
-    public virtual StockAttribute StockAttribute { get; set; }
+    public virtual StockAttribute? StockAttribute { get; set; }
+    public virtual Location? Location { get; set; }
 
     public LocationStockAttribute()
     {

@@ -17,6 +17,7 @@ public class LocationDimension : Entity<Guid>
     public virtual Unit? LengthUnit { get; set; }
     public virtual Unit? VolumeUnit { get; set; }
     public virtual Unit? WeightUnit { get; set; }
+    public virtual Location? Location { get; set; }
 
     public LocationDimension()
     {

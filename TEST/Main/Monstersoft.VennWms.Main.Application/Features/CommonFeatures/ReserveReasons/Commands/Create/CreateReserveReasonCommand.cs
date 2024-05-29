@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.CommonDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ReserveReasons.Constants;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ReserveReasons.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ReserveReasons.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class CreateReserveReasonCommand : IRequest<CreatedReserveReasonResponse>
     public string[] Roles => [Admin, User, Add, Write];
 
     public CreateReserveReasonDto ReserveReason { get; set; }
+    public ReserveReasonDetailLevel DetailLevel { get; set; }
 
 
     public class CreateReserveReasonCommandHandler : IRequestHandler<CreateReserveReasonCommand, CreatedReserveReasonResponse>
@@ -50,7 +55,38 @@ public class CreateReserveReasonCommand : IRequest<CreatedReserveReasonResponse>
             reserveReason.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
             reserveReason.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedReserveReasonResponse>(await _reserveReasonRepository.AddAsync(reserveReason));
+            ReserveReason createdRecord = await _reserveReasonRepository.AddAsync(reserveReason);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _reserveReasonRepository.GetAsync(predicate: x => x.Id == createdRecord.Id,
+                include: x =>
+                {
+                    IQueryable<ReserveReason> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<ReserveReason, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReserveReasonResponse>(response);
+            }
+            else
+            {
+                var response = await _reserveReasonRepository.GetAsync(predicate: x => x.Id == createdRecord.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReserveReasonResponse>(response);
+
+            }
         }
     }
 

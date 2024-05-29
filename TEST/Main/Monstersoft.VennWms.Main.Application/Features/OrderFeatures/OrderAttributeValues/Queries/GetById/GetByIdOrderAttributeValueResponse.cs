@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Queries.GetById;
+﻿using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Queries.GetById;
 
 public class GetByIdOrderAttributeValueResponse
 {
@@ -8,5 +10,6 @@ public class GetByIdOrderAttributeValueResponse
     public string Value { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public OrderAttributeValueOrderResponseDto? Order { get; set; }
+    public OrderAttributeValueOrderAttributeResponseDto? OrderAttribute { get; set; }
 }

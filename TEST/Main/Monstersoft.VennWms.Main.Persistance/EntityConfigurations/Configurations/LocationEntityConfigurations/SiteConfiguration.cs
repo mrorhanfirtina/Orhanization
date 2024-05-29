@@ -9,7 +9,7 @@ public class SiteConfiguration : IEntityTypeConfiguration<Site>
     public void Configure(EntityTypeBuilder<Site> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("Sites").HasKey(p => p.Id);
+        builder.ToTable("Sites", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -29,7 +29,7 @@ public class SiteConfiguration : IEntityTypeConfiguration<Site>
 
         #region İlişki Tanımları
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasMany(p => p.SiteDepositors).WithOne().HasForeignKey(p => p.SiteId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.SiteDepositors).WithOne(p => p.Site).HasForeignKey(p => p.SiteId).OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Filtreler

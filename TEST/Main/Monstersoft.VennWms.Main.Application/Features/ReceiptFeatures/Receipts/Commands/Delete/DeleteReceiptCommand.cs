@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.Receipts.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.Receipts.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
@@ -45,8 +46,13 @@ public class DeleteReceiptCommand : IRequest<DeletedReceiptResponse>, ITransacti
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
             Receipt receipt = await _receiptRepository.GetAsync(predicate: x => x.Id == request.Id,
+            include: x => x.Include(y => y.ReceiptAttributeValues)
+                           .Include(y => y.ReceiptMemos)
+                           .Include(y => y.ReceiptItems)
+                           .Include(y => y.ReceiptItems).ThenInclude(z => z.ReceiptItemMemos)
+                           .Include(y => y.ReceiptItems).ThenInclude(z => z.ReceiptItmStockAttrValues),
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
             await _receiptRepository.DeleteAsync(receipt);

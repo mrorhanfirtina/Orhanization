@@ -9,7 +9,7 @@ public class UnsuitReasonConfiguration : IEntityTypeConfiguration<UnsuitReason>
     public void Configure(EntityTypeBuilder<UnsuitReason> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("UnsuitReasons").HasKey(p => p.Id);
+        builder.ToTable("UnsuitReasons", "common").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -28,7 +28,7 @@ public class UnsuitReasonConfiguration : IEntityTypeConfiguration<UnsuitReason>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.DepositorCompany);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.OrderDtos;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Constants;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,7 @@ public class UpdateOrderItemMemoCommand : IRequest<UpdatedOrderItemMemoResponse>
     public string? CacheGroupKey => "GetOrderItemMemos";
 
     public UpdateOrderItemMemoDto OrderItemMemo { get; set; }
+    public OrderItemMemoDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateOrderItemMemoCommandHandler : IRequestHandler<UpdateOrderItemMemoCommand, UpdatedOrderItemMemoResponse>
@@ -53,8 +58,57 @@ public class UpdateOrderItemMemoCommand : IRequest<UpdatedOrderItemMemoResponse>
             OrderItemMemo? orderItemMemo = _mapper.Map(request.OrderItemMemo, currentOrderItemMemo);
             orderItemMemo.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedOrderItemMemoResponse>(await _orderItemMemoRepository.UpdateAsync(orderItemMemo));
+            await _orderItemMemoRepository.UpdateAsync(orderItemMemo);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _orderItemMemoRepository.GetAsync(predicate: x => x.Id == orderItemMemo.Id,
+                include: x =>
+                {
+                    IQueryable<OrderItemMemo> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeOrderItem)
+                    {
+                        query = query.Include(y => y.OrderItem);
+
+                        if (detailLevel.OrderItemDetailLevel.IncludeOrder)
+                        {
+                            query = query.Include(y => y.OrderItem).ThenInclude(m => m.Order);
+
+                            if (detailLevel.OrderItemDetailLevel.OrderDetailLevel.IncludeCustomer)
+                            {
+                                query = query.Include(y => y.OrderItem).ThenInclude(m => m.Order).ThenInclude(n => n.Customer);
+                            }
+
+                            if (detailLevel.OrderItemDetailLevel.OrderDetailLevel.IncludeDepositor)
+                            {
+                                query = query.Include(y => y.OrderItem).ThenInclude(m => m.Order).ThenInclude(n => n.Depositor);
+                            }
+
+                            if (detailLevel.OrderItemDetailLevel.OrderDetailLevel.IncludeReceiver)
+                            {
+                                query = query.Include(y => y.OrderItem).ThenInclude(m => m.Order).ThenInclude(n => n.Receiver);
+                            }
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<OrderItemMemo, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedOrderItemMemoResponse>(response);
+            }
+            else
+            {
+                var response = await _orderItemMemoRepository.GetAsync(predicate: x => x.Id == orderItemMemo.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedOrderItemMemoResponse>(response);
+            }
         }
     }
 }

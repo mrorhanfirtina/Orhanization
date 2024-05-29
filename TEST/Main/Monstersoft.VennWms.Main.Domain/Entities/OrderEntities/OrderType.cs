@@ -11,7 +11,7 @@ public class OrderType : Entity<Guid>
     public string Format { get; set; }
     public Guid DepositorCompanyId { get; set; }
     public int Counter { get; set; }
-    public virtual ICollection<Order> Orders { get; set; }
+    public virtual ICollection<Order>? Orders { get; set; }
     public virtual DepositorCompany DepositorCompany { get; set; }
 
     public OrderType()

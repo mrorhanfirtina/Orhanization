@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.ProductDtos;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Constants;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,37 +29,93 @@ public class UpdateItemUnitConversionCommand : IRequest<UpdatedItemUnitConversio
     public string? CacheGroupKey => "GetItemUnitConversions";
 
     public UpdateItemUnitConversionDto ItemUnitConversion { get; set; }
+    public ItemUnitConversionDetailLevel DetailLevel { get; set; }
+
 
 
     public class UpdateItemUnitConversionCommandHandler : IRequestHandler<UpdateItemUnitConversionCommand, UpdatedItemUnitConversionResponse>
     {
-        private readonly IItemUnitConversionRepository _ıtemUnitConversionRepository;
-        private readonly ItemUnitConversionBusinessRules _ıtemUnitConversionBusinessRules;
+        private readonly IItemUnitConversionRepository _itemUnitConversionRepository;
+        private readonly ItemUnitConversionBusinessRules _itemUnitConversionBusinessRules;
         private readonly IMapper _mapper;
 
-        public UpdateItemUnitConversionCommandHandler(IItemUnitConversionRepository ıtemUnitConversionRepository, ItemUnitConversionBusinessRules ıtemUnitConversionBusinessRules, IMapper mapper)
+        public UpdateItemUnitConversionCommandHandler(IItemUnitConversionRepository itemUnitConversionRepository, ItemUnitConversionBusinessRules itemUnitConversionBusinessRules, IMapper mapper)
         {
-            _ıtemUnitConversionRepository = ıtemUnitConversionRepository;
-            _ıtemUnitConversionBusinessRules = ıtemUnitConversionBusinessRules;
+            _itemUnitConversionRepository = itemUnitConversionRepository;
+            _itemUnitConversionBusinessRules = itemUnitConversionBusinessRules;
             _mapper = mapper;
         }
 
         public async Task<UpdatedItemUnitConversionResponse> Handle(UpdateItemUnitConversionCommand request, CancellationToken cancellationToken)
         {
-            _ıtemUnitConversionBusinessRules.UpdateRequest()
+            _itemUnitConversionBusinessRules.UpdateRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.ItemUnitConversion.Id)
             .CheckConvertedItemUnitIdExistence(request.ItemUnitConversion.ConvertedItemUnitId)
             .CheckReferenceItemUnitIdExistence(request.ItemUnitConversion.ReferenceItemUnitId);
 
-            ItemUnitConversion? currentItemUnitConversion = await _ıtemUnitConversionRepository.GetAsync(predicate: x => x.Id == request.ItemUnitConversion.Id);
+            ItemUnitConversion? currentItemUnitConversion = await _itemUnitConversionRepository.GetAsync(predicate: x => x.Id == request.ItemUnitConversion.Id);
 
             //İstekle gelen Dto'dan mapleme id oluşturma ve oluşturma tarihi eklemesi yapılıyor.
-            ItemUnitConversion? ıtemUnitConversion = _mapper.Map(request.ItemUnitConversion, currentItemUnitConversion);
-            ıtemUnitConversion.UpdatedDate = DateTime.Now;
+            ItemUnitConversion? itemUnitConversion = _mapper.Map(request.ItemUnitConversion, currentItemUnitConversion);
+            itemUnitConversion.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedItemUnitConversionResponse>(await _ıtemUnitConversionRepository.UpdateAsync(ıtemUnitConversion));
+            await _itemUnitConversionRepository.UpdateAsync(itemUnitConversion);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _itemUnitConversionRepository.GetAsync(predicate: x => x.Id == itemUnitConversion.Id,
+                include: x =>
+                {
+                    IQueryable<ItemUnitConversion> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReferenceItemUnit)
+                    {
+                        query = query.Include(y => y.ReferenceItemUnit);
+
+                        if (detailLevel.ReferenceItemUnitDetailLevel.IncludeUnit)
+                        {
+                            query = query.Include(y => y.ReferenceItemUnit).ThenInclude(m => m.Unit);
+                        }
+
+                        if (detailLevel.ReferenceItemUnitDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.ReferenceItemUnit).ThenInclude(m => m.Product);
+                        }
+                    }
+
+                    if (detailLevel.IncludeConvertedItemUnit)
+                    {
+                        query = query.Include(y => y.ConvertedItemUnit);
+
+                        if (detailLevel.ConvertedItemUnitDetailLevel.IncludeUnit)
+                        {
+                            query = query.Include(y => y.ConvertedItemUnit).ThenInclude(m => m.Unit);
+                        }
+
+                        if (detailLevel.ConvertedItemUnitDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.ConvertedItemUnit).ThenInclude(m => m.Product);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<ItemUnitConversion, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedItemUnitConversionResponse>(response);
+            }
+            else
+            {
+                var response = await _itemUnitConversionRepository.GetAsync(predicate: x => x.Id == itemUnitConversion.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedItemUnitConversionResponse>(response);
+            }
         }
     }
 }

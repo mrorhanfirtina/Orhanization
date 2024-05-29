@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoTypes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.PORepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.POEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -19,6 +23,7 @@ public class GetByIdPoTypeQuery : IRequest<GetByIdPoTypeResponse>, ITransactiona
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public PoTypeDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdPoTypeQueryHandler : IRequestHandler<GetByIdPoTypeQuery, GetByIdPoTypeResponse>
@@ -40,9 +45,35 @@ public class GetByIdPoTypeQuery : IRequest<GetByIdPoTypeResponse>, ITransactiona
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdPoTypeResponse>(await _poTypeRepository.GetAsync(x => x.Id == request.Id,
-                include: m => m.Include(x => x.PurchaseOrders),
-                withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdPoTypeResponse>(await _poTypeRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<PoType> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludePurchaseOrder)
+                    {
+                        query = query.Include(y => y.PurchaseOrders);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<PoType, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdPoTypeResponse>(await _poTypeRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

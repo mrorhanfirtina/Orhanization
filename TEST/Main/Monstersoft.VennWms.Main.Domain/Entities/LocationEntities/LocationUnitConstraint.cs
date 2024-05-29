@@ -9,6 +9,7 @@ public class LocationUnitConstraint : Entity<Guid>
     public int UnitId { get; set; }
     public decimal Capacity { get; set; }
     public virtual Unit? Unit { get; set; }
+    public virtual Location? Location { get; set; }
 
     public LocationUnitConstraint()
     {

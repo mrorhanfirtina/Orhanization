@@ -41,9 +41,11 @@ public class GetByIdReceiptQuery : IRequest<GetByIdReceiptResponse>, ITransactio
             .CheckIdExistence(request.Id);
 
             return _mapper.Map<GetByIdReceiptResponse>(await _receiptRepository.GetAsync(x => x.Id == request.Id,
-                include: m => m.Include(x => x.ReceiptAttributeValues).Include(x => x.ReceiptMemos)
-                .Include(x => x.ReceiptItems).ThenInclude(ri => ri.ReceiptItemMemos)
-                .Include(x => x.ReceiptItems).ThenInclude(ri => ri.ReceiptItmStockAttrValues),
+                include: x => x.Include(y => y.ReceiptAttributeValues)
+                           .Include(y => y.ReceiptMemos)
+                           .Include(y => y.ReceiptItems)
+                           .Include(y => y.ReceiptItems).ThenInclude(z => z.ReceiptItemMemos)
+                           .Include(y => y.ReceiptItems).ThenInclude(z => z.ReceiptItmStockAttrValues),
                 withDeleted: false, cancellationToken: cancellationToken));
         }
     }

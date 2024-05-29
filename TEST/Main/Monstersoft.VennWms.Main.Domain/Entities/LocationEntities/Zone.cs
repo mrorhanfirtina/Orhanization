@@ -9,7 +9,7 @@ public class Zone : Entity<Guid>
     public string Description { get; set; }
     public Guid BuildingId { get; set; }
     public Guid DepositorCompanyId { get; set; }
-    public virtual Building Building { get; set; }
+    public virtual Building? Building { get; set; }
     public virtual DepositorCompany DepositorCompany { get; set; }
 
     public Zone()

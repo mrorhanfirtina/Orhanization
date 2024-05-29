@@ -30,13 +30,11 @@ public class DeleteSupplierCommand : IRequest<DeletedSupplierResponse>, ITransac
     {
         private readonly ISupplierRepository _supplierRepository;
         private readonly SupplierBusinessRules _supplierBusinessRules;
-        private readonly IAddressRepository _addressRepository;
 
-        public DeleteSupplierCommandHandler(ISupplierRepository supplierRepository, SupplierBusinessRules supplierBusinessRules, IAddressRepository addressRepository)
+        public DeleteSupplierCommandHandler(ISupplierRepository supplierRepository, SupplierBusinessRules supplierBusinessRules)
         {
             _supplierRepository = supplierRepository;
             _supplierBusinessRules = supplierBusinessRules;
-            _addressRepository = addressRepository;
         }
 
         public async Task<DeletedSupplierResponse> Handle(DeleteSupplierCommand request, CancellationToken cancellationToken)
@@ -47,13 +45,14 @@ public class DeleteSupplierCommand : IRequest<DeletedSupplierResponse>, ITransac
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Supplier supplier = await _supplierRepository.GetAsync(predicate: x => x.Id == request.Id && !x.DeletedDate.HasValue,
+            Supplier? supplier = await _supplierRepository.GetAsync(predicate: x => x.Id == request.Id && !x.DeletedDate.HasValue,
             include: x => x.Include(y => y.Address),
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
+            supplier.Address.DeletedDate = DateTime.Now;
+
             await _supplierRepository.DeleteAsync(supplier);
-            await _addressRepository.DeleteAsync(supplier.Address);
 
             return new DeletedSupplierResponse
             {

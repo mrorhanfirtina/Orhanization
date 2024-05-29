@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.CommonDtos;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Constants;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,7 @@ public class UpdateLockReasonCommand : IRequest<UpdatedLockReasonResponse>, ITra
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public UpdateLockReasonDto LockReason { get; set; }
+    public LockReasonDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateLockReasonCommandHandler : IRequestHandler<UpdateLockReasonCommand, UpdatedLockReasonResponse>
@@ -53,8 +58,37 @@ public class UpdateLockReasonCommand : IRequest<UpdatedLockReasonResponse>, ITra
             LockReason? lockReason = _mapper.Map(request.LockReason, currentLockReason);
             lockReason.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedLockReasonResponse>(await _lockReasonRepository.UpdateAsync(lockReason));
+            await _lockReasonRepository.UpdateAsync(lockReason);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _lockReasonRepository.GetAsync(predicate: x => x.Id == lockReason.Id,
+                include: x =>
+                {
+                    IQueryable<LockReason> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<LockReason, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedLockReasonResponse>(response);
+            }
+            else
+            {
+                var response = await _lockReasonRepository.GetAsync(predicate: x => x.Id == lockReason.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedLockReasonResponse>(response);
+            }
         }
     }
 }

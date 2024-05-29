@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.OrderDtos;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Constants;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,7 @@ public class UpdateOrderItemStockAttrValueCommand : IRequest<UpdatedOrderItemSto
     public string? CacheGroupKey => "GetOrderItemStockAttrValues";
 
     public UpdateOrderItemStockAttrValueDto OrderItemStockAttrValue { get; set; }
+    public OrderItemStockAttrValueDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateOrderItemStockAttrValueCommandHandler : IRequestHandler<UpdateOrderItemStockAttrValueCommand, UpdatedOrderItemStockAttrValueResponse>
@@ -54,8 +59,57 @@ public class UpdateOrderItemStockAttrValueCommand : IRequest<UpdatedOrderItemSto
             OrderItemStockAttrValue? orderItemStockAttrValue = _mapper.Map(request.OrderItemStockAttrValue, currentOrderItemStockAttrValue);
             orderItemStockAttrValue.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedOrderItemStockAttrValueResponse>(await _orderItemStockAttrValueRepository.UpdateAsync(orderItemStockAttrValue));
+            await _orderItemStockAttrValueRepository.UpdateAsync(orderItemStockAttrValue);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _orderItemStockAttrValueRepository.GetAsync(predicate: x => x.Id == orderItemStockAttrValue.Id,
+                include: x =>
+                {
+                    IQueryable<OrderItemStockAttrValue> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeOrderItem)
+                    {
+                        query = query.Include(y => y.OrderItem);
+
+                        if (detailLevel.OrderItemDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.OrderItem).ThenInclude(y => y.Product);
+                        }
+
+                        if (detailLevel.OrderItemDetailLevel.IncludeOrder)
+                        {
+                            query = query.Include(y => y.OrderItem).ThenInclude(y => y.Order);
+                        }
+                    }
+
+                    if (detailLevel.IncludeStockAttribute)
+                    {
+                        query = query.Include(y => y.StockAttribute);
+
+                        if (detailLevel.StockAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.StockAttribute).ThenInclude(y => y.AttributeInputType);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<OrderItemStockAttrValue, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedOrderItemStockAttrValueResponse>(response);
+            }
+            else
+            {
+                var response = await _orderItemStockAttrValueRepository.GetAsync(predicate: x => x.Id == orderItemStockAttrValue.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedOrderItemStockAttrValueResponse>(response);
+            }
         }
     }
 }

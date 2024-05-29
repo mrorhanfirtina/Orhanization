@@ -9,14 +9,14 @@ public class ItemUnitConfiguration : IEntityTypeConfiguration<ItemUnit>
     public void Configure(EntityTypeBuilder<ItemUnit> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("ItemUnits").HasKey(p => p.Id);
+        builder.ToTable("ItemUnits", "product").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
         builder.Property(p => p.Id).HasColumnName("Id").IsRequired();
         builder.Property(p => p.ProductId).HasColumnName("ProductId").IsRequired();
         builder.Property(p => p.UnitId).HasColumnName("UnitId").IsRequired();
-        builder.Property(p => p.IsCustomerUnit).HasColumnName("IsCustomerUnit");
+        builder.Property(p => p.IsConsumerUnit).HasColumnName("IsConsumerUnit");
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
         builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
@@ -24,11 +24,11 @@ public class ItemUnitConfiguration : IEntityTypeConfiguration<ItemUnit>
 
         #region Indexler
         builder.HasIndex(p => p.Id).IsUnique();
-        builder.HasIndex(p => new { p.ProductId, p.UnitId, p.IsCustomerUnit, p.CreatedDate }, name: "IX_ItemUnits_Areas");
+        builder.HasIndex(p => new { p.ProductId, p.UnitId, p.IsConsumerUnit, p.CreatedDate }, name: "IX_ItemUnits_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.ItemPackTypes).WithOne().HasForeignKey(p => p.ItemUnitId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ItemPackTypes).WithOne(m => m.ItemUnit).HasForeignKey(p => p.ItemUnitId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(p => p.Unit).WithMany().HasForeignKey(p => p.UnitId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 

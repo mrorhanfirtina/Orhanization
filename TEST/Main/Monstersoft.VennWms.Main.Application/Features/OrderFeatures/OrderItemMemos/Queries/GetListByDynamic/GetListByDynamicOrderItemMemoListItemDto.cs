@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Queries.GetListByDynamic;
+﻿using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Queries.GetListByDynamic;
 
 public class GetListByDynamicOrderItemMemoListItemDto
 {
@@ -10,6 +12,6 @@ public class GetListByDynamicOrderItemMemoListItemDto
     public DateTime EditDate { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public OrderItemMemoOrderItemResponseDto? OrderItem { get; set; }
 }
 

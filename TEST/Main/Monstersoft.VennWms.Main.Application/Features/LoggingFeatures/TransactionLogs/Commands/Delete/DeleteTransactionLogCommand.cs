@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.LoggingFeatures.TransactionLogs.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LoggingFeatures.TransactionLogs.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LoggingRepositories;
@@ -45,8 +46,13 @@ public class DeleteTransactionLogCommand : IRequest<DeletedTransactionLogRespons
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
             TransactionLog transactionLog = await _transactionLogRepository.GetAsync(predicate: x => x.Id == request.Id,
+            include: x => x.Include(y => y.LogStocks)
+                              .Include(y => y.LogStocks).ThenInclude(z => z.LogStockAttributeValues)
+                              .Include(y => y.LogStocks).ThenInclude(z => z.LogStockContainers)
+                              .Include(y => y.LogStocks).ThenInclude(z => z.LogStockReserveReasons)
+                              .Include(y => y.LogStocks).ThenInclude(z => z.LogStockUnsuitReasons),
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
             await _transactionLogRepository.DeleteAsync(transactionLog);

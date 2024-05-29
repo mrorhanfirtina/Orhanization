@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductBarcodes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductBarcodes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +28,8 @@ public class GetListByDynamicProductBarcodeQuery : IRequest<GetListResponse<GetL
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public ProductBarcodeDetailLevel DetailLevel { get; set; }
+
 
 
     public class GetListByDynamicProductBarcodeQueryHandler : IRequestHandler<GetListByDynamicProductBarcodeQuery, GetListResponse<GetListByDynamicProductBarcodeListItemDto>>
@@ -45,13 +50,58 @@ public class GetListByDynamicProductBarcodeQuery : IRequest<GetListResponse<GetL
             _productBarcodeBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ProductBarcode> productBarcodeList = await _productBarcodeRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            include: m => m.Include(x => x.BarcodeSuppliers),
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ProductBarcode> productBarcodeList = await _productBarcodeRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<ProductBarcode> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicProductBarcodeListItemDto>>(productBarcodeList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeItemUnit)
+                    {
+                        query = query.Include(y => y.ItemUnit);
+                    }
+
+                    if (detailLevel.IncludeProduct)
+                    {
+                        query = query.Include(y => y.Product);
+                    }
+
+                    if (detailLevel.IncludeBarcodeSupplier)
+                    {
+                        query = query.Include(y => y.BarcodeSuppliers);
+
+                        if (detailLevel.BarcodeSupplierDetailLevel.IncludeSupplier)
+                        {
+                            query = query.Include(y => y.BarcodeSuppliers).ThenInclude(y => y.Supplier);
+
+                            if (detailLevel.BarcodeSupplierDetailLevel.SupplierDetailLevel.IncludeCompany)
+                            {
+                                query = query.Include(y => y.BarcodeSuppliers).ThenInclude(y => y.Supplier).ThenInclude(y => y.Company);
+                            }
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ProductBarcode, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicProductBarcodeListItemDto>>(productBarcodeList);
+            }
+            else
+            {
+                Paginate<ProductBarcode> productBarcodeList = await _productBarcodeRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicProductBarcodeListItemDto>>(productBarcodeList);
+            }
         }
     }
 

@@ -20,9 +20,11 @@ public class Building : Entity<Guid>
     public virtual BuildingDimension? BuildingDimension { get; set; }
     public virtual Site? Site { get; set; }
     public virtual ICollection<StorageSystem>? StorageSystems { get; set; }
+    public virtual ICollection<Zone>? Zones { get; set; }
     public Building()
     {
         StorageSystems = new HashSet<StorageSystem>();
+        Zones = new HashSet<Zone>();
     }
 
     public Building(Guid id, string code, Guid siteId, string description, string province, string city, string country, string addressText, string zipCode, Guid depositorCompanyId) : this()

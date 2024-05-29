@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.LocationDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProductAttributes.Constants;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProductAttributes.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProductAttributes.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +30,7 @@ public class CreateLocationProductAttributeCommand : IRequest<CreatedLocationPro
     public string? CacheGroupKey => "GetLocationProductAttributes";
 
     public CreateLocationProductAttributeDto LocationProductAttribute { get; set; }
+    public LocationProductAttributeDetailLevel DetailLevel { get; set; }
 
 
     public class CreateLocationProductAttributeCommandHandler : IRequestHandler<CreateLocationProductAttributeCommand, CreatedLocationProductAttributeResponse>
@@ -50,7 +57,47 @@ public class CreateLocationProductAttributeCommand : IRequest<CreatedLocationPro
             locationProductAttribute.Id = Guid.NewGuid();
             locationProductAttribute.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedLocationProductAttributeResponse>(await _locationProductAttributeRepository.AddAsync(locationProductAttribute));
+            await _locationProductAttributeRepository.AddAsync(locationProductAttribute);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _locationProductAttributeRepository.GetAsync(predicate: x => x.Id == locationProductAttribute.Id,
+                include: x =>
+                {
+                    IQueryable<LocationProductAttribute> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeLocation)
+                    {
+                        query = query.Include(y => y.Location);
+                    }
+
+                    if (detailLevel.IncludeProductAttribute)
+                    {
+                        query = query.Include(y => y.ProductAttribute);
+
+                        if (detailLevel.ProductAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.ProductAttribute).ThenInclude(m => m.AttributeInputType);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<LocationProductAttribute, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedLocationProductAttributeResponse>(response);
+            }
+            else
+            {
+                var response = await _locationProductAttributeRepository.GetAsync(predicate: x => x.Id == locationProductAttribute.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedLocationProductAttributeResponse>(response);
+            }
         }
     }
 

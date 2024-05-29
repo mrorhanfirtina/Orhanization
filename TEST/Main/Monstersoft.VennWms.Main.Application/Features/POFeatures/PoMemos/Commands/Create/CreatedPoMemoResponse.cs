@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Commands.Create;
+﻿using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Commands.Create;
 
 public class CreatedPoMemoResponse
 {
@@ -9,5 +11,6 @@ public class CreatedPoMemoResponse
     public DateTime InputDate { get; set; }
     public DateTime EditDate { get; set; }
     public DateTime CreatedDate { get; set; }
+    public PoMemoPurchaseOrderResponseDto? PurchaseOrder { get; set; }
 
 }

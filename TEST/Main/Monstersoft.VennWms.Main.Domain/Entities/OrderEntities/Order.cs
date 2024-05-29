@@ -1,5 +1,6 @@
 ﻿using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
+using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Orhanization.Core.Persistence.Repositories;
 
 namespace Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
@@ -17,9 +18,12 @@ public class Order : Entity<Guid>
     public Guid OrderTypeId { get; set; }
     public int StatusId { get; set; }
     public virtual Customer? Customer { get; set; }
-    public virtual ICollection<OrderAttributeValue> OrderAttributeValues { get; set; }
+    public virtual OrderPriority? OrderPriority { get; set; }
+    public virtual OrderShipment OrderShipment { get; set; }
+    public virtual OrderType? OrderType { get; set; }
+    public virtual ICollection<OrderAttributeValue>? OrderAttributeValues { get; set; }
     public virtual ICollection<OrderItem> OrderItems { get; set; }
-    public virtual ICollection<OrderMemo> OrderMemos { get; set; }
+    public virtual ICollection<OrderMemo>? OrderMemos { get; set; }
     public virtual Depositor Depositor { get; set; }
     public virtual DepositorCompany DepositorCompany { get; set; }
     public virtual Receiver Receiver { get; set; }

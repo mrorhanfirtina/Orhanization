@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.OrderDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderMemos.Constants;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderMemos.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class CreateOrderMemoCommand : IRequest<CreatedOrderMemoResponse>, ITrans
     public string? CacheGroupKey => "GetOrderMemos";
 
     public CreateOrderMemoDto OrderMemo { get; set; }
+    public OrderMemoDetailLevel DetailLevel { get; set; }
 
 
     public class CreateOrderMemoCommandHandler : IRequestHandler<CreateOrderMemoCommand, CreatedOrderMemoResponse>
@@ -49,7 +54,37 @@ public class CreateOrderMemoCommand : IRequest<CreatedOrderMemoResponse>, ITrans
             orderMemo.Id = Guid.NewGuid();
             orderMemo.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedOrderMemoResponse>(await _orderMemoRepository.AddAsync(orderMemo));
+            await _orderMemoRepository.AddAsync(orderMemo);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _orderMemoRepository.GetAsync(predicate: x => x.Id == orderMemo.Id,
+                include: x =>
+                {
+                    IQueryable<OrderMemo> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeOrder)
+                    {
+                        query = query.Include(y => y.Order);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<OrderMemo, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedOrderMemoResponse>(response);
+            }
+            else
+            {
+                var response = await _orderMemoRepository.GetAsync(predicate: x => x.Id == orderMemo.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedOrderMemoResponse>(response);
+            }
         }
     }
 

@@ -9,7 +9,7 @@ public class TaskStockConfiguration : IEntityTypeConfiguration<TaskStock>
     public void Configure(EntityTypeBuilder<TaskStock> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("TaskStocks").HasKey(p => p.Id);
+        builder.ToTable("TaskStocks", "stock").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

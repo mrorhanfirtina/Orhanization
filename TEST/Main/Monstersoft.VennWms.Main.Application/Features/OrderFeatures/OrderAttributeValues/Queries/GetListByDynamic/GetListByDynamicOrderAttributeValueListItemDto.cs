@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Queries.GetListByDynamic;
+﻿using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Queries.GetListByDynamic;
 
 public class GetListByDynamicOrderAttributeValueListItemDto
 {
@@ -8,5 +10,6 @@ public class GetListByDynamicOrderAttributeValueListItemDto
     public string Value { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public OrderAttributeValueOrderResponseDto? Order { get; set; }
+    public OrderAttributeValueOrderAttributeResponseDto? OrderAttribute { get; set; }
 }

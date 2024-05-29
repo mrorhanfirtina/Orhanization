@@ -9,7 +9,7 @@ public class BarcodePrinterConfigurations : IEntityTypeConfiguration<BarcodePrin
     public void Configure(EntityTypeBuilder<BarcodePrinter> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("BarcodePrinters").HasKey(p => p.Id);
+        builder.ToTable("BarcodePrinters", "barcode").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -28,6 +28,7 @@ public class BarcodePrinterConfigurations : IEntityTypeConfiguration<BarcodePrin
 
         #region İlişki Tanımları
         builder.HasOne(p => p.Printer).WithMany().HasForeignKey(p => p.PrinterId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Barcode).WithMany(p => p.BarcodePrinters).HasForeignKey(p => p.BarcodeId).OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Filtreler

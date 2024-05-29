@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using Monstersoft.VennWms.Main.Application.Dtos.DtoValidators.CreateDtoValidators.CreateDtoRootValidators.ShipmentDtos;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.Shipments.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.Shipments.Dtos.DtoValidators;
 
 namespace Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.Shipments.Validators;
 

@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Queries.GetById;
+﻿using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Queries.GetById;
 
 public class GetByIdItemPackTypeResponse
 {
@@ -15,5 +17,9 @@ public class GetByIdItemPackTypeResponse
     public int WeightUnitId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public ItemPackTypeItemUnitResponseDto? ItemUnit { get; set; }
+    public ItemPackTypeLenghtUnitResponseDto? LenghtUnit { get; set; }
+    public ItemPackTypeVolumeUnitResponseDto? VolumeUnit { get; set; }
+    public ItemPackTypeWeightUnitResponseDto? WeightUnit { get; set; }
 
 }

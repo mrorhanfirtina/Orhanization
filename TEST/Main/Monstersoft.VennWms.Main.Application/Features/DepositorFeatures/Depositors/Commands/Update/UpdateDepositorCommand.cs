@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.DepositorDtos;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -26,6 +28,7 @@ public class UpdateDepositorCommand : IRequest<UpdatedDepositorResponse>, ITrans
     public string? CacheGroupKey => "GetDepositors";
 
     public UpdateDepositorDto Depositor { get; set; }
+    public DepositorDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateDepositorCommandHandler : IRequestHandler<UpdateDepositorCommand, UpdatedDepositorResponse>
@@ -57,8 +60,53 @@ public class UpdateDepositorCommand : IRequest<UpdatedDepositorResponse>, ITrans
             depositor.UpdatedDate = DateTime.Now;
             depositor.DepositorFeature.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedDepositorResponse>(await _depositorRepository.UpdateAsync(depositor));
+            await _depositorRepository.UpdateAsync(depositor);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _depositorRepository.GetAsync(predicate: x => x.Id == depositor.Id,
+                include: x =>
+                {
+                    IQueryable<Depositor> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeDepositorFeature)
+                    {
+                        query = query.Include(y => y.DepositorFeature);
+                    }
+
+                    if (detailLevel.IncludeCompany)
+                    {
+                        query = query.Include(y => y.Company);
+
+                        if (detailLevel.CompanyDetailLevel.IncludeAddress)
+                        {
+                            query = query.Include(y => y.Company).ThenInclude(m => m.Address);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<Depositor, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedDepositorResponse>(response);
+            }
+            else
+            {
+                var response = await _depositorRepository.GetAsync(predicate: x => x.Id == depositor.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedDepositorResponse>(response);
+
+            }
         }
     }
 }

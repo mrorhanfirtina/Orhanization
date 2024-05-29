@@ -19,6 +19,7 @@ public class LocationFeature : Entity<Guid>
     public bool NoStockMergeLed { get; set; }
     public bool SingleProductLed { get; set; }
     public bool SinglePackTypeLed { get; set; }
+    public virtual Location? Location { get; set; }
 
     public LocationFeature()
     {

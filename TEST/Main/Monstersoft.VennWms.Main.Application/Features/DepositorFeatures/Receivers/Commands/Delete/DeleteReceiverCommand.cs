@@ -30,13 +30,11 @@ public class DeleteReceiverCommand : IRequest<DeletedReceiverResponse>, ITransac
     {
         private readonly IReceiverRepository _receiverRepository;
         private readonly ReceiverBusinessRules _receiverBusinessRules;
-        private readonly IAddressRepository _addressRepository;
 
-        public DeleteReceiverCommandHandler(IReceiverRepository receiverRepository, ReceiverBusinessRules receiverBusinessRules, IAddressRepository addressRepository)
+        public DeleteReceiverCommandHandler(IReceiverRepository receiverRepository, ReceiverBusinessRules receiverBusinessRules)
         {
             _receiverRepository = receiverRepository;
             _receiverBusinessRules = receiverBusinessRules;
-            _addressRepository = addressRepository;
         }
 
         public async Task<DeletedReceiverResponse> Handle(DeleteReceiverCommand request, CancellationToken cancellationToken)
@@ -47,13 +45,14 @@ public class DeleteReceiverCommand : IRequest<DeletedReceiverResponse>, ITransac
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Receiver receiver = await _receiverRepository.GetAsync(predicate: x => x.Id == request.Id && !x.DeletedDate.HasValue,
+            Receiver? receiver = await _receiverRepository.GetAsync(predicate: x => x.Id == request.Id && !x.DeletedDate.HasValue,
             include: x => x.Include(y => y.Address),
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
+            receiver.Address.DeletedDate = DateTime.Now;
+
             await _receiverRepository.DeleteAsync(receiver);
-            await _addressRepository.DeleteAsync(receiver.Address);
 
             return new DeletedReceiverResponse
             {

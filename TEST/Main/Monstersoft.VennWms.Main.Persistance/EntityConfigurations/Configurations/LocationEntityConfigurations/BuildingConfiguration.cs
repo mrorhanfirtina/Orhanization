@@ -9,7 +9,7 @@ public class BuildingConfiguration : IEntityTypeConfiguration<Building>
     public void Configure(EntityTypeBuilder<Building> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("Buildings").HasKey(p => p.Id);
+        builder.ToTable("Buildings", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -21,7 +21,7 @@ public class BuildingConfiguration : IEntityTypeConfiguration<Building>
         builder.Property(p => p.City).HasColumnName("City").HasMaxLength(60).IsRequired();
         builder.Property(p => p.Country).HasColumnName("Country").HasMaxLength(60).IsRequired();
         builder.Property(p => p.AddressText).HasColumnName("AddressText").HasMaxLength(250).IsRequired();
-        builder.Property(p => p.ZipCode).HasColumnName("ZipCode").HasMaxLength(10).IsRequired();
+        builder.Property(p => p.ZipCode).HasColumnName("ZipCode").HasMaxLength(15).IsRequired();
         builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.Latitude).HasColumnName("Latitude").HasColumnType("DECIMAL(11,7)");
         builder.Property(p => p.Longitude).HasColumnName("Longitude").HasColumnType("DECIMAL(11,7)");
@@ -37,9 +37,9 @@ public class BuildingConfiguration : IEntityTypeConfiguration<Building>
 
         #region İlişki Tanımları
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasMany(p => p.StorageSystems).WithOne().HasForeignKey(p => p.BuildingId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(p => p.Site).WithMany().HasForeignKey(p => p.SiteId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasOne(p => p.BuildingDimension).WithOne().HasForeignKey<BuildingDimension>(p => p.BuildingId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.StorageSystems).WithOne(p => p.Building).HasForeignKey(p => p.BuildingId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.Site).WithMany(p => p.Buildings).HasForeignKey(p => p.SiteId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.BuildingDimension).WithOne(p => p.Building).HasForeignKey<BuildingDimension>(p => p.BuildingId).OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Filtreler

@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,8 @@ public class GetListByDynamicOrderAttributeValueQuery : IRequest<GetListResponse
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public OrderAttributeValueDetailLevel DetailLevel { get; set; }
+
 
     public class GetListByDynamicOrderAttributeValueQueryHandler : IRequestHandler<GetListByDynamicOrderAttributeValueQuery, GetListResponse<GetListByDynamicOrderAttributeValueListItemDto>>
     {
@@ -43,13 +49,49 @@ public class GetListByDynamicOrderAttributeValueQuery : IRequest<GetListResponse
             _orderAttributeValueBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<OrderAttributeValue> orderAttributeValueList = await _orderAttributeValueRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<OrderAttributeValue> orderAttributeValueList = await _orderAttributeValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<OrderAttributeValue> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicOrderAttributeValueListItemDto>>(orderAttributeValueList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeOrder)
+                    {
+                        query = query.Include(y => y.Order);
+                    }
+
+                    if (detailLevel.IncludeOrderAttribute)
+                    {
+                        query = query.Include(y => y.OrderAttribute);
+
+                        if (detailLevel.OrderAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.OrderAttribute).ThenInclude(m => m.AttributeInputType);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<OrderAttributeValue, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicOrderAttributeValueListItemDto>>(orderAttributeValueList);
+            }
+            else
+            {
+                Paginate<OrderAttributeValue> orderAttributeValueList = await _orderAttributeValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicOrderAttributeValueListItemDto>>(orderAttributeValueList);
+            }
         }
     }
-
 }

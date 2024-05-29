@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -23,10 +27,11 @@ public class GetListPrinterQuery : IRequest<GetListResponse<GetListPrinterListIt
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string CacheKey => $"GetListPrinterQuery({PageRequest.PageIndex},{PageRequest.PageSize})";
     public bool ByPassCache { get; }
-    public string? CacheGroupKey => "GetPrinters";
+    public string? CacheGroupKey => "GetBarcodes";
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
+    public PrinterDetailLevel DetailLevel { get; set; }
 
 
     public class GetListPrinterQueryHandler : IRequestHandler<GetListPrinterQuery, GetListResponse<GetListPrinterListItemDto>>
@@ -49,12 +54,38 @@ public class GetListPrinterQuery : IRequest<GetListResponse<GetListPrinterListIt
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<Printer> printerList = await _printerRepository.GetListAsync(
-            predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            
 
-            return _mapper.Map<GetListResponse<GetListPrinterListItemDto>>(printerList);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<Printer> printerList = await _printerRepository.GetListAsync(
+                    predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                    include: x =>
+                    {
+                        IQueryable<Printer> query = x;
+
+                        var detailLevel = request.DetailLevel;
+
+                        if (detailLevel.IncludeDepositorCompany)
+                        {
+                            query = query.Include(y => y.DepositorCompany);
+                        }
+
+                        var includableQuery = query as IIncludableQueryable<Printer, object>;
+                        return includableQuery;
+                    },
+                    index: request.PageRequest.PageIndex,
+                    size: request.PageRequest.PageSize, enableTracking: false, cancellationToken: cancellationToken);
+                return _mapper.Map<GetListResponse<GetListPrinterListItemDto>>(printerList);
+            }
+            else
+            {
+                Paginate<Printer> printerList = await _printerRepository.GetListAsync(
+                    predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                    index: request.PageRequest.PageIndex,
+                    size: request.PageRequest.PageSize, enableTracking: false, cancellationToken: cancellationToken);
+                return _mapper.Map<GetListResponse<GetListPrinterListItemDto>>(printerList);
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ public class LocationDepositorConfiguration : IEntityTypeConfiguration<LocationD
     public void Configure(EntityTypeBuilder<LocationDepositor> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("LocationDepositors").HasKey(p => p.Id);
+        builder.ToTable("LocationDepositors", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

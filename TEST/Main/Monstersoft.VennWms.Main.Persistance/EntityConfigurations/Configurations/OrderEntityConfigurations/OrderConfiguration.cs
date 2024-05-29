@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
+using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 
 namespace Monstersoft.VennWms.Main.Persistance.EntityConfigurations.Configurations.OrderEntityConfigurations;
 
@@ -9,7 +10,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
     public void Configure(EntityTypeBuilder<Order> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("Orders").HasKey(p => p.Id);
+        builder.ToTable("Orders", "order").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -36,13 +37,15 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 
         #region İlişki Tanımları
         builder.HasOne(p => p.Customer).WithMany().HasForeignKey(p => p.CustomerId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasMany(p => p.OrderAttributeValues).WithOne().HasForeignKey(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.OrderItems).WithOne().HasForeignKey(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.OrderMemos).WithOne().HasForeignKey(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.OrderAttributeValues).WithOne(p => p.Order).HasForeignKey(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.OrderItems).WithOne(p => p.Order).HasForeignKey(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.OrderMemos).WithOne(p => p.Order).HasForeignKey(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(p => p.Depositor).WithMany().HasForeignKey(p => p.DepositorId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Receiver).WithMany().HasForeignKey(p => p.ReceiverId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Status).WithMany().HasForeignKey(p => p.StatusId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.OrderPriority).WithOne(p => p.Order).HasForeignKey<OrderPriority>(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.OrderShipment).WithOne().HasForeignKey<OrderShipment>(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Filtreler

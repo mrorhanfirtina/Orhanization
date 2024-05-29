@@ -9,7 +9,8 @@ public class LocationProductAttribute : Entity<Guid>
     public Guid ProductAttributeId { get; set; }
     public string Value { get; set; }
     public bool IsForbid { get; set; }
-    public virtual ProductAttribute ProductAttribute { get; set; }
+    public virtual ProductAttribute? ProductAttribute { get; set; }
+    public virtual Location? Location { get; set; }
     public LocationProductAttribute()
     {
     }

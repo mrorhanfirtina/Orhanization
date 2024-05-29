@@ -52,9 +52,11 @@ public class GetListReceiptQuery : IRequest<GetListResponse<GetListReceiptListIt
 
             Paginate<Receipt> receiptList = await _receiptRepository.GetListAsync(
             predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(x => x.ReceiptAttributeValues).Include(x => x.ReceiptMemos)
-            .Include(x => x.ReceiptItems).ThenInclude(ri => ri.ReceiptItemMemos)
-            .Include(x => x.ReceiptItems).ThenInclude(ri => ri.ReceiptItmStockAttrValues),
+            include: x => x.Include(y => y.ReceiptAttributeValues)
+                           .Include(y => y.ReceiptMemos)
+                           .Include(y => y.ReceiptItems)
+                           .Include(y => y.ReceiptItems).ThenInclude(z => z.ReceiptItemMemos)
+                           .Include(y => y.ReceiptItems).ThenInclude(z => z.ReceiptItmStockAttrValues),
             index: request.PageRequest.PageIndex,
             size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 

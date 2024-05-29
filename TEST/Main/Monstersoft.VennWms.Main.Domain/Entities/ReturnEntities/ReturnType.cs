@@ -11,7 +11,7 @@ public class ReturnType : Entity<Guid>
     public bool IsCodeGenerate { get; set; }
     public int Counter { get; set; }
     public string Format { get; set; }
-    public virtual ICollection<Return> Returns { get; set; }
+    public virtual ICollection<Return>? Returns { get; set; }
     public virtual DepositorCompany DepositorCompany { get; set; }
 
     public ReturnType()

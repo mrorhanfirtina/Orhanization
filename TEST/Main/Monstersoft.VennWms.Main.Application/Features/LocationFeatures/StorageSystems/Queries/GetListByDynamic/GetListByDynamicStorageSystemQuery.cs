@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicStorageSystemQuery : IRequest<GetListResponse<GetLi
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public StorageSystemDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicStorageSystemQueryHandler : IRequestHandler<GetListByDynamicStorageSystemQuery, GetListResponse<GetListByDynamicStorageSystemListItemDto>>
@@ -46,12 +51,49 @@ public class GetListByDynamicStorageSystemQuery : IRequest<GetListResponse<GetLi
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<StorageSystem> storageSystemList = await _storageSystemRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<StorageSystem> storageSystemList = await _storageSystemRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<StorageSystem> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicStorageSystemListItemDto>>(storageSystemList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeBuilding)
+                    {
+                        query = query.Include(y => y.Building);
+                    }
+
+                    if (detailLevel.IncludeLocation)
+                    {
+                        query = query.Include(y => y.Locations);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<StorageSystem, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicStorageSystemListItemDto>>(storageSystemList);
+            }
+            else
+            {
+                Paginate<StorageSystem> storageSystemList = await _storageSystemRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicStorageSystemListItemDto>>(storageSystemList);
+            }
         }
     }
 

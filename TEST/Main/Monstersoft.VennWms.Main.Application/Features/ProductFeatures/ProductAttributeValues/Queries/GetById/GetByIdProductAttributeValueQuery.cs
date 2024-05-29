@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributeValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributeValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -18,6 +23,8 @@ public class GetByIdProductAttributeValueQuery : IRequest<GetByIdProductAttribut
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public ProductAttributeValueDetailLevel DetailLevel { get; set; }
+
 
 
     public class GetByIdProductAttributeValueQueryHandler : IRequestHandler<GetByIdProductAttributeValueQuery, GetByIdProductAttributeValueResponse>
@@ -39,7 +46,41 @@ public class GetByIdProductAttributeValueQuery : IRequest<GetByIdProductAttribut
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdProductAttributeValueResponse>(await _productAttributeValueRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdProductAttributeValueResponse>(await _productAttributeValueRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<ProductAttributeValue> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeProduct)
+                    {
+                        query = query.Include(y => y.Product);
+                    }
+
+                    if (detailLevel.IncludeProductAttribute)
+                    {
+                        query = query.Include(y => y.ProductAttribute);
+
+                        if (detailLevel.ProductAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.ProductAttribute).ThenInclude(m => m.AttributeInputType);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<ProductAttributeValue, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdProductAttributeValueResponse>(await _productAttributeValueRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

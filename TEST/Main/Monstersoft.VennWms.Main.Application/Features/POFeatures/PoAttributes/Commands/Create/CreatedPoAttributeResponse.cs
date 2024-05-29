@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Commands.Create;
+﻿using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Commands.Create;
 
 public class CreatedPoAttributeResponse
 {
@@ -9,6 +11,8 @@ public class CreatedPoAttributeResponse
     public Guid DepositorCompanyId { get; set; }
     public bool IsNecessary { get; set; }
     public DateTime CreatedDate { get; set; }
+    public PoAttributeDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public PoAttributeAttributeInputTypeResponseDto? AttributeInputType { get; set; }
 
 }
 

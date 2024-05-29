@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.LocationDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationZones.Constants;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationZones.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationZones.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +30,7 @@ public class CreateLocationZoneCommand : IRequest<CreatedLocationZoneResponse>, 
     public string? CacheGroupKey => "GetLocationZones";
 
     public CreateLocationZoneDto LocationZone { get; set; }
+    public LocationZoneDetailLevel DetailLevel { get; set; }
 
 
     public class CreateLocationZoneCommandHandler : IRequestHandler<CreateLocationZoneCommand, CreatedLocationZoneResponse>
@@ -50,7 +57,42 @@ public class CreateLocationZoneCommand : IRequest<CreatedLocationZoneResponse>, 
             locationZone.Id = Guid.NewGuid();
             locationZone.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedLocationZoneResponse>(await _locationZoneRepository.AddAsync(locationZone));
+            await _locationZoneRepository.AddAsync(locationZone);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _locationZoneRepository.GetAsync(predicate: x => x.Id == locationZone.Id,
+                include: x =>
+                {
+                    IQueryable<LocationZone> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeLocation)
+                    {
+                        query = query.Include(y => y.Location);
+                    }
+
+                    if (detailLevel.IncludeZone)
+                    {
+                        query = query.Include(y => y.Zone);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<LocationZone, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedLocationZoneResponse>(response);
+            }
+            else
+            {
+                var response = await _locationZoneRepository.GetAsync(predicate: x => x.Id == locationZone.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedLocationZoneResponse>(response);
+            }
         }
     }
 

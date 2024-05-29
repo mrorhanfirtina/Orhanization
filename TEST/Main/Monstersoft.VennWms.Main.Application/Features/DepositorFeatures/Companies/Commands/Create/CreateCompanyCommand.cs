@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.DepositorDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Companies.Constants;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Companies.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Companies.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -23,6 +29,7 @@ public class CreateCompanyCommand : IRequest<CreatedCompanyResponse>, ITransacti
     public string? CacheGroupKey => "GetCompanies";
 
     public CreateCompanyDto Company { get; set; }
+    public CompanyDetailLevel DetailLevel { get; set; }
 
 
     public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand, CreatedCompanyResponse>
@@ -41,15 +48,51 @@ public class CreateCompanyCommand : IRequest<CreatedCompanyResponse>, ITransacti
         public async Task<CreatedCompanyResponse> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
         {
             _companyBusinessRules.CreateRequest()
-            .CheckCodeExistenceWhenCreate(request.Company.Code);
+            .CheckDepositorCompany(request.UserRequestInfo!.RequestUserLocalityId)
+                .CheckCodeExistenceWhenCreate(request.Company.Code);
 
             Company company = _mapper.Map<Company>(request.Company);
             company.Id = Guid.NewGuid();
-            company.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
+            company.DepositorCompanyId = Guid.Parse(request.UserRequestInfo!.RequestUserLocalityId);
             company.CreatedDate = DateTime.Now;
-            company.Address.Id = Guid.NewGuid();
+            company.Address.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedCompanyResponse>(await _companyRepository.AddAsync(company));
+            await _companyRepository.AddAsync(company);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _companyRepository.GetAsync(predicate: x => x.Id == company.Id,
+                include: x =>
+                {
+                    IQueryable<Company> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAddress)
+                    {
+                        query = query.Include(y => y.Address);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<Company, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedCompanyResponse>(response);
+            }
+            else
+            {
+                var response = await _companyRepository.GetAsync(predicate: x => x.Id == company.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedCompanyResponse>(response);
+            }
         }
     }
 }

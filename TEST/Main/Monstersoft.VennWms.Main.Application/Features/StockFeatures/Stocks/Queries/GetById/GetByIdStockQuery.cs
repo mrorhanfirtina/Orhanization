@@ -41,7 +41,12 @@ public class GetByIdStockQuery : IRequest<GetByIdStockResponse>, ITransactionalR
             .CheckIdExistence(request.Id);
 
             return _mapper.Map<GetByIdStockResponse>(await _stockRepository.GetAsync(x => x.Id == request.Id,
-                include: m => m.Include(x => x.StockContainer).Include(x => x.StockAttributeValues).Include(x => x.StockMemos).Include(x => x.StockReserveReasons).Include(x => x.StockUnsuitReasons),
+                include: x => x.Include(y => y.StockMemos)
+                .Include(y => y.StockAttributeValues)
+                .Include(y => y.StockInbounds)
+                .Include(y => y.StockPackTypes)
+                .Include(y => y.StockReserveReasons)
+                .Include(y => y.StockUnsuitReasons),
                 withDeleted: false, cancellationToken: cancellationToken));
         }
     }

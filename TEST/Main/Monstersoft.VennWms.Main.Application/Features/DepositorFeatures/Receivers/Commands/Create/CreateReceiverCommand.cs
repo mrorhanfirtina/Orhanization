@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.ReceiptDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Receivers.Constants;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Receivers.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Receivers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class CreateReceiverCommand : IRequest<CreatedReceiverResponse>, ITransac
     public string? CacheGroupKey => "GetReceivers";
 
     public CreateReceiverDto Receiver { get; set; }
+    public ReceiverDetailLevel DetailLevel { get; set; }
 
 
     public class CreateReceiverCommandHandler : IRequestHandler<CreateReceiverCommand, CreatedReceiverResponse>
@@ -42,6 +47,7 @@ public class CreateReceiverCommand : IRequest<CreatedReceiverResponse>, ITransac
         public async Task<CreatedReceiverResponse> Handle(CreateReceiverCommand request, CancellationToken cancellationToken)
         {
             _receiverBusinessRules.CreateRequest()
+            .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckCodeExistenceWhenCreate(request.Receiver.Code)
             .CheckCustomerIdExistence(request.Receiver.CustomerId);
 
@@ -49,9 +55,52 @@ public class CreateReceiverCommand : IRequest<CreatedReceiverResponse>, ITransac
             receiver.Id = Guid.NewGuid();
             receiver.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
             receiver.CreatedDate = DateTime.Now;
-            receiver.Address.Id = Guid.NewGuid();
 
-            return _mapper.Map<CreatedReceiverResponse>(await _receiverRepository.AddAsync(receiver));
+            await _receiverRepository.AddAsync(receiver);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _receiverRepository.GetAsync(predicate: x => x.Id == receiver.Id,
+                include: x =>
+                {
+                    IQueryable<Receiver> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAddress)
+                    {
+                        query = query.Include(y => y.Address);
+                    }
+
+                    if (detailLevel.IncludeCustomer)
+                    {
+                        query = query.Include(y => y.Customer);
+
+                        if (detailLevel.CustomerDetailLevel.IncludeCompany)
+                        {
+                            query = query.Include(y => y.Customer).ThenInclude(m => m.Company);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<Receiver, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReceiverResponse>(response);
+            }
+            else
+            {
+                var response = await _receiverRepository.GetAsync(predicate: x => x.Id == receiver.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReceiverResponse>(response);
+            }
         }
     }
 }

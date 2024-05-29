@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.LoggingFeatures.TransactionLogs.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LoggingFeatures.TransactionLogs.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LoggingRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +28,7 @@ public class GetListByDynamicTransactionLogQuery : IRequest<GetListResponse<GetL
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public TransactionLogDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicTransactionLogQueryHandler : IRequestHandler<GetListByDynamicTransactionLogQuery, GetListResponse<GetListByDynamicTransactionLogListItemDto>>
@@ -47,16 +51,128 @@ public class GetListByDynamicTransactionLogQuery : IRequest<GetListResponse<GetL
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<TransactionLog> transactionLogList = await _transactionLogRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(x => x.LogStocks).ThenInclude(ls => ls.LogStockAttributeValues)
-                .Include(x => x.LogStocks).ThenInclude(ls => ls.LogStockContainers)
-                .Include(x => x.LogStocks).ThenInclude(ls => ls.LogStockReserveReasons)
-                .Include(x => x.LogStocks).ThenInclude(ls => ls.LogStockUnsuitReasons),
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<TransactionLog> transactionLogList = await _transactionLogRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<TransactionLog> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicTransactionLogListItemDto>>(transactionLogList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeDepositor)
+                    {
+                        query = query.Include(y => y.Depositor);
+                    }
+
+                    if (detailLevel.IncludeUser)
+                    {
+                        query = query.Include(y => y.User);
+                    }
+
+                    if (detailLevel.IncludeLogStock)
+                    {
+                        query = query.Include(y => y.LogStocks);
+
+                        if (detailLevel.LogStockDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.Product);
+                        }
+
+                        if (detailLevel.LogStockDetailLevel.IncludeFromLocation)
+                        {
+                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.FromLocation);
+                        }
+
+                        if (detailLevel.LogStockDetailLevel.IncludeToLocation)
+                        {
+                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.ToLocation);
+                        }
+
+                        if (detailLevel.LogStockDetailLevel.IncludeTransactionType)
+                        {
+                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.TransactionType);
+                        }
+
+                        if (detailLevel.LogStockDetailLevel.IncludeLogStockReserveReason)
+                        {
+                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockReserveReasons);
+
+                            if (detailLevel.LogStockDetailLevel.LogStockReserveReasonDetailLevel.IncludeFromReason)
+                            {
+                                query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockReserveReasons).ThenInclude(y => y.FromReason);
+                            }
+
+                            if (detailLevel.LogStockDetailLevel.LogStockReserveReasonDetailLevel.IncludeToReason)
+                            {
+                                query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockReserveReasons).ThenInclude(y => y.ToReason);
+                            }
+                        }
+
+                        if (detailLevel.LogStockDetailLevel.IncludeLogStockAttributeValue)
+                        {
+                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockAttributeValues);
+
+                            if (detailLevel.LogStockDetailLevel.LogStockAttributeDetailLevel.IncludeStockAttribute)
+                            {
+                                query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockAttributeValues).ThenInclude(y => y.StockAttribute);
+                            }
+                        }
+
+                        if (detailLevel.LogStockDetailLevel.IncludeLogStockContainer)
+                        {
+                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockContainers);
+
+                            if (detailLevel.LogStockDetailLevel.LogStockContainerDetailLevel.IncludeFromContainerUnit)
+                            {
+                                query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockContainers).ThenInclude(y => y.FromContainerUnit);
+                            }
+
+                            if (detailLevel.LogStockDetailLevel.LogStockContainerDetailLevel.IncludeToContainerUnit)
+                            {
+                                query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockContainers).ThenInclude(y => y.ToContainerUnit);
+                            }
+                        }
+
+                        if (detailLevel.LogStockDetailLevel.IncludeLogStockUnsuitReason)
+                        {
+                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockUnsuitReasons);
+
+                            if (detailLevel.LogStockDetailLevel.LogStockUnsuitReasonDetailLevel.IncludeFromReason)
+                            {
+                                query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockUnsuitReasons).ThenInclude(y => y.FromReason);
+                            }
+
+                            if (detailLevel.LogStockDetailLevel.LogStockUnsuitReasonDetailLevel.IncludeToReason)
+                            {
+                                query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockUnsuitReasons).ThenInclude(y => y.ToReason);
+                            }
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<TransactionLog, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicTransactionLogListItemDto>>(transactionLogList);
+            }
+            else
+            {
+                Paginate<TransactionLog> transactionLogList = await _transactionLogRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicTransactionLogListItemDto>>(transactionLogList);
+            }
         }
     }
 

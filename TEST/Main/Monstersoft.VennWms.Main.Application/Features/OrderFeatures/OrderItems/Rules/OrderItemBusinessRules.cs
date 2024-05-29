@@ -2,6 +2,7 @@
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Monstersoft.VennWms.Main.Domain.Enums;
 using Orhanization.Core.Application.Rules;
 using Orhanization.Core.CrossCuttingConcerns.Exceptions.Types;
@@ -172,6 +173,26 @@ public class OrderItemBusinessRules : BaseBusinessRules
         else if (CurrentRequest == RequestType.Update && !isExists)
         {
             throw new BusinessException(OrderItemMessages.ProductIdNotExistsError);
+        }
+
+        return this;
+    }
+    #endregion
+
+    #region ORDERSHIPMENT RULES
+    public OrderItemBusinessRules CheckOrderShipment(OrderShipment orderShipment)
+    {
+        if (orderShipment == null)
+        {
+            throw new BusinessException(OrderItemMessages.OrderShipmentNotFound);
+        }
+
+        if (orderShipment != null)
+        {
+            if (orderShipment.ProgressStatusId != 0)
+            {
+                throw new BusinessException(OrderItemMessages.OrderIsStarted);
+            }
         }
 
         return this;

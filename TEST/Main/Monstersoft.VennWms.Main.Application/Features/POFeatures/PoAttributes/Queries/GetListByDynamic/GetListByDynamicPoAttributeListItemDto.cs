@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Queries.GetListByDynamic;
+﻿using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Queries.GetListByDynamic;
 
 public class GetListByDynamicPoAttributeListItemDto
 {
@@ -10,6 +12,8 @@ public class GetListByDynamicPoAttributeListItemDto
     public bool IsNecessary { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public PoAttributeDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public PoAttributeAttributeInputTypeResponseDto? AttributeInputType { get; set; }
 
 }
 

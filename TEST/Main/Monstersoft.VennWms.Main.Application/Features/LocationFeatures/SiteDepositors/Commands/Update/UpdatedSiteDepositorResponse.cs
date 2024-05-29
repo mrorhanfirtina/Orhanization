@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.SiteDepositors.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.SiteDepositors.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.SiteDepositors.Commands.Update;
 
 public class UpdatedSiteDepositorResponse
 {
@@ -7,5 +9,7 @@ public class UpdatedSiteDepositorResponse
     public Guid DepositorId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public SiteDepositorSiteResponseDto? Site { get; set; }
+    public SiteDepositorDepositorResponseDto? Depositor { get; set; }
 }
 

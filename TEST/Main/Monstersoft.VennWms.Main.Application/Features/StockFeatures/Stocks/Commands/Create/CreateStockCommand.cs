@@ -1,5 +1,9 @@
-﻿using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.StockDtos;
+﻿using AutoMapper;
+using MediatR;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.Stocks.Dtos.CreateDtos;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.Stocks.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
+using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Caching;
@@ -20,5 +24,41 @@ public class CreateStockCommand : IRequest<CreatedStockResponse>, ITransactional
     public string? CacheGroupKey => "GetStocks";
 
     public CreateStockDto Stock { get; set; }
+
+
+    public class CreateStockCommandHandler : IRequestHandler<CreateStockCommand, CreatedStockResponse>
+    {
+        private readonly IStockRepository _stockRepository;
+        private readonly IMapper _mapper;
+        private readonly StockBusinessRules _stockBusinessRules;
+
+        public CreateStockCommandHandler(IStockRepository stockRepository, IMapper mapper, StockBusinessRules stockBusinessRules)
+        {
+            _stockRepository = stockRepository;
+            _mapper = mapper;
+            _stockBusinessRules = stockBusinessRules;
+        }
+
+        public async Task<CreatedStockResponse> Handle(CreateStockCommand request, CancellationToken cancellationToken)
+        {
+            _stockBusinessRules.CreateRequest()
+                .CheckDepositorCompany(request.UserRequestInfo!.RequestUserLocalityId)
+                .CheckDepositorIdExistence(request.Stock.DepositorId);
+
+            Stock? stock = _mapper.Map<Stock>(request.Stock);
+
+            stock.CreatedDate = DateTime.Now;
+            stock.DepositorCompanyId = Guid.Parse(request.UserRequestInfo!.RequestUserLocalityId);
+
+            stock.StockMemos?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; });
+            stock.StockAttributeValues?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; });
+            stock.StockReserveReasons?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; });
+            stock.StockUnsuitReasons?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; });
+            stock.StockInbounds?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; });
+            stock.StockPackTypes?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; });
+
+            return _mapper.Map<CreatedStockResponse>(await _stockRepository.AddAsync(stock));
+        }
+    }
 }
 

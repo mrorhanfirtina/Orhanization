@@ -1,5 +1,9 @@
-﻿using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.ShipmentDtos;
+﻿using AutoMapper;
+using MediatR;
+using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemTasks.Dtos.CreateDtos;
+using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemTasks.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
+using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Caching;
@@ -20,4 +24,36 @@ public class CreateOrderShipItemTaskCommand : IRequest<CreatedOrderShipItemTaskR
     public string? CacheGroupKey => "GetOrderShipItemTasks";
 
     public CreateOrderShipItemTaskDto OrderShipItemTask { get; set; }
+
+
+    public class CreateOrderShipItemTaskCommandHandler : IRequestHandler<CreateOrderShipItemTaskCommand, CreatedOrderShipItemTaskResponse>
+    {
+        private readonly IOrderShipItemTaskRepository _orderShipItemTaskRepository;
+        private readonly IMapper _mapper;
+        private readonly OrderShipItemTaskBusinessRules _orderShipItemTaskBusinessRules;
+
+        public CreateOrderShipItemTaskCommandHandler(IOrderShipItemTaskRepository orderShipItemTaskRepository, IMapper mapper, OrderShipItemTaskBusinessRules orderShipItemTaskBusinessRules)
+        {
+            _orderShipItemTaskRepository = orderShipItemTaskRepository;
+            _mapper = mapper;
+            _orderShipItemTaskBusinessRules = orderShipItemTaskBusinessRules;
+        }
+
+        public async Task<CreatedOrderShipItemTaskResponse> Handle(CreateOrderShipItemTaskCommand request, CancellationToken cancellationToken)
+        {
+            _orderShipItemTaskBusinessRules.CreateRequest()
+                .CheckDepositorCompany(request.UserRequestInfo!.RequestUserLocalityId);
+
+            OrderShipItemTask? orderShipItemTask = _mapper.Map<OrderShipItemTask>(request.OrderShipItemTask);
+
+            orderShipItemTask.CreatedDate = DateTime.Now;
+
+            orderShipItemTask.OrderShipItemStocks.ToList().ForEach(x =>
+            {
+                x.CreatedDate = DateTime.Now;
+            });
+
+            return _mapper.Map<CreatedOrderShipItemTaskResponse>(await _orderShipItemTaskRepository.AddAsync(orderShipItemTask));
+        }
+    }
 }

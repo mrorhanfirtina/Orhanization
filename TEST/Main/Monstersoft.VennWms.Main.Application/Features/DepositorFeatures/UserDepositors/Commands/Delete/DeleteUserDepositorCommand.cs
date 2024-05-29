@@ -44,9 +44,9 @@ public class DeleteUserDepositorCommand : IRequest<DeletedUserDepositorResponse>
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            UserDepositor userDepositor = await _userDepositorRepository.GetAsync(predicate: x => x.Id == request.Id,
+            UserDepositor? userDepositor = await _userDepositorRepository.GetAsync(predicate: x => x.Id == request.Id,
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
             await _userDepositorRepository.DeleteAsync(userDepositor);

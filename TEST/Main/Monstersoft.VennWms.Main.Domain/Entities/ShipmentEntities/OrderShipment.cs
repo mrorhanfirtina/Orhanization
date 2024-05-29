@@ -1,6 +1,5 @@
 ﻿using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 using Orhanization.Core.Persistence.Repositories;
 
 namespace Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
@@ -14,10 +13,9 @@ public class OrderShipment : Entity<Guid>
     public DateTime? LastMoveDate { get; set; }
     public int ProgressStatusId { get; set; }
     public virtual ICollection<OrderShipItem> OrderShipItems { get; set; }
-    public virtual Shipment Shipment { get; set; }
-    public virtual Order Order { get; set; }
-    public virtual DepositorCompany DepositorCompany { get; set; }
-    public virtual ProgressStatus ProgressStatus { get; set; }
+    public virtual Shipment? Shipment { get; set; }
+    public virtual DepositorCompany? DepositorCompany { get; set; }
+    public virtual ProgressStatus? ProgressStatus { get; set; }
 
 
     public OrderShipment()

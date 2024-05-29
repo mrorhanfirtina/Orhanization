@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.LocationDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Constants;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +30,7 @@ public class CreateStorageSystemCommand : IRequest<CreatedStorageSystemResponse>
     public string? CacheGroupKey => "GetStorageSystems";
 
     public CreateStorageSystemDto StorageSystem { get; set; }
+    public StorageSystemDetailLevel DetailLevel { get; set; }
 
 
     public class CreateStorageSystemCommandHandler : IRequestHandler<CreateStorageSystemCommand, CreatedStorageSystemResponse>
@@ -51,7 +58,47 @@ public class CreateStorageSystemCommand : IRequest<CreatedStorageSystemResponse>
             storageSystem.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
             storageSystem.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedStorageSystemResponse>(await _storageSystemRepository.AddAsync(storageSystem));
+            await _storageSystemRepository.AddAsync(storageSystem);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _storageSystemRepository.GetAsync(predicate: x => x.Id == storageSystem.Id,
+                include: x =>
+                {
+                    IQueryable<StorageSystem> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeBuilding)
+                    {
+                        query = query.Include(y => y.Building);
+                    }
+
+                    if (detailLevel.IncludeLocation)
+                    {
+                        query = query.Include(y => y.Locations);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<StorageSystem, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedStorageSystemResponse>(response);
+            }
+            else
+            {
+                var response = await _storageSystemRepository.GetAsync(predicate: x => x.Id == storageSystem.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedStorageSystemResponse>(response);
+            }
         }
     }
 

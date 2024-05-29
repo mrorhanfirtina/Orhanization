@@ -9,7 +9,7 @@ public class OrderShipItem : Entity<Guid>
     public Guid OrderShipmentId { get; set; }
     public int ProgressStatusId { get; set; }
     public decimal Quantity { get; set; }
-    public virtual ICollection<OrderShipItemTask> OrderShipItemTasks { get; set; }
+    public virtual ICollection<OrderShipItemTask>? OrderShipItemTasks { get; set; }
     public virtual ProgressStatus ProgressStatus { get; set; }
 
     public OrderShipItem()

@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.BarcodeDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.BarcodePrinters.Constants;
+using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.BarcodePrinters.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.BarcodePrinters.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -20,9 +24,10 @@ public class CreateBarcodePrinterCommand : IRequest<CreatedBarcodePrinterRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBarcodePrinters";
+    public string? CacheGroupKey => "GetBarcodes";
 
     public CreateBarcodePrinterDto BarcodePrinter { get; set; }
+    public BarcodePrinterDetailLevel DetailLevel { get; set; }
 
 
     public class CreateBarcodePrinterCommandHandler : IRequestHandler<CreateBarcodePrinterCommand, CreatedBarcodePrinterResponse>
@@ -50,7 +55,45 @@ public class CreateBarcodePrinterCommand : IRequest<CreatedBarcodePrinterRespons
             barcodePrinter.Id = Guid.NewGuid();
             barcodePrinter.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedBarcodePrinterResponse>(await _barcodePrinterRepository.AddAsync(barcodePrinter));
+            await _barcodePrinterRepository.AddAsync(barcodePrinter);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _barcodePrinterRepository.GetAsync(predicate: x => x.Id == barcodePrinter.Id,
+                include: x =>
+                {
+                    IQueryable<BarcodePrinter> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeBarcode)
+                    {
+                        query = query.Include(y => y.Barcode);
+
+                        if (detailLevel.BarcodeDetailLevel.IncludeDepositorCompany)
+                        {
+                            query = query.Include(y => y.Barcode.DepositorCompany);
+                        }
+                    }
+
+                    if (detailLevel.IncludePrinter)
+                    {
+                        query = query.Include(y => y.Printer);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<BarcodePrinter, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedBarcodePrinterResponse>(response);
+            }
+            else
+            {
+                var response = await _barcodePrinterRepository.GetAsync(predicate: x => x.Id == barcodePrinter.Id, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedBarcodePrinterResponse>(response);
+            }
+
         }
     }
 }

@@ -9,14 +9,16 @@ public class TransactionTypeConfiguration : IEntityTypeConfiguration<Transaction
     public void Configure(EntityTypeBuilder<TransactionType> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("TransactionTypes").HasKey(p => p.Id);
+        builder.ToTable("TransactionTypes", "task").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
         builder.Property(p => p.Id).HasColumnName("Id").IsRequired();
         builder.Property(p => p.Code).HasColumnName("Code").HasMaxLength(10).IsRequired();
         builder.Property(p => p.Description).HasColumnName("Description").HasMaxLength(60).IsRequired();
-        builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
+        builder.Property(p => p.IsLogging).HasColumnName("IsLogging").HasDefaultValue(false).IsRequired();
+        builder.Property(p => p.IsTaskType).HasColumnName("IsTaskType").HasDefaultValue(false).IsRequired();
+        builder.Property(p => p.IsOperational).HasColumnName("IsOperational").HasDefaultValue(false).IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
         builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
@@ -24,11 +26,10 @@ public class TransactionTypeConfiguration : IEntityTypeConfiguration<Transaction
 
         #region Indexler
         builder.HasIndex(p => p.Id).IsUnique();
-        builder.HasIndex(p => new { p.Code, p.Description, p.DepositorCompanyId, p.CreatedDate }, name: "IX_TransactionTypes_Areas");
+        builder.HasIndex(p => new { p.Code, p.Description, p.CreatedDate }, name: "IX_TransactionTypes_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

@@ -11,7 +11,7 @@ public class PoType : Entity<Guid>
     public string Format { get; set; }
     public int Counter { get; set; }
     public Guid DepositorCompanyId { get; set; }
-    public virtual ICollection<PurchaseOrder> PurchaseOrders { get; set; }
+    public virtual ICollection<PurchaseOrder>? PurchaseOrders { get; set; }
     public virtual DepositorCompany DepositorCompany { get; set; }
 
     public PoType()

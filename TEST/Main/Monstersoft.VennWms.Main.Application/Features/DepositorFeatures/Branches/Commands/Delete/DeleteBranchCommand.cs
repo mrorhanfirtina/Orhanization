@@ -29,30 +29,29 @@ public class DeleteBranchCommand : IRequest<DeletedBranchResponse>, ITransaction
     {
         private readonly IBranchRepository _branchRepository;
         private readonly BranchBusinessRules _branchBusinessRules;
-        private readonly IAddressRepository _addressRepository;
 
-        public DeleteBranchCommandHandler(IBranchRepository branchRepository, BranchBusinessRules branchBusinessRules, IAddressRepository addressRepository)
+        public DeleteBranchCommandHandler(IBranchRepository branchRepository, BranchBusinessRules branchBusinessRules)
         {
             _branchRepository = branchRepository;
             _branchBusinessRules = branchBusinessRules;
-            _addressRepository = addressRepository;
         }
 
         public async Task<DeletedBranchResponse> Handle(DeleteBranchCommand request, CancellationToken cancellationToken)
         {
             _branchBusinessRules.DeleteRequest()
-            .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
+            .CheckDepositorCompany(request.UserRequestInfo!.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Branch branch = await _branchRepository.GetAsync(predicate: x => x.Id == request.Id && !x.DeletedDate.HasValue,
+            Branch? branch = await _branchRepository.GetAsync(predicate: x => x.Id == request.Id && !x.DeletedDate.HasValue,
             include: x => x.Include(y => y.Address),
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
+            branch.Address.DeletedDate = DateTime.Now;
+
             await _branchRepository.DeleteAsync(branch);
-            await _addressRepository.DeleteAsync(branch.Address);
 
             return new DeletedBranchResponse
             {

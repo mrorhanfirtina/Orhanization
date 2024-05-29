@@ -9,7 +9,7 @@ public class StockPackTypeConfiguration : IEntityTypeConfiguration<StockPackType
     public void Configure(EntityTypeBuilder<StockPackType> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("StockPackTypes").HasKey(p => p.Id);
+        builder.ToTable("StockPackTypes", "stock").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -18,8 +18,9 @@ public class StockPackTypeConfiguration : IEntityTypeConfiguration<StockPackType
         builder.Property(p => p.ItemUnitId).HasColumnName("ItemUnitId").IsRequired();
         builder.Property(p => p.Quantity).HasColumnName("Quantity").HasColumnType("DECIMAL(18,6)").IsRequired();
         builder.Property(p => p.QuantityFree).HasColumnName("QuantityFree").HasColumnType("DECIMAL(18,6)").IsRequired();
-        builder.Property(p => p.CUQuantity).HasColumnName("CUQuantity").HasColumnType("DECIMAL(18,6)").IsRequired();
-        builder.Property(p => p.CUQuantityFree).HasColumnName("CUQuantityFree").HasColumnType("DECIMAL(18,6)").IsRequired();
+        builder.Property(p => p.ParentId).HasColumnName("ParentId");
+        builder.Property(p => p.CUQuantity).HasColumnName("CUQuantity").HasColumnType("DECIMAL(18,6)");
+        builder.Property(p => p.CUQuantityFree).HasColumnName("CUQuantityFree").HasColumnType("DECIMAL(18,6)");
         builder.Property(p => p.PackTypeRatio).HasColumnName("PackTypeRatio").HasColumnType("DECIMAL(18,6)").IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
@@ -28,11 +29,10 @@ public class StockPackTypeConfiguration : IEntityTypeConfiguration<StockPackType
 
         #region Indexler
         builder.HasIndex(p => p.Id).IsUnique();
-        builder.HasIndex(p => new { p.StockId, p.ItemUnitId, p.Quantity, p.QuantityFree, p.CUQuantity, p.CUQuantityFree, p.PackTypeRatio, p.CreatedDate }, name: "IX_StockPackTypes_Areas");
+        builder.HasIndex(p => new { p.StockId, p.ItemUnitId, p.Quantity, p.QuantityFree, p.ParentId, p.PackTypeRatio, p.CreatedDate }, name: "IX_StockPackTypes_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Stock).WithMany().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(p => p.ItemUnit).WithMany().HasForeignKey(p => p.ItemUnitId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 

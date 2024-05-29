@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Commands.Create;
+﻿using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Commands.Create;
 
 public class CreatedBarcodeSupplierResponse
 {
@@ -7,5 +9,7 @@ public class CreatedBarcodeSupplierResponse
     public Guid SupplierId { get; set; }
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
-
+    public BarcodeSupplierDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public BarcodeSupplierProductBarcodeResponseDto? ProductBarcode { get; set; }
+    public BarcodeSupplierSupplierResponseDto? Supplier { get; set; }
 }

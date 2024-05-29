@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Suppliers.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Suppliers.Commands.Update;
 
@@ -12,7 +12,9 @@ public class UpdatedSupplierResponse
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public Address Address { get; set; }
+    public SupplierCompanyResponseDto? Company { get; set; }
+    public SupplierAddressResponseDto? Address { get; set; }
+    public SupplierDepositorCompanyResponseDto? DepositorCompany { get; set; }
 
 }
 

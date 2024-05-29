@@ -8,7 +8,8 @@ public class ProductStockAttribute : Entity<Guid>
     public Guid ProductId { get; set; }
     public Guid StockAttributeId { get; set; }
     public bool IsNecessary { get; set; }
-    public virtual StockAttribute StockAttribute { get; set; }
+    public virtual StockAttribute? StockAttribute { get; set; }
+    public virtual Product? Product { get; set; }
 
     public ProductStockAttribute()
     {

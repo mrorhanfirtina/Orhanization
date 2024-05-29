@@ -12,7 +12,7 @@ public class DepositorCompany : Entity<Guid>
     public string? PhoneNumber { get; set; }
     public string? FaxNumber { get; set; }
     public Guid AddressId { get; set; }
-    public virtual Address Address { get; set; }
+    public virtual Address? Address { get; set; }
     public DepositorCompany()
     {
     }

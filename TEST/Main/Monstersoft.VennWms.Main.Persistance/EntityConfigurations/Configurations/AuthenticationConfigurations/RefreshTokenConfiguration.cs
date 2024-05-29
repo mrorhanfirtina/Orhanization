@@ -8,7 +8,7 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
 {
     public void Configure(EntityTypeBuilder<RefreshToken> builder)
     {
-        builder.ToTable("RefreshTokens").HasKey(r => r.Id);
+        builder.ToTable("RefreshTokens", "auth").HasKey(r => r.Id);
         builder.Property(r => r.Id).HasColumnName("Id").UseIdentityColumn(1, 1);
         builder.Property(r => r.UserId).HasColumnName("UserId");
         builder.Property(r => r.Token).HasColumnName("Token");

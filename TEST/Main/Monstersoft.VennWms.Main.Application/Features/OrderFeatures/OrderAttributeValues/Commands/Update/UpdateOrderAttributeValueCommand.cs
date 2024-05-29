@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.OrderDtos;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Constants;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,8 @@ public class UpdateOrderAttributeValueCommand : IRequest<UpdatedOrderAttributeVa
     public string? CacheGroupKey => "GetOrderAttributeValues";
 
     public UpdateOrderAttributeValueDto OrderAttributeValue { get; set; }
+    public OrderAttributeValueDetailLevel DetailLevel { get; set; }
+
 
 
     public class UpdateOrderAttributeValueCommandHandler : IRequestHandler<UpdateOrderAttributeValueCommand, UpdatedOrderAttributeValueResponse>
@@ -54,8 +60,47 @@ public class UpdateOrderAttributeValueCommand : IRequest<UpdatedOrderAttributeVa
             OrderAttributeValue? orderAttributeValue = _mapper.Map(request.OrderAttributeValue, currentOrderAttributeValue);
             orderAttributeValue.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedOrderAttributeValueResponse>(await _orderAttributeValueRepository.UpdateAsync(orderAttributeValue));
+            await _orderAttributeValueRepository.UpdateAsync(orderAttributeValue);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _orderAttributeValueRepository.GetAsync(predicate: x => x.Id == orderAttributeValue.Id,
+                include: x =>
+                {
+                    IQueryable<OrderAttributeValue> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeOrder)
+                    {
+                        query = query.Include(y => y.Order);
+                    }
+
+                    if (detailLevel.IncludeOrderAttribute)
+                    {
+                        query = query.Include(y => y.OrderAttribute);
+
+                        if (detailLevel.OrderAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.OrderAttribute).ThenInclude(m => m.AttributeInputType);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<OrderAttributeValue, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedOrderAttributeValueResponse>(response);
+            }
+            else
+            {
+                var response = await _orderAttributeValueRepository.GetAsync(predicate: x => x.Id == orderAttributeValue.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedOrderAttributeValueResponse>(response);
+            }
         }
     }
 }

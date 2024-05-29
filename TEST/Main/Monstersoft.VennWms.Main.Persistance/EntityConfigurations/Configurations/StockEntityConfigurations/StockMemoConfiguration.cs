@@ -9,7 +9,7 @@ public class StockMemoConfiguration : IEntityTypeConfiguration<StockMemo>
     public void Configure(EntityTypeBuilder<StockMemo> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("StockMemos").HasKey(p => p.Id);
+        builder.ToTable("StockMemos", "stock").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

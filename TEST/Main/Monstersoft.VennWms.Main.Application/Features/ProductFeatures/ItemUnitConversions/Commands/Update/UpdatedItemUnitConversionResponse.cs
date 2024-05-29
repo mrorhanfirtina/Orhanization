@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Commands.Update;
 
 public class UpdatedItemUnitConversionResponse
 {
@@ -8,6 +10,8 @@ public class UpdatedItemUnitConversionResponse
     public decimal ConversionQuantity { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public ItemUnitConversionReferenceItemUnitResponseDto? ReferenceItemUnit { get; set; }
+    public ItemUnitConversionConvertedItemUnitResponseDto? ConvertedItemUnit { get; set; }
 
 }
 

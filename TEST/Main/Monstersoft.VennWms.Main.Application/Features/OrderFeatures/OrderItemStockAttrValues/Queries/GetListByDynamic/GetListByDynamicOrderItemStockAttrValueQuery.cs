@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
@@ -13,6 +16,7 @@ using Orhanization.Core.Application.Response;
 using Orhanization.Core.Persistence.Dynamic;
 using Orhanization.Core.Persistence.Paging;
 using static Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Constants.OrderItemStockAttrValueOperationClaims;
+using Monstersoft.VennWms.Main.Application.Statics;
 
 
 namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Queries.GetListByDynamic;
@@ -24,6 +28,7 @@ public class GetListByDynamicOrderItemStockAttrValueQuery : IRequest<GetListResp
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public OrderItemStockAttrValueDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicOrderItemStockAttrValueQueryHandler : IRequestHandler<GetListByDynamicOrderItemStockAttrValueQuery, GetListResponse<GetListByDynamicOrderItemStockAttrValueListItemDto>>
@@ -44,12 +49,59 @@ public class GetListByDynamicOrderItemStockAttrValueQuery : IRequest<GetListResp
             _orderItemStockAttrValueBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<OrderItemStockAttrValue> orderItemStockAttrValueList = await _orderItemStockAttrValueRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<OrderItemStockAttrValue> orderItemStockAttrValueList = await _orderItemStockAttrValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<OrderItemStockAttrValue> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicOrderItemStockAttrValueListItemDto>>(orderItemStockAttrValueList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeOrderItem)
+                    {
+                        query = query.Include(y => y.OrderItem);
+
+                        if (detailLevel.OrderItemDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.OrderItem).ThenInclude(y => y.Product);
+                        }
+
+                        if (detailLevel.OrderItemDetailLevel.IncludeOrder)
+                        {
+                            query = query.Include(y => y.OrderItem).ThenInclude(y => y.Order);
+                        }
+                    }
+
+                    if (detailLevel.IncludeStockAttribute)
+                    {
+                        query = query.Include(y => y.StockAttribute);
+
+                        if (detailLevel.StockAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.StockAttribute).ThenInclude(y => y.AttributeInputType);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<OrderItemStockAttrValue, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicOrderItemStockAttrValueListItemDto>>(orderItemStockAttrValueList);
+            }
+            else
+            {
+                Paginate<OrderItemStockAttrValue> orderItemStockAttrValueList = await _orderItemStockAttrValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicOrderItemStockAttrValueListItemDto>>(orderItemStockAttrValueList);
+            }
         }
     }
 

@@ -9,7 +9,7 @@ public class OrderTypeConfiguration : IEntityTypeConfiguration<OrderType>
     public void Configure(EntityTypeBuilder<OrderType> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("OrderTypes").HasKey(p => p.Id);
+        builder.ToTable("OrderTypes", "order").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -30,7 +30,7 @@ public class OrderTypeConfiguration : IEntityTypeConfiguration<OrderType>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.Orders).WithOne().HasForeignKey(p => p.OrderTypeId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(p => p.Orders).WithOne(p => p.OrderType).HasForeignKey(p => p.OrderTypeId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 

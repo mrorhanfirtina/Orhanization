@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using Monstersoft.VennWms.Main.Application.Dtos.DtoValidators.CreateDtoValidators.CreateDtoRootValidators.CommonDtos;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Dtos.DtoValidators;
 
 namespace Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Validators;
 

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.ReceiptDtos;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
 using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;

@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.SiteDepositors.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.SiteDepositors.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -17,7 +22,7 @@ public class GetByIdSiteDepositorQuery : IRequest<GetByIdSiteDepositorResponse>,
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-
+    public SiteDepositorDetailLevel DetailLevel { get; set; }
 
     public class GetByIdSiteDepositorQueryHandler : IRequestHandler<GetByIdSiteDepositorQuery, GetByIdSiteDepositorResponse>
     {
@@ -38,9 +43,37 @@ public class GetByIdSiteDepositorQuery : IRequest<GetByIdSiteDepositorResponse>,
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdSiteDepositorResponse>(await _siteDepositorRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdSiteDepositorResponse>(await _siteDepositorRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<SiteDepositor> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeSite)
+                    {
+                        query = query.Include(y => y.Site);
+                    }
+
+                    if (detailLevel.IncludeDepositor)
+                    {
+                        query = query.Include(y => y.Depositor);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<SiteDepositor, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdSiteDepositorResponse>(await _siteDepositorRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
-
 }
 

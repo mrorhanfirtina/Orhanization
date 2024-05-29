@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributes.Commands.Create;
+﻿using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributes.Commands.Create;
 
 public class CreatedOrderAttributeResponse
 {
@@ -10,6 +12,8 @@ public class CreatedOrderAttributeResponse
     public bool IsItemAttribte { get; set; }
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
+    public OrderAttributeAttributeInputTypeResponseDto? AttributeInputType { get; set; }
+    public OrderAttributeDepositorCompanyResponseDto? DepositorCompany { get; set; }
 
 }
 

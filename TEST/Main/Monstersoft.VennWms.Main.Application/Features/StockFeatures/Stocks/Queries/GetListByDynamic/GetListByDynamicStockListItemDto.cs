@@ -19,6 +19,8 @@ public class GetListByDynamicStockListItemDto
     public DateTime UpdatedDate { get; set; }
     public StockContainer StockContainer { get; set; }
     public ICollection<StockAttributeValue> StockAttributeValues { get; set; }
+    public ICollection<StockInbound> StockInbounds { get; set; }
+    public ICollection<StockPackType> StockPackTypes { get; set; }
     public ICollection<StockMemo> StockMemos { get; set; }
     public ICollection<StockReserveReason> StockReserveReasons { get; set; }
     public ICollection<StockUnsuitReason> StockUnsuitReasons { get; set; }

@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.LocationDtos;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Constants;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -26,6 +29,7 @@ public class UpdateSiteCommand : IRequest<UpdatedSiteResponse>, ITransactionalRe
     public string? CacheGroupKey => "GetSites";
 
     public UpdateSiteDto Site { get; set; }
+    public SiteDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateSiteCommandHandler : IRequestHandler<UpdateSiteCommand, UpdatedSiteResponse>
@@ -51,7 +55,10 @@ public class UpdateSiteCommand : IRequest<UpdatedSiteResponse>, ITransactionalRe
             .CheckCodeExistenceWhenUpdate(request.Site.Code, request.Site.Id)
             .CheckDepositorIdsExistence(request.Site?.SiteDepositors?.Select(x => x.DepositorId)?.ToArray() ?? new Guid[0]);
 
-            Site? currentSite = await _siteRepository.GetAsync(predicate: x => x.Id == request.Site.Id, include: x => x.Include(y => y.SiteDepositors));
+            Site? currentSite = await _siteRepository.GetAsync(predicate: x => x.Id == request.Site.Id, 
+            include: x => x.Include(y => y.SiteDepositors)
+                           .Include(y => y.SiteDepositors).ThenInclude(m => m.Depositor)
+                           .Include(y => y.SiteDepositors).ThenInclude(m => m.Depositor).ThenInclude(p => p.Company));
 
             await _siteDepositorRepository.DeleteRangeAsync(currentSite.SiteDepositors, permanent: true);
 
@@ -59,18 +66,55 @@ public class UpdateSiteCommand : IRequest<UpdatedSiteResponse>, ITransactionalRe
             Site? site = _mapper.Map(request.Site, currentSite);
             site.UpdatedDate = DateTime.Now;
 
-            foreach (var siteDepositor in site.SiteDepositors)
+            site.SiteDepositors.ToList().ForEach(x => { x.CreatedDate = site.CreatedDate; x.UpdatedDate = DateTime.Now; });
+
+            await _siteRepository.UpdateAsync(site);
+
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
             {
-                siteDepositor.SiteId = site.Id;
-                siteDepositor.Id = Guid.NewGuid();
-                siteDepositor.CreatedDate = currentSite.CreatedDate;
-                siteDepositor.UpdatedDate = DateTime.Now;
+                var response = await _siteRepository.GetAsync(predicate: x => x.Id == site.Id,
+                include: x =>
+                {
+                    IQueryable<Site> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeBuilding)
+                    {
+                        query = query.Include(y => y.Buildings);
+                    }
+
+                    if (detailLevel.IncludeSiteDepositor)
+                    {
+                        query = query.Include(y => y.SiteDepositors);
+
+                        if (detailLevel.SiteDepositorDetailLevel.IncludeDepositor)
+                        {
+                            query = query.Include(y => y.SiteDepositors).ThenInclude(y => y.Depositor);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<Site, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedSiteResponse>(response);
             }
+            else
+            {
+                var response = await _siteRepository.GetAsync(predicate: x => x.Id == site.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
 
-            await _siteDepositorRepository.AddRangeAsync(site.SiteDepositors);
-
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedSiteResponse>(await _siteRepository.UpdateAsync(site));
+                return _mapper.Map<UpdatedSiteResponse>(response);
+            }
         }
     }
 }

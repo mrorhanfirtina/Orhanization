@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.DepositorDtos;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Suppliers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Suppliers.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +30,7 @@ public class CreateSupplierCommand : IRequest<CreatedSupplierResponse>, ITransac
     public string? CacheGroupKey => "GetSuppliers";
 
     public CreateSupplierDto Supplier { get; set; }
+    public SupplierDetailLevel DetailLevel { get; set; }
 
 
     public class CreateSupplierCommandHandler : IRequestHandler<CreateSupplierCommand, CreatedSupplierResponse>
@@ -42,6 +49,7 @@ public class CreateSupplierCommand : IRequest<CreatedSupplierResponse>, ITransac
         public async Task<CreatedSupplierResponse> Handle(CreateSupplierCommand request, CancellationToken cancellationToken)
         {
             _supplierBusinessRules.CreateRequest()
+            .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckCodeExistenceWhenCreate(request.Supplier.Code)
             .CheckCompanyIdExistence(request.Supplier.CompanyId);
 
@@ -49,9 +57,47 @@ public class CreateSupplierCommand : IRequest<CreatedSupplierResponse>, ITransac
             supplier.Id = Guid.NewGuid();
             supplier.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
             supplier.CreatedDate = DateTime.Now;
-            supplier.Address.Id = Guid.NewGuid();
 
-            return _mapper.Map<CreatedSupplierResponse>(await _supplierRepository.AddAsync(supplier));
+            await _supplierRepository.AddAsync(supplier);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _supplierRepository.GetAsync(predicate: x => x.Id == supplier.Id,
+                include: x =>
+                {
+                    IQueryable<Supplier> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAddress)
+                    {
+                        query = query.Include(y => y.Address);
+                    }
+
+                    if (detailLevel.IncludeCompany)
+                    {
+                        query = query.Include(y => y.Company);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<Supplier, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedSupplierResponse>(response);
+            }
+            else
+            {
+                var response = await _supplierRepository.GetAsync(predicate: x => x.Id == supplier.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedSupplierResponse>(response);
+            }
         }
     }
 }

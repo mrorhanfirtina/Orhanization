@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnits.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnits.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +28,8 @@ public class GetListByDynamicItemUnitQuery : IRequest<GetListResponse<GetListByD
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public ItemUnitDetailLevel DetailLevel { get; set; }
+
 
 
     public class GetListByDynamicItemUnitQueryHandler : IRequestHandler<GetListByDynamicItemUnitQuery, GetListResponse<GetListByDynamicItemUnitListItemDto>>
@@ -45,13 +50,78 @@ public class GetListByDynamicItemUnitQuery : IRequest<GetListResponse<GetListByD
             _itemUnitBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ItemUnit> itemUnitList = await _itemUnitRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            include: m => m.Include(x => x.ItemPackTypes),
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ItemUnit> itemUnitList = await _itemUnitRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<ItemUnit> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicItemUnitListItemDto>>(itemUnitList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeProduct)
+                    {
+                        query = query.Include(y => y.Product);
+                    }
+
+                    if (detailLevel.IncludeUnit)
+                    {
+                        query = query.Include(y => y.Unit);
+                    }
+
+                    if (detailLevel.IncludeItemPackType)
+                    {
+                        query = query.Include(y => y.ItemPackTypes);
+
+                        if (detailLevel.ItemPackTypeDetailLevel.IncludeLenghtUnit)
+                        {
+                            query = query.Include(y => y.ItemPackTypes).ThenInclude(y => y.LenghtUnit);
+                        }
+
+                        if (detailLevel.ItemPackTypeDetailLevel.IncludeVolumeUnit)
+                        {
+                            query = query.Include(y => y.ItemPackTypes).ThenInclude(y => y.VolumeUnit);
+                        }
+
+                        if (detailLevel.ItemPackTypeDetailLevel.IncludeWeightUnit)
+                        {
+                            query = query.Include(y => y.ItemPackTypes).ThenInclude(y => y.WeightUnit);
+                        }
+                    }
+
+                    if (detailLevel.IncludeItemUnitConversion)
+                    {
+                        query = query.Include(y => y.ItemUnitConversions);
+
+                        if (detailLevel.ItemUnitConversionDetailLevel.IncludeConvertedItemUnit)
+                        {
+                            query = query.Include(y => y.ItemUnitConversions).ThenInclude(y => y.ConvertedItemUnit);
+
+                            if (detailLevel.ItemUnitConversionDetailLevel.ConvertedItemUnitDetailLevel.IncludeUnit)
+                            {
+                                query = query.Include(y => y.ItemUnitConversions).ThenInclude(y => y.ConvertedItemUnit).ThenInclude(y => y.Unit);
+                            }
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ItemUnit, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: true,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicItemUnitListItemDto>>(itemUnitList);
+            }
+            else
+            {
+                Paginate<ItemUnit> itemUnitList = await _itemUnitRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: true,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicItemUnitListItemDto>>(itemUnitList);
+            }
         }
     }
 

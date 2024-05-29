@@ -9,7 +9,7 @@ public class LocationZoneConfiguration : IEntityTypeConfiguration<LocationZone>
     public void Configure(EntityTypeBuilder<LocationZone> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("LocationZones").HasKey(p => p.Id);
+        builder.ToTable("LocationZones", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

@@ -9,7 +9,7 @@ public class StockConfiguration : IEntityTypeConfiguration<Stock>
     public void Configure(EntityTypeBuilder<Stock> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("Stocks").HasKey(p => p.Id);
+        builder.ToTable("Stocks", "stock").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -19,11 +19,9 @@ public class StockConfiguration : IEntityTypeConfiguration<Stock>
         builder.Property(p => p.DepositorId).HasColumnName("DepositorId").IsRequired();
         builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.LocationId).HasColumnName("LocationId").IsRequired();
-        builder.Property(p => p.UnitId).HasColumnName("UnitId").IsRequired();
-        builder.Property(p => p.ReceiptId).HasColumnName("ReceiptId");
-        builder.Property(p => p.ReturnId).HasColumnName("ReturnId");
-        builder.Property(p => p.Quantity).HasColumnName("Quantity").HasColumnType("DECIMAL(18,6)").IsRequired();
-        builder.Property(p => p.FreeQuantity).HasColumnName("FreeQuantity").HasColumnType("DECIMAL(18,6)").IsRequired();
+        builder.Property(p => p.CuItemUnitId).HasColumnName("CuItemUnitId").IsRequired();
+        builder.Property(p => p.CuQuantity).HasColumnName("CuQuantity").HasColumnType("DECIMAL(18,6)").IsRequired();
+        builder.Property(p => p.CuQuantityFree).HasColumnName("CuQuantityFree").HasColumnType("DECIMAL(18,6)").IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
         builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
@@ -31,7 +29,7 @@ public class StockConfiguration : IEntityTypeConfiguration<Stock>
 
         #region Indexler
         builder.HasIndex(p => p.Id).IsUnique();
-        builder.HasIndex(p => new { p.StockContainerId, p.ProductId, p.DepositorId, p.DepositorCompanyId, p.LocationId, p.UnitId, p.ReceiptId, p.ReturnId, p.Quantity, p.FreeQuantity, p.CreatedDate }, name: "IX_Stocks_Areas");
+        builder.HasIndex(p => new { p.StockContainerId, p.ProductId, p.DepositorId, p.DepositorCompanyId, p.LocationId, p.CuItemUnitId, p.CuQuantity, p.CuQuantityFree, p.CreatedDate }, name: "IX_Stocks_Areas");
         #endregion
 
         #region İlişki Tanımları
@@ -44,9 +42,9 @@ public class StockConfiguration : IEntityTypeConfiguration<Stock>
         builder.HasOne(p => p.Depositor).WithMany().HasForeignKey(p => p.DepositorId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Location).WithMany().HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasOne(p => p.Unit).WithMany().HasForeignKey(p => p.UnitId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasOne(p => p.Receipt).WithMany().HasForeignKey(p => p.ReceiptId).OnDelete(DeleteBehavior.NoAction);
-        builder.HasOne(p => p.Return).WithMany().HasForeignKey(p => p.ReturnId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(p => p.ItemUnit).WithMany().HasForeignKey(p => p.CuItemUnitId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(p => p.StockInbounds).WithOne().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.StockPackTypes).WithOne().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Filtreler

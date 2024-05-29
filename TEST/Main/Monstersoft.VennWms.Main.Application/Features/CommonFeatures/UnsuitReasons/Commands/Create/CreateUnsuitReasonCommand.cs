@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.CommonDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Constants;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -23,6 +29,7 @@ public class CreateUnsuitReasonCommand : IRequest<CreatedUnsuitReasonResponse>, 
     public string[] Roles => [Admin, User, Add, Write];
 
     public CreateUnsuitReasonDto UnsuitReason { get; set; }
+    public UnsuitReasonsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateUnsuitReasonCommandHandler : IRequestHandler<CreateUnsuitReasonCommand, CreatedUnsuitReasonResponse>
@@ -49,7 +56,38 @@ public class CreateUnsuitReasonCommand : IRequest<CreatedUnsuitReasonResponse>, 
             unsuitReason.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
             unsuitReason.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedUnsuitReasonResponse>(await _unsuitReasonRepository.AddAsync(unsuitReason));
+            UnsuitReason createdRecord = await _unsuitReasonRepository.AddAsync(unsuitReason);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _unsuitReasonRepository.GetAsync(predicate: x => x.Id == createdRecord.Id,
+                include: x =>
+                {
+                    IQueryable<UnsuitReason> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<UnsuitReason, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedUnsuitReasonResponse>(response);
+            }
+            else
+            {
+                var response = await _unsuitReasonRepository.GetAsync(predicate: x => x.Id == createdRecord.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedUnsuitReasonResponse>(response);
+
+            }
         }
     }
 

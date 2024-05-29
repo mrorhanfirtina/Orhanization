@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationStockAttributes.Constants;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationStockAttributes.Rules;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationZones.Queries.GetById;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationZones.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -19,28 +25,63 @@ public class GetByIdLocationStockAttributeQuery : IRequest<GetByIdLocationStockA
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public LocationStockAttributeDetailLevel DetailLevel { get; set; }
 
 
-    public class GetByIdLocationZoneQueryHandler : IRequestHandler<GetByIdLocationZoneQuery, GetByIdLocationZoneResponse>
+    public class GetByIdLocationStockAttributeQueryHandler : IRequestHandler<GetByIdLocationStockAttributeQuery, GetByIdLocationStockAttributeResponse>
     {
-        private readonly ILocationZoneRepository _locationZoneRepository;
-        private readonly LocationZoneBusinessRules _locationZoneBusinessRules;
+        private readonly ILocationStockAttributeRepository _locationStockAttributeRepository;
+        private readonly LocationStockAttributeBusinessRules _locationStockAttributeBusinessRules;
         private readonly IMapper _mapper;
 
-        public GetByIdLocationZoneQueryHandler(ILocationZoneRepository locationZoneRepository, IMapper mapper, LocationZoneBusinessRules locationZoneBusinessRules)
+        public GetByIdLocationStockAttributeQueryHandler(ILocationStockAttributeRepository locationStockAttributeRepository, IMapper mapper, LocationStockAttributeBusinessRules locationStockAttributeBusinessRules)
         {
-            _locationZoneRepository = locationZoneRepository;
+            _locationStockAttributeRepository = locationStockAttributeRepository;
             _mapper = mapper;
-            _locationZoneBusinessRules = locationZoneBusinessRules;
+            _locationStockAttributeBusinessRules = locationStockAttributeBusinessRules;
         }
 
-        public async Task<GetByIdLocationZoneResponse> Handle(GetByIdLocationZoneQuery request, CancellationToken cancellationToken)
+        public async Task<GetByIdLocationStockAttributeResponse> Handle(GetByIdLocationStockAttributeQuery request, CancellationToken cancellationToken)
         {
-            _locationZoneBusinessRules.GetRequest()
+            _locationStockAttributeBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdLocationZoneResponse>(await _locationZoneRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdLocationStockAttributeResponse>(await _locationStockAttributeRepository.GetAsync(x => x.Id == request.Id, withDeleted: false,
+                include: x =>
+                {
+                    IQueryable<LocationStockAttribute> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeLocation)
+                    {
+                        query = query.Include(y => y.Location);
+                    }
+
+                    if (detailLevel.IncludeStockAttribute)
+                    {
+                        query = query.Include(y => y.StockAttribute);
+
+                        if (detailLevel.StockAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.StockAttribute).ThenInclude(m => m.AttributeInputType);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<LocationStockAttribute, object>;
+                    return includableQuery;
+                },
+                enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdLocationStockAttributeResponse>(await _locationStockAttributeRepository.GetAsync(x => x.Id == request.Id, withDeleted: false,
+                enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

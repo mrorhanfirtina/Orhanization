@@ -1,5 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItems.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItems.Commands.Update;
 
@@ -12,9 +11,11 @@ public class UpdatedOrderItemResponse
     public Guid ItemUnitId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public Order Order { get; set; }
-    public ICollection<OrderItemMemo> OrderItemMemos { get; set; }
-    public ICollection<OrderItemStockAttrValue> OrderItemStockAttrValues { get; set; }
-    public ICollection<OrderShipItem> OrderShipItems { get; set; }
+    public OrderItemOrderResponseDto? Order { get; set; }
+    public ICollection<OrderItemOrderItemMemoResponseDto>? OrderItemMemos { get; set; }
+    public ICollection<OrderItemOrderItemStockAttrValueResponseDto>? OrderItemStockAttrValues { get; set; }
+    public ICollection<OrderItemOrderShipItemResponseDto>? OrderShipItems { get; set; }
+    public OrderItemProductResponseDto? Product { get; set; }
+    public OrderItemItemUnitResponseDto? ItemUnit { get; set; }
 
 }

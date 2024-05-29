@@ -9,7 +9,7 @@ public class LocationCodeComponentConfiguration : IEntityTypeConfiguration<Locat
     public void Configure(EntityTypeBuilder<LocationCodeComponent> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("LocationCodeComponents").HasKey(p => p.Id);
+        builder.ToTable("LocationCodeComponents", "common").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

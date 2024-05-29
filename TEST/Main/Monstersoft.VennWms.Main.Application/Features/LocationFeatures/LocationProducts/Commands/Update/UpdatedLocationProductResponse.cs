@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProducts.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProducts.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProducts.Commands.Update;
 
 public class UpdatedLocationProductResponse
 {
@@ -8,5 +10,7 @@ public class UpdatedLocationProductResponse
     public bool IsForbid { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public LocationProductLocationResponseDto? Location { get; set; }
+    public LocationProductProductResponseDto? Product { get; set; }
 
 }

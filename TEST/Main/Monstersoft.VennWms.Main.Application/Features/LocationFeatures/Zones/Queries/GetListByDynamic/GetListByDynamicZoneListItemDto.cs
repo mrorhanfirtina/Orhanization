@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Zones.Queries.GetListByDynamic;
+﻿using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Zones.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Zones.Queries.GetListByDynamic;
 
 public class GetListByDynamicZoneListItemDto
 {
@@ -9,6 +11,8 @@ public class GetListByDynamicZoneListItemDto
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public ZoneBuildingResponseDto? Building { get; set; }
+    public ZoneDepositorCompanyResponseDto? DepositorCompany { get; set; }
 
 }
 

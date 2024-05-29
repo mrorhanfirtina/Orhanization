@@ -9,7 +9,7 @@ public class LocationPickingTypeConfiguration : IEntityTypeConfiguration<Locatio
     public void Configure(EntityTypeBuilder<LocationPickingType> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("LocationPickingTypes").HasKey(p => p.Id);
+        builder.ToTable("LocationPickingTypes", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

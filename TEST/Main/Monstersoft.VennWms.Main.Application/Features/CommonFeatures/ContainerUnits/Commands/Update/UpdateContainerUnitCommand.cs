@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.CommonDtos;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Constants;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,7 @@ public class UpdateContainerUnitCommand : IRequest<UpdatedContainerUnitResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public UpdateContainerUnitDto ContainerUnit { get; set; }
+    public ContainerUnitDetaillevel DetailLevel { get; set; }
 
 
     public class UpdateContainerUnitCommandHandler : IRequestHandler<UpdateContainerUnitCommand, UpdatedContainerUnitResponse>
@@ -53,8 +58,38 @@ public class UpdateContainerUnitCommand : IRequest<UpdatedContainerUnitResponse>
             ContainerUnit? containerUnit = _mapper.Map(request.ContainerUnit, currentContainerUnit);
             containerUnit.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedContainerUnitResponse>(await _containerUnitRepository.UpdateAsync(containerUnit));
+            await _containerUnitRepository.UpdateAsync(containerUnit);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _containerUnitRepository.GetAsync(predicate: x => x.Id == containerUnit.Id,
+                include: x =>
+                {
+                    IQueryable<ContainerUnit> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<ContainerUnit, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedContainerUnitResponse>(response);
+            }
+            else
+            {
+                var response = await _containerUnitRepository.GetAsync(predicate: x => x.Id == containerUnit.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedContainerUnitResponse>(response);
+
+            }
         }
     }
 

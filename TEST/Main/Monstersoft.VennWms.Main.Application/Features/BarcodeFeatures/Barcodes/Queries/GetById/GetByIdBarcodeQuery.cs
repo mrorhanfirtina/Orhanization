@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -20,6 +23,7 @@ public class GetByIdBarcodeQuery : IRequest<GetByIdBarcodeResponse>, ITransactio
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public BarcodeDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdBarcodeQueryHandler : IRequestHandler<GetByIdBarcodeQuery, GetByIdBarcodeResponse>
@@ -41,9 +45,47 @@ public class GetByIdBarcodeQuery : IRequest<GetByIdBarcodeResponse>, ITransactio
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdBarcodeResponse>(await _barcodeRepository.GetAsync(x => x.Id == request.Id, 
-                include: m => m.Include(m => m.BarcodeAreas).Include(m => m.BarcodePrinters), 
-                withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdBarcodeResponse>(await _barcodeRepository.GetAsync(x => x.Id == request.Id,
+                        include: x =>
+                        {
+                            IQueryable<Barcode> query = x;
+
+                            var detailLevel = request.DetailLevel;
+
+                            if (detailLevel.IncludeDepositorCompany)
+                            {
+                                query = query.Include(y => y.DepositorCompany);
+                            }
+
+                            if (detailLevel.IncludeBarcodeAreas)
+                            {
+                                query = query.Include(y => y.BarcodeAreas);
+                            }
+
+                            if (detailLevel.IncludeBarcodePrinters)
+                            {
+                                query = query.Include(y => y.BarcodePrinters);
+
+                                if (detailLevel.BarcodePrinterDetailLevel.IncludePrinter)
+                                {
+                                    query = query.Include(y => y.BarcodePrinters).ThenInclude(m => m.Printer);
+                                }
+                            }
+
+                            var includableQuery = query as IIncludableQueryable<Barcode, object>;
+                            return includableQuery;
+                        },
+                        withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdBarcodeResponse>(await _barcodeRepository.GetAsync(x => x.Id == request.Id,
+                            withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+
+                
         }
     }
 

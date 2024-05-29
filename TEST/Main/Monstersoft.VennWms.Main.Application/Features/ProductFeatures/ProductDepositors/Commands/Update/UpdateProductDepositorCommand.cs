@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.ProductDtos;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductDepositors.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductDepositors.Constants;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductDepositors.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductDepositors.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,8 @@ public class UpdateProductDepositorCommand : IRequest<UpdatedProductDepositorRes
     public string? CacheGroupKey => "GetProductDepositors";
 
     public UpdateProductDepositorDto ProductDepositor { get; set; }
+    public ProductDepositorDetailLevel DetailLevel { get; set; }
+
 
 
     public class UpdateProductDepositorCommandHandler : IRequestHandler<UpdateProductDepositorCommand, UpdatedProductDepositorResponse>
@@ -54,8 +60,41 @@ public class UpdateProductDepositorCommand : IRequest<UpdatedProductDepositorRes
             ProductDepositor? productDepositor = _mapper.Map(request.ProductDepositor, currentProductDepositor);
             productDepositor.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedProductDepositorResponse>(await _productDepositorRepository.UpdateAsync(productDepositor));
+            await _productDepositorRepository.UpdateAsync(productDepositor);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _productDepositorRepository.GetAsync(predicate: x => x.Id == productDepositor.Id,
+                include: x =>
+                {
+                    IQueryable<ProductDepositor> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositor)
+                    {
+                        query = query.Include(y => y.Depositor);
+                    }
+
+                    if (detailLevel.IncludeProduct)
+                    {
+                        query = query.Include(y => y.Product);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ProductDepositor, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedProductDepositorResponse>(response);
+            }
+            else
+            {
+                var response = await _productDepositorRepository.GetAsync(predicate: x => x.Id == productDepositor.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedProductDepositorResponse>(response);
+            }
         }
     }
 }

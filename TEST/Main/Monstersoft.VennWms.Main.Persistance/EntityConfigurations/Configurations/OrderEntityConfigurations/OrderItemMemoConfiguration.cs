@@ -9,7 +9,7 @@ public class OrderItemMemoConfiguration : IEntityTypeConfiguration<OrderItemMemo
     public void Configure(EntityTypeBuilder<OrderItemMemo> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("OrderItemMemos").HasKey(p => p.Id);
+        builder.ToTable("OrderItemMemos", "order").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

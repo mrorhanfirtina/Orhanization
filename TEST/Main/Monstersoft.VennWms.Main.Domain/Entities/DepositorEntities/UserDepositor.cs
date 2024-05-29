@@ -7,8 +7,8 @@ public class UserDepositor : Entity<Guid>
 {
     public Guid DepositorId { get; set; }
     public int UserId { get; set; }
-    public virtual Depositor Depositor { get; set; }
-    public virtual User User { get; set; }
+    public virtual Depositor? Depositor { get; set; }
+    public virtual User? User { get; set; }
 
     public UserDepositor()
     {

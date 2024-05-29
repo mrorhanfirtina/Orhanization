@@ -3,6 +3,7 @@
 public class BaseMessages
 {
     public const string RecordAlreadyExists = "Aynı idlere sahip kayıt halihazırda var. Tekrardan oluşturalamaz.";
+    public const string OrderShipmentNotFound = "Siparişe ait OrderShipment kaydı bulunamadı.";
     public const string DepositorCodeExists = "Istekle gelen depositor kod değeri halihazırda var!";
     public const string EmptyLocalityId = "Istekle gelen depositor id değeri boş!";
     public const string LocalityIdNotFound = "Istekle gelen depositor id değeri veritabanında bulunamadı!";

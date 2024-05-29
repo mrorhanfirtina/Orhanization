@@ -10,10 +10,12 @@ public class OrderItem : Entity<Guid>
     public Guid ProductId { get; set; }
     public decimal Quantity { get; set; }
     public Guid ItemUnitId { get; set; }
-    public virtual ICollection<OrderItemMemo> OrderItemMemos { get; set; }
-    public virtual ICollection<OrderItemStockAttrValue> OrderItemStockAttrValues { get; set; }
-    public virtual ICollection<OrderShipItem> OrderShipItems { get; set; }
-    public virtual Product Product { get; set; }
+    public virtual Order? Order { get; set; }
+    public virtual ICollection<OrderItemMemo>? OrderItemMemos { get; set; }
+    public virtual ICollection<OrderItemStockAttrValue>? OrderItemStockAttrValues { get; set; }
+    public virtual ICollection<OrderShipItem>? OrderShipItems { get; set; }
+    public virtual Product? Product { get; set; }
+    public virtual ItemUnit? ItemUnit { get; set; }
     public OrderItem()
     {
         OrderItemMemos = new HashSet<OrderItemMemo>();

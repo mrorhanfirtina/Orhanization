@@ -19,7 +19,7 @@ public class DeleteBarcodeAreaCommand : IRequest<DeletedBarcodeAreaResponse>, IT
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBarcodeAreas";
+    public string? CacheGroupKey => "GetBarcodes";
 
     public Guid Id { get; set; }
 

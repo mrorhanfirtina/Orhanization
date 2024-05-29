@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.PORepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.POEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicPoMemoQuery : IRequest<GetListResponse<GetListByDyn
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public PoMemoDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicPoMemoQueryHandler : IRequestHandler<GetListByDynamicPoMemoQuery, GetListResponse<GetListByDynamicPoMemoListItemDto>>
@@ -44,12 +49,39 @@ public class GetListByDynamicPoMemoQuery : IRequest<GetListResponse<GetListByDyn
             _poMemoBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<PoMemo> poMemoList = await _poMemoRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<PoMemo> poMemoList = await _poMemoRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<PoMemo> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicPoMemoListItemDto>>(poMemoList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludePurchaseOrder)
+                    {
+                        query = query.Include(y => y.PurchaseOrder);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<PoMemo, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicPoMemoListItemDto>>(poMemoList);
+            }
+            else
+            {
+                Paginate<PoMemo> poMemoList = await _poMemoRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicPoMemoListItemDto>>(poMemoList);
+            }
         }
     }
 

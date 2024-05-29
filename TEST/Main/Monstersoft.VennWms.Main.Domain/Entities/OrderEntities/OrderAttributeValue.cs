@@ -7,7 +7,8 @@ public class OrderAttributeValue : Entity<Guid>
     public Guid OrderId { get; set; }
     public Guid OrderAttributeId { get; set; }
     public string Value { get; set; }
-    public virtual OrderAttribute OrderAttribute { get; set; }
+    public virtual Order? Order { get; set; }
+    public virtual OrderAttribute? OrderAttribute { get; set; }
 
     public OrderAttributeValue()
     {

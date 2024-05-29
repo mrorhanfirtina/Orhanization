@@ -1,5 +1,6 @@
 ﻿
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Constants;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
@@ -45,6 +46,7 @@ public class DeleteUnitCommand : IRequest<DeletedUnitResponse>, ITransactionalRe
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
             Unit unit = await _unitRepository.GetAsync(predicate: x => x.Id == request.Id,
+            include: x => x.Include(y => y.ReferenceUnitConversions),
             withDeleted: false,
             enableTracking: false,
             cancellationToken: cancellationToken);

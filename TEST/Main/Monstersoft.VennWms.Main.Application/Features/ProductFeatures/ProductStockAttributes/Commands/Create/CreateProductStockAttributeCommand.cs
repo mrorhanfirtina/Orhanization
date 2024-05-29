@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.ProductDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductStockAttributes.Constants;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductStockAttributes.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductStockAttributes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -23,6 +27,8 @@ public class CreateProductStockAttributeCommand : IRequest<CreatedProductStockAt
     public string? CacheGroupKey => "GetProductStockAttributes";
 
     public CreateProductStockAttributeDto ProductStockAttribute { get; set; }
+    public ProductStockAttributeDetailLevel DetailLevel { get; set; }
+
 
 
     public class CreateProductStockAttributeCommandHandler : IRequestHandler<CreateProductStockAttributeCommand, CreatedProductStockAttributeResponse>
@@ -49,7 +55,47 @@ public class CreateProductStockAttributeCommand : IRequest<CreatedProductStockAt
             productStockAttribute.Id = Guid.NewGuid();
             productStockAttribute.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedProductStockAttributeResponse>(await _productStockAttributeRepository.AddAsync(productStockAttribute));
+            await _productStockAttributeRepository.AddAsync(productStockAttribute);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _productStockAttributeRepository.GetAsync(predicate: x => x.Id == productStockAttribute.Id,
+                include: x =>
+                {
+                    IQueryable<ProductStockAttribute> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeProduct)
+                    {
+                        query = query.Include(y => y.Product);
+                    }
+
+                    if (detailLevel.IncludeStockAttribute)
+                    {
+                        query = query.Include(y => y.StockAttribute);
+
+                        if (detailLevel.StockAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.StockAttribute).ThenInclude(m => m.AttributeInputType);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<ProductStockAttribute, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedProductStockAttributeResponse>(response);
+            }
+            else
+            {
+                var response = await _productStockAttributeRepository.GetAsync(predicate: x => x.Id == productStockAttribute.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedProductStockAttributeResponse>(response);
+            }
         }
     }
 }

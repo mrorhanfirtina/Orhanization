@@ -9,6 +9,7 @@ public class LocationDepositor : Entity<Guid>
     public Guid DepositorId { get; set; }
     public bool IsForbid { get; set; }
     public virtual Depositor? Depositor { get; set; }
+    public virtual Location? Location { get; set; }
 
     public LocationDepositor()
     {

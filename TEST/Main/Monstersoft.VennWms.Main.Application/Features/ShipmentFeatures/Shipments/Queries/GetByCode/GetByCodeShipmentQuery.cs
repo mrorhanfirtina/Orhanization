@@ -43,7 +43,8 @@ public class GetByCodeShipmentQuery : IRequest<GetByCodeShipmentResponse>, ITran
 
             return _mapper.Map<GetByCodeShipmentResponse>(await _shipmentRepository.GetAsync(
             predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(x => x.Distributor).Include(x => x.Branch).Include(x => x.ShipmentAttributeValues).Include(x => x.ShipmentMemos),
+            include: x => x.Include(y => y.ShipmentMemos)
+            .Include(y => y.ShipmentAttributeValues),
             withDeleted: false, cancellationToken: cancellationToken));
         }
     }

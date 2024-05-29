@@ -49,7 +49,8 @@ public class GetListByDynamicShipmentQuery : IRequest<GetListResponse<GetListByD
 
             Paginate<Shipment> shipmentList = await _shipmentRepository.GetListByDynamicAsync(
             dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(x => x.Distributor).Include(x => x.Branch).Include(x => x.ShipmentAttributeValues).Include(x => x.ShipmentMemos),
+            include: x => x.Include(y => y.ShipmentMemos)
+            .Include(y => y.ShipmentAttributeValues),
             index: request.PageRequest.PageIndex,
             size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 

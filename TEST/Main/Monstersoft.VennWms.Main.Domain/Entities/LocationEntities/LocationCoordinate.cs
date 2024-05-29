@@ -10,6 +10,7 @@ public class LocationCoordinate : Entity<Guid>
     public decimal LocationY { get; set; }
     public decimal LocationZ { get; set; }
     public virtual Building? Building { get; set; }
+    public virtual Location? Location { get; set; }
 
     public LocationCoordinate()
     {

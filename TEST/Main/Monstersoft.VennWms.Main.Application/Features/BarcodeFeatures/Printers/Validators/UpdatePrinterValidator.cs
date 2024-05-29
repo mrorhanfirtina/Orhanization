@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using Monstersoft.VennWms.Main.Application.Dtos.DtoValidators.UpdateDtoValidators.UpdateDtoRootValidators.BarcodeDtos;
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Commands.Update;
+using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Dtos.DtoValidators;
 
 namespace Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Validators;
 

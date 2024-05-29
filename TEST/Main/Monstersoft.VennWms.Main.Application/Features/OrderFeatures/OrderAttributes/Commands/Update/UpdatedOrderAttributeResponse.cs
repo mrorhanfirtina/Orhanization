@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributes.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributes.Commands.Update;
 
 public class UpdatedOrderAttributeResponse
 {
@@ -11,6 +13,8 @@ public class UpdatedOrderAttributeResponse
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public OrderAttributeAttributeInputTypeResponseDto? AttributeInputType { get; set; }
+    public OrderAttributeDepositorCompanyResponseDto? DepositorCompany { get; set; }
 
 }
 

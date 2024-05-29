@@ -9,7 +9,7 @@ public class StockUnsuitReasonConfiguration : IEntityTypeConfiguration<StockUnsu
     public void Configure(EntityTypeBuilder<StockUnsuitReason> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("StockUnsuitReasons").HasKey(p => p.Id);
+        builder.ToTable("StockUnsuitReasons", "stock").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

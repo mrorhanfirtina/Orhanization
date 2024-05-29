@@ -1,0 +1,6 @@
+﻿namespace Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ReserveReasons.Constants;
+
+public class ReserveReasonDetailLevel
+{
+    public bool IncludeDepositorCompany { get; set; } = false;
+}

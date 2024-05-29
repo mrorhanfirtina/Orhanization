@@ -9,7 +9,7 @@ public class LockReasonConfiguration : IEntityTypeConfiguration<LockReason>
     public void Configure(EntityTypeBuilder<LockReason> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("LockReasons").HasKey(p => p.Id);
+        builder.ToTable("LockReasons", "common").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -28,7 +28,7 @@ public class LockReasonConfiguration : IEntityTypeConfiguration<LockReason>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

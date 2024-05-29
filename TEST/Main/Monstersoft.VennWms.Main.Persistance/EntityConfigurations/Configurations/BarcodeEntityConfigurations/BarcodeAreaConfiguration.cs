@@ -5,11 +5,11 @@ using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
 namespace Monstersoft.VennWms.Main.Persistance.EntityConfigurations.Configurations.BarcodeEntityConfigurations;
 
 public class BarcodeAreaConfiguration : IEntityTypeConfiguration<BarcodeArea>
-    {
+{
     public void Configure(EntityTypeBuilder<BarcodeArea> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("BarcodeAreas").HasKey(p => p.Id);
+        builder.ToTable("BarcodeAreas", "barcode").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -29,6 +29,7 @@ public class BarcodeAreaConfiguration : IEntityTypeConfiguration<BarcodeArea>
         #endregion
 
         #region İlişki Tanımları
+        builder.HasOne(p => p.Barcode).WithMany(p => p.BarcodeAreas).HasForeignKey(p => p.BarcodeId).OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Filtreler

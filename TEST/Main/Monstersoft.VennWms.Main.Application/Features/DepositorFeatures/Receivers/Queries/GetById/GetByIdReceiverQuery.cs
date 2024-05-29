@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Receivers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Receivers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -19,7 +23,7 @@ public class GetByIdReceiverQuery : IRequest<GetByIdReceiverResponse>, ITransact
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-
+    public ReceiverDetailLevel DetailLevel { get; set; }
 
     public class GetByIdReceiverQueryHandler : IRequestHandler<GetByIdReceiverQuery, GetByIdReceiverResponse>
     {
@@ -40,10 +44,45 @@ public class GetByIdReceiverQuery : IRequest<GetByIdReceiverResponse>, ITransact
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdReceiverResponse>(await _receiverRepository.GetAsync(x => x.Id == request.Id,
-                include: m => m.Include(m => m.Address),
-                withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdReceiverResponse>(await _receiverRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<Receiver> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAddress)
+                    {
+                        query = query.Include(y => y.Address);
+                    }
+
+                    if (detailLevel.IncludeCustomer)
+                    {
+                        query = query.Include(y => y.Customer);
+
+                        if (detailLevel.CustomerDetailLevel.IncludeCompany)
+                        {
+                            query = query.Include(y => y.Customer).ThenInclude(m => m.Company);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<Receiver, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdReceiverResponse>(await _receiverRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
-
 }

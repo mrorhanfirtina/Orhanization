@@ -9,7 +9,7 @@ public class ZoneConfiguration : IEntityTypeConfiguration<Zone>
     public void Configure(EntityTypeBuilder<Zone> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("Zones").HasKey(p => p.Id);
+        builder.ToTable("Zones", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -29,7 +29,7 @@ public class ZoneConfiguration : IEntityTypeConfiguration<Zone>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Building).WithMany().HasForeignKey(p => p.BuildingId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Building).WithMany(p => p.Zones).HasForeignKey(p => p.BuildingId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 

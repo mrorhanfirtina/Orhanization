@@ -9,7 +9,7 @@ public class BarcodeConfiguration : IEntityTypeConfiguration<Barcode>
     public void Configure(EntityTypeBuilder<Barcode> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("Barcodes").HasKey(p => p.Id);
+        builder.ToTable("Barcodes", "barcode").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -30,8 +30,6 @@ public class BarcodeConfiguration : IEntityTypeConfiguration<Barcode>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.BarcodeAreas).WithOne().HasForeignKey(p => p.BarcodeId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.BarcodePrinters).WithOne().HasForeignKey(p => p.BarcodeId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 

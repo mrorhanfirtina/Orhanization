@@ -9,7 +9,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
     public void Configure(EntityTypeBuilder<Product> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("Products").HasKey(p => p.Id);
+        builder.ToTable("Products", "product").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -29,12 +29,14 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.ProductAttributeValues).WithOne().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.ProductBarcodes).WithOne().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.ItemUnits).WithOne().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.ProductDepositors).WithOne().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.ProductStockAttributes).WithOne().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ProductAttributeValues).WithOne(p => p.Product).HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ProductBarcodes).WithOne(p => p.Product).HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ItemUnits).WithOne(p => p.Product).HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ProductDepositors).WithOne(p => p.Product).HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ProductStockAttributes).WithOne(p => p.Product).HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.ProductCategory).WithOne(p => p.Product).HasForeignKey<ProductCategory>(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.ProductAbcCategory).WithOne(m => m.Product).HasForeignKey<ProductAbcCategory>(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Filtreler

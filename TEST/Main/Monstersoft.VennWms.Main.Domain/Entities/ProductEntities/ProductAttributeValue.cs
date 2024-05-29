@@ -8,6 +8,7 @@ public class ProductAttributeValue : Entity<Guid>
     public Guid ProductAttributeId { get; set; }
     public string Value { get; set; }
     public virtual ProductAttribute ProductAttribute { get; set; }
+    public virtual Product Product { get; set; }
 
     public ProductAttributeValue()
     {

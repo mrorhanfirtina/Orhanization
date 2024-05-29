@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Queries.GetById;
 
@@ -10,6 +10,7 @@ public class GetByIdBarcodeResponse
     public string Query { get; set; }
     public string Text { get; set; }
     public Guid DepositorCompanyId { get; set; }
-    public virtual ICollection<BarcodeArea> BarcodeAreas { get; set; }
-    public virtual ICollection<BarcodePrinter> BarcodePrinters { get; set; }
+    public BarcodeDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public ICollection<BarcodeBarcodeAreaResponseDto>? BarcodeAreas { get; set; }
+    public ICollection<BarcodeBarcodePrinterResponseDto>? BarcodePrinters { get; set; }
 }

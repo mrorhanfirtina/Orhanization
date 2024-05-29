@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Buildings.Commands.Create;
+﻿using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Buildings.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Buildings.Commands.Create;
 
 public class CreatedBuildingResponse
 {
@@ -12,7 +14,13 @@ public class CreatedBuildingResponse
     public string Country { get; set; }
     public string AddressText { get; set; }
     public string ZipCode { get; set; }
+    public decimal? Latitude { get; set; }
+    public decimal? Longitude { get; set; }
     public DateTime CreatedDate { get; set; }
-
+    public BuildingSiteResponseDto? Site { get; set; }
+    public BuildingDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public BuildingBuildingDimensionResponseDto? BuildingDimension { get; set; }
+    public ICollection<BuildingStorageSystemResponseDto>? StorageSystems { get; set; }
+    public ICollection<BuildingZoneResponseDto>? Zones { get; set; }
 }
 

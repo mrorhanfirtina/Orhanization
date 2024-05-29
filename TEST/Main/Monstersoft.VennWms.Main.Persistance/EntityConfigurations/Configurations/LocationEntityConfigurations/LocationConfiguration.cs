@@ -9,7 +9,7 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
     public void Configure(EntityTypeBuilder<Location> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("Locations").HasKey(p => p.Id);
+        builder.ToTable("Locations", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -30,19 +30,23 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
 
         #region İlişki Tanımları
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasMany(p => p.LocationStockAttributes).WithOne().HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.LocationProducts).WithOne().HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.LocationStockAttributes).WithOne(p => p.Location).HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.LocationProducts).WithOne(p => p.Location).HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(p => p.LocationZones).WithOne().HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.LocationProductAttributes).WithOne().HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(p => p.LocationLockReason).WithOne().HasForeignKey<LocationLockReason>(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(p => p.LocationPickingType).WithOne().HasForeignKey<LocationPickingType>(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(p => p.LocationDimension).WithOne().HasForeignKey<LocationDimension>(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(p => p.LocationFeature).WithOne().HasForeignKey<LocationFeature>(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(p => p.LocationPriority).WithOne().HasForeignKey<LocationPriority>(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(p => p.LocationCodeFormat).WithOne().HasForeignKey<LocationCodeFormat>(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(p => p.LocationCoordinate).WithOne().HasForeignKey<LocationCoordinate>(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.LocationUnitConstraints).WithOne().HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.LocationDepositors).WithOne(p => p.Location).HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.LocationProductAttributes).WithOne(p => p.Location).HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.LocationLockReason).WithOne(p => p.Location).HasForeignKey<LocationLockReason>(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.LocationPickingType).WithOne(p => p.Location).HasForeignKey<LocationPickingType>(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.LocationDimension).WithOne(p => p.Location).HasForeignKey<LocationDimension>(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.LocationFeature).WithOne(p => p.Location).HasForeignKey<LocationFeature>(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.LocationPriority).WithOne(p => p.Location).HasForeignKey<LocationPriority>(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.LocationCodeFormat).WithOne(p => p.Location).HasForeignKey<LocationCodeFormat>(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.LocationCoordinate).WithOne(p => p.Location).HasForeignKey<LocationCoordinate>(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.LocationUnitConstraints).WithOne(p => p.Location).HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(p => p.LocationDepositors).WithOne().HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.LocationProductAbcCategories).WithOne(p => p.Location).HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.LocationProductCategories).WithOne(p => p.Location).HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.LocationProductConstraints).WithOne(p => p.Location).HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Filtreler

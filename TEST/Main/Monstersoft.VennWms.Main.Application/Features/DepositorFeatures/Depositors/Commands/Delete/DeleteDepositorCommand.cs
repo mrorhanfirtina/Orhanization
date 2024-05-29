@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
@@ -44,11 +45,12 @@ public class DeleteDepositorCommand : IRequest<DeletedDepositorResponse>, ITrans
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
             Depositor depositor = await _depositorRepository.GetAsync(predicate: x => x.Id == request.Id,
+            include: x => x.Include(y => y.DepositorFeature),
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
-            await _depositorRepository.DeleteAsync(depositor, permanent: true);
+            await _depositorRepository.DeleteAsync(depositor);
 
             return new DeletedDepositorResponse
             {

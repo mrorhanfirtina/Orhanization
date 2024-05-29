@@ -9,7 +9,7 @@ public class BranchConfiguration : IEntityTypeConfiguration<Branch>
     public void Configure(EntityTypeBuilder<Branch> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("Branches").HasKey(p => p.Id);
+        builder.ToTable("Branches", "depositor").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -30,8 +30,8 @@ public class BranchConfiguration : IEntityTypeConfiguration<Branch>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Address).WithOne().HasForeignKey<Branch>(p => p.AddressId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(p => p.Distributor).WithMany().HasForeignKey(p => p.DistributorId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Address).WithOne().HasForeignKey<Branch>(p => p.AddressId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Distributor).WithMany(p => p.Branches).HasForeignKey(p => p.DistributorId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 

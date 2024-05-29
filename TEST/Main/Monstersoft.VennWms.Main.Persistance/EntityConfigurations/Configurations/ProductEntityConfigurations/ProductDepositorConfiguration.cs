@@ -10,7 +10,7 @@ public class ProductDepositorConfiguration : IEntityTypeConfiguration<ProductDep
     {
 
         #region Tablo Tanımları
-        builder.ToTable("ProductDepositors").HasKey(p => p.Id);
+        builder.ToTable("ProductDepositors", "product").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

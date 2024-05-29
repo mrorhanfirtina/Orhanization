@@ -9,7 +9,7 @@ public class LocationStockAttributeConfiguration : IEntityTypeConfiguration<Loca
     public void Configure(EntityTypeBuilder<LocationStockAttribute> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("LocationStockAttributes").HasKey(p => p.Id);
+        builder.ToTable("LocationStockAttributes", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

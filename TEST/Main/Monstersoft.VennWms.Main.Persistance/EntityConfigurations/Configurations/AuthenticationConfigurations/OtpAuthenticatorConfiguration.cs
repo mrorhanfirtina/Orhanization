@@ -8,7 +8,7 @@ public class OtpAuthenticatorConfiguration : IEntityTypeConfiguration<OtpAuthent
 {
     public void Configure(EntityTypeBuilder<OtpAuthenticator> builder)
     {
-        builder.ToTable("OtpAuthenticators").HasKey(e => e.Id);
+        builder.ToTable("OtpAuthenticators", "auth").HasKey(e => e.Id);
         builder.Property(e => e.UserId).HasColumnName("UserId");
         builder.Property(e => e.Id).HasColumnName("Id").UseIdentityColumn(1, 1);
         builder.Property(e => e.SecretKey).HasColumnName("SecretKey");

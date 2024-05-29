@@ -9,7 +9,7 @@ public class WorkTaskConfiguration : IEntityTypeConfiguration<WorkTask>
     public void Configure(EntityTypeBuilder<WorkTask> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("WorkTasks").HasKey(p => p.Id);
+        builder.ToTable("WorkTasks", "task").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

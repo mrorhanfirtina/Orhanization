@@ -1,6 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.POEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.POFeatures.PurchaseOrders.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.POFeatures.PurchaseOrders.Queries.GetList;
 
@@ -15,10 +13,13 @@ public class GetListPurchaseOrderListItemDto
     public int StatusId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public Supplier Supplier { get; set; }
-    public PoType PoType { get; set; }
-    public ICollection<PoAttributeValue> PoAttributeValues { get; set; }
-    public ICollection<PoMemo> PoMemo { get; set; }
-    public ICollection<Receipt> Receipt { get; set; }
+    public PurchaseOrderPoTypeResponseDto? PoType { get; set; }
+    public PurchaseOrderStatusResponseDto? Status { get; set; }
+    public PurchaseOrderDepositorResponseDto? Depositor { get; set; }
+    public PurchaseOrderDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public PurchaseOrderSupplierResponseDto? Supplier { get; set; }
+    public ICollection<PurchaseOrderPoAttributeValueResponseDto>? PoAttributeValues { get; set; }
+    public ICollection<PurchaseOrderPoMemoResponseDto>? PoMemo { get; set; }
+    public ICollection<PurchaseOrderReceiptResponseDto>? Receipt { get; set; }
 
 }

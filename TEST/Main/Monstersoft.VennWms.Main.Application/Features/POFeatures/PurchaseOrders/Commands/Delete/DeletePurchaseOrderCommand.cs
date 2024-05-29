@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PurchaseOrders.Constants;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PurchaseOrders.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.PORepositories;
@@ -45,8 +46,16 @@ public class DeletePurchaseOrderCommand : IRequest<DeletedPurchaseOrderResponse>
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
             PurchaseOrder purchaseOrder = await _purchaseOrderRepository.GetAsync(predicate: x => x.Id == request.Id,
+            include: x => x.Include(y => y.PoMemos)
+                           .Include(y => y.PoAttributeValues)
+                           .Include(y => y.Receipts)
+                           .Include(y => y.Receipts).ThenInclude(z => z.ReceiptAttributeValues)
+                           .Include(y => y.Receipts).ThenInclude(z => z.ReceiptMemos)
+                           .Include(y => y.Receipts).ThenInclude(z => z.ReceiptItems)
+                           .Include(y => y.Receipts).ThenInclude(z => z.ReceiptItems).ThenInclude(a => a.ReceiptItemMemos)
+                           .Include(y => y.Receipts).ThenInclude(z => z.ReceiptItems).ThenInclude(a => a.ReceiptItmStockAttrValues),
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
             await _purchaseOrderRepository.DeleteAsync(purchaseOrder);

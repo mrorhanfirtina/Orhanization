@@ -9,7 +9,7 @@ public class SupplierConfiguration : IEntityTypeConfiguration<Supplier>
     public void Configure(EntityTypeBuilder<Supplier> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("Suppliers").HasKey(p => p.Id);
+        builder.ToTable("Suppliers", "depositor").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -30,7 +30,7 @@ public class SupplierConfiguration : IEntityTypeConfiguration<Supplier>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Address).WithOne().HasForeignKey<Supplier>(p => p.AddressId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.Address).WithOne().HasForeignKey<Supplier>(p => p.AddressId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Company).WithMany().HasForeignKey(p => p.CompanyId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion

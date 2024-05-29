@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.StockDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.TaskStocks.Constants;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.TaskStocks.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.TaskStocks.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;

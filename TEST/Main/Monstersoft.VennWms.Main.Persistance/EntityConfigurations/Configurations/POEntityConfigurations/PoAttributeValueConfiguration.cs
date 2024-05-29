@@ -9,7 +9,7 @@ public class PoAttributeValueConfiguration : IEntityTypeConfiguration<PoAttribut
     public void Configure(EntityTypeBuilder<PoAttributeValue> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("PoAttributeValues").HasKey(p => p.Id);
+        builder.ToTable("PoAttributeValues", "po").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

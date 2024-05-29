@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.BarcodeDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.BarcodeAreas.Constants;
+using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.BarcodeAreas.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.BarcodeAreas.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -20,9 +24,10 @@ public class CreateBarcodeAreaCommand : IRequest<CreatedBarcodeAreaResponse>, IT
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBarcodeAreas";
+    public string? CacheGroupKey => "GetBarcodes";
 
     public CreateBarcodeAreaDto BarcodeArea { get; set; }
+    public BarcodeAreaDetailLevel DetailLevel { get; set; }
 
 
     public class CreateBarcodeAreaCommandHandler : IRequestHandler<CreateBarcodeAreaCommand, CreatedBarcodeAreaResponse>
@@ -48,7 +53,40 @@ public class CreateBarcodeAreaCommand : IRequest<CreatedBarcodeAreaResponse>, IT
             barcodeArea.Id = Guid.NewGuid();
             barcodeArea.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedBarcodeAreaResponse>(await _barcodeAreaRepository.AddAsync(barcodeArea));
+            await _barcodeAreaRepository.AddAsync(barcodeArea);
+
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _barcodeAreaRepository.GetAsync(predicate: x => x.Id == barcodeArea.Id,
+                include: x =>
+                {
+                    IQueryable<BarcodeArea> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeBarcode)
+                    {
+                        query = query.Include(y => y.Barcode);
+
+                        if (detailLevel.BarcodeDetailLevel.IncludeDepositorCompany)
+                        {
+                            query = query.Include(y => y.Barcode.DepositorCompany);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<BarcodeArea, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedBarcodeAreaResponse>(response);
+            }
+            else
+            {
+                var response = await _barcodeAreaRepository.GetAsync(predicate: x => x.Id == barcodeArea.Id, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedBarcodeAreaResponse>(response);
+            }
         }
     }
 }

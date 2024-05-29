@@ -12,11 +12,11 @@ public class ReceiptItem : Entity<Guid>
     public decimal ExpectedQuantity { get; set; }
     public decimal ActualQuantity { get; set; }
     public int StatusId { get; set; }
-    public virtual ICollection<ReceiptItemMemo> ReceiptItemMemos { get; set; }
-    public virtual ICollection<ReceiptItmStockAttrValue> ReceiptItmStockAttrValues { get; set; }
-    public virtual Product Product { get; set; }
-    public virtual ItemUnit ItemUnit { get; set; }
-    public virtual Status Status { get; set; }
+    public virtual ICollection<ReceiptItemMemo>? ReceiptItemMemos { get; set; }
+    public virtual ICollection<ReceiptItmStockAttrValue>? ReceiptItmStockAttrValues { get; set; }
+    public virtual Product? Product { get; set; }
+    public virtual ItemUnit? ItemUnit { get; set; }
+    public virtual Status? Status { get; set; }
 
     public ReceiptItem()
     {

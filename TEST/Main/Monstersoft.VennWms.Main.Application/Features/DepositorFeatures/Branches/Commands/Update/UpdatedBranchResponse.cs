@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Branches.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Branches.Commands.Update;
 
@@ -12,6 +12,7 @@ public class UpdatedBranchResponse
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public Address Address { get; set; }
-
+    public BranchAddressResponseDto? Address { get; set; }
+    public BranchDistributorResponseDto? Customer { get; set; }
+    public BranchDepositorCompanyResponseDto? DepositorCompany { get; set; }
 }

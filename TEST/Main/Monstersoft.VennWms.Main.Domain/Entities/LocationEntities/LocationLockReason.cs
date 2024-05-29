@@ -8,6 +8,7 @@ public class LocationLockReason : Entity<Guid>
     public Guid LocationId { get; set; }
     public int LockReasonId { get; set; }
     public virtual LockReason? LockReason { get; set; }
+    public virtual Location? Location { get; set; }
 
     public LocationLockReason()
     {

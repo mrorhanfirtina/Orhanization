@@ -44,10 +44,12 @@ public class DeleteCustomerCommand : IRequest<DeletedCustomerResponse>, ITransac
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Customer customer = await _customerRepository.GetAsync(predicate: x => x.Id == request.Id,
+            Customer? customer = await _customerRepository.GetAsync(predicate: x => x.Id == request.Id,
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
+
+            customer.Address.DeletedDate = DateTime.Now;
 
             await _customerRepository.DeleteAsync(customer);
 

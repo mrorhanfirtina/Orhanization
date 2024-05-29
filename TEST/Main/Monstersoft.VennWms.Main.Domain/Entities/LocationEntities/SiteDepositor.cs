@@ -7,7 +7,8 @@ public class SiteDepositor : Entity<Guid>
 {
     public Guid SiteId { get; set; }
     public Guid DepositorId { get; set; }
-    public virtual Depositor Depositor { get; set; }
+    public virtual Depositor? Depositor { get; set; }
+    public virtual Site? Site { get; set; }
     public SiteDepositor()
     {
     }

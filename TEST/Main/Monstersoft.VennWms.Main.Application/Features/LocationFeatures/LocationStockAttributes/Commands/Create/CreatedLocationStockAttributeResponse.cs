@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationStockAttributes.Commands.Create;
+﻿using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationStockAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationStockAttributes.Commands.Create;
 
 public class CreatedLocationStockAttributeResponse
 {
@@ -7,6 +9,8 @@ public class CreatedLocationStockAttributeResponse
     public Guid StockAttributeId { get; set; }
     public bool IsForbid { get; set; }
     public DateTime CreatedDate { get; set; }
+    public LocationStockAttributeLocationResponseDto? Location { get; set; }
+    public LocationStockAttributeStockAttributeResponseDto? StockAttribute { get; set; }
 
 }
 

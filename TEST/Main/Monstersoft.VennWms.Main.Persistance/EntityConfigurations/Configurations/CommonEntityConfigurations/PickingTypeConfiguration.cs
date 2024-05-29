@@ -9,7 +9,7 @@ public class PickingTypeConfiguration : IEntityTypeConfiguration<PickingType>
     public void Configure(EntityTypeBuilder<PickingType> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("PickingTypes").HasKey(p => p.Id);
+        builder.ToTable("PickingTypes", "common").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

@@ -10,9 +10,11 @@ public class Site : Entity<Guid>
     public Guid DepositorCompanyId { get; set; }
     public virtual DepositorCompany DepositorCompany { get; set; }
     public virtual ICollection<SiteDepositor> SiteDepositors { get; set; }
+    public virtual ICollection<Building>? Buildings { get; set; }
     public Site()
     {
         SiteDepositors = new HashSet<SiteDepositor>();
+        Buildings = new HashSet<Building>();
     }
 
     public Site(Guid id,string code, string description, Guid depositorCompanyId):this()

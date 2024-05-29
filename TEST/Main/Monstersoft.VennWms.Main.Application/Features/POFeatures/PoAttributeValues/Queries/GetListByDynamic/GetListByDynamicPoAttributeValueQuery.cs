@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.PORepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.POEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicPoAttributeValueQuery : IRequest<GetListResponse<Ge
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public PoAttributeValueDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicPoAttributeValueQueryHandler : IRequestHandler<GetListByDynamicPoAttributeValueQuery, GetListResponse<GetListByDynamicPoAttributeValueListItemDto>>
@@ -44,12 +49,51 @@ public class GetListByDynamicPoAttributeValueQuery : IRequest<GetListResponse<Ge
             _poAttributeValueBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<PoAttributeValue> poAttributeValueList = await _poAttributeValueRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-            return _mapper.Map<GetListResponse<GetListByDynamicPoAttributeValueListItemDto>>(poAttributeValueList);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<PoAttributeValue> poAttributeValueList = await _poAttributeValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<PoAttributeValue> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludePurchaseOrder)
+                    {
+                        query = query.Include(y => y.PurchaseOrder);
+                    }
+
+                    if (detailLevel.IncludePoAttribute)
+                    {
+                        query = query.Include(y => y.PoAttribute);
+
+                        if (detailLevel.PoAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.PoAttribute).ThenInclude(m => m.AttributeInputType);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<PoAttributeValue, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicPoAttributeValueListItemDto>>(poAttributeValueList);
+            }
+            else
+            {
+                Paginate<PoAttributeValue> poAttributeValueList = await _poAttributeValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicPoAttributeValueListItemDto>>(poAttributeValueList);
+            }
         }
     }
 

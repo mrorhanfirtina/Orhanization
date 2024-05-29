@@ -1,4 +1,7 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Commands.Create;
+﻿using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.SiteDepositors.Dtos.ResponseDtos;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Commands.Create;
 
 public class CreatedSiteResponse
 {
@@ -7,6 +10,8 @@ public class CreatedSiteResponse
     public string Description { get; set; }
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
-
+    public SiteDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public ICollection<SiteSiteDepositorResponseDto>? SiteDepositors { get; set; }
+    public ICollection<SiteBuildingResponseDto>? Buildings { get; set; }
 }
 

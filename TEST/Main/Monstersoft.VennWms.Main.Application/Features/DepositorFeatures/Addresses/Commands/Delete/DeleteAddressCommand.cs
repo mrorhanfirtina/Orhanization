@@ -44,8 +44,8 @@ public class DeleteAddressCommand : IRequest<DeletedAddressResponse>, ITransacti
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Address address = await _addressRepository.GetAsync(predicate: x => x.Id == request.Id && !x.DeletedDate.HasValue,
-            enableTracking: false,
+            Address? address = await _addressRepository.GetAsync(predicate: x => x.Id == request.Id && !x.DeletedDate.HasValue,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
             await _addressRepository.DeleteAsync(address);

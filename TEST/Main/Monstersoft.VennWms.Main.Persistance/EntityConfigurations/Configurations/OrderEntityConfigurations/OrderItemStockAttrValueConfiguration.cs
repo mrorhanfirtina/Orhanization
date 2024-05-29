@@ -9,7 +9,7 @@ public class OrderItemStockAttrValueConfiguration : IEntityTypeConfiguration<Ord
     public void Configure(EntityTypeBuilder<OrderItemStockAttrValue> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("OrderItemStockAttrValues").HasKey(p => p.Id);
+        builder.ToTable("OrderItemStockAttrValues", "order").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

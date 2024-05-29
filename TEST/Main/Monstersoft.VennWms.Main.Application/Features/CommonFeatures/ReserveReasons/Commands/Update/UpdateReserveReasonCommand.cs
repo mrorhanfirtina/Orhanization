@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.CommonDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ReserveReasons.Constants;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ReserveReasons.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ReserveReasons.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +27,7 @@ public class UpdateReserveReasonCommand : IRequest<UpdatedReserveReasonResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public UpdateReserveReasonDto ReserveReason { get; set; }
+    public ReserveReasonDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateReserveReasonCommandHandler : IRequestHandler<UpdateReserveReasonCommand, UpdatedReserveReasonResponse>
@@ -52,8 +56,37 @@ public class UpdateReserveReasonCommand : IRequest<UpdatedReserveReasonResponse>
             ReserveReason? reserveReason = _mapper.Map(request.ReserveReason, currentReserveReason);
             reserveReason.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedReserveReasonResponse>(await _reserveReasonRepository.UpdateAsync(reserveReason));
+            await _reserveReasonRepository.UpdateAsync(reserveReason);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _reserveReasonRepository.GetAsync(predicate: x => x.Id == reserveReason.Id,
+                include: x =>
+                {
+                    IQueryable<ReserveReason> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<ReserveReason, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedReserveReasonResponse>(response);
+            }
+            else
+            {
+                var response = await _reserveReasonRepository.GetAsync(predicate: x => x.Id == reserveReason.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedReserveReasonResponse>(response);
+            }
         }
     }
 }

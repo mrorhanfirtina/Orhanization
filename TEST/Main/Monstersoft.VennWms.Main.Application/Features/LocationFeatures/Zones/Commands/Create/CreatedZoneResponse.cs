@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Zones.Commands.Create;
+﻿using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Zones.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Zones.Commands.Create;
 
 public class CreatedZoneResponse
 {
@@ -8,6 +10,7 @@ public class CreatedZoneResponse
     public Guid BuildingId { get; set; }
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
-
+    public ZoneBuildingResponseDto? Building { get; set; }
+    public ZoneDepositorCompanyResponseDto? DepositorCompany { get; set; }
 }
 

@@ -46,8 +46,8 @@ public class GetListByDynamicOrderShipItemTaskQuery : IRequest<GetListResponse<G
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
             Paginate<OrderShipItemTask> orderShipItemTaskList = await _orderShipItemTaskRepository.GetListByDynamicAsync(
+            include: x => x.Include(y => y.OrderShipItemStocks),
             dynamic: request.DynamicQuery,
-            include: m => m.Include(x => x.OrderShipItemStocks),
             index: request.PageRequest.PageIndex,
             size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 

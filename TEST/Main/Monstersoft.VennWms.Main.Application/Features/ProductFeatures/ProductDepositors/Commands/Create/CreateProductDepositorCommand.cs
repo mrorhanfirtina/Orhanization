@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.ProductDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductDepositors.Constants;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductDepositors.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductDepositors.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +30,8 @@ public class CreateProductDepositorCommand : IRequest<CreatedProductDepositorRes
     public string? CacheGroupKey => "GetProductDepositors";
 
     public CreateProductDepositorDto ProductDepositor { get; set; }
+    public ProductDepositorDetailLevel DetailLevel { get; set; }
+
 
 
     public class CreateProductDepositorCommandHandler : IRequestHandler<CreateProductDepositorCommand, CreatedProductDepositorResponse>
@@ -50,7 +58,41 @@ public class CreateProductDepositorCommand : IRequest<CreatedProductDepositorRes
             productDepositor.Id = Guid.NewGuid();
             productDepositor.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedProductDepositorResponse>(await _productDepositorRepository.AddAsync(productDepositor));
+            await _productDepositorRepository.AddAsync(productDepositor);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _productDepositorRepository.GetAsync(predicate: x => x.Id == productDepositor.Id,
+                include: x =>
+                {
+                    IQueryable<ProductDepositor> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositor)
+                    {
+                        query = query.Include(y => y.Depositor);
+                    }
+
+                    if (detailLevel.IncludeProduct)
+                    {
+                        query = query.Include(y => y.Product);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ProductDepositor, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedProductDepositorResponse>(response);
+            }
+            else
+            {
+                var response = await _productDepositorRepository.GetAsync(predicate: x => x.Id == productDepositor.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedProductDepositorResponse>(response);
+            }
         }
     }
 

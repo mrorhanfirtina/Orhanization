@@ -9,7 +9,7 @@ public class ReserveReasonConfiguration : IEntityTypeConfiguration<ReserveReason
     public void Configure(EntityTypeBuilder<ReserveReason> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("ReserveReasons").HasKey(p => p.Id);
+        builder.ToTable("ReserveReasons", "common").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -28,7 +28,7 @@ public class ReserveReasonConfiguration : IEntityTypeConfiguration<ReserveReason
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.DepositorCompany);
+        builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

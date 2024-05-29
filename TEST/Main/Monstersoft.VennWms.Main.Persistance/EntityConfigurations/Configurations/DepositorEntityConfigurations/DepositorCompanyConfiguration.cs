@@ -9,7 +9,7 @@ public class DepositorCompanyConfiguration : IEntityTypeConfiguration<DepositorC
     public void Configure(EntityTypeBuilder<DepositorCompany> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("DepositorCompanies").HasKey(p => p.Id);
+        builder.ToTable("DepositorCompanies", "depositor").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -19,8 +19,8 @@ public class DepositorCompanyConfiguration : IEntityTypeConfiguration<DepositorC
         builder.Property(p => p.Description).HasColumnName("Description").HasMaxLength(120);
         builder.Property(p => p.TaxOffice).HasColumnName("TaxOffice").HasMaxLength(30);
         builder.Property(p => p.TaxNumber).HasColumnName("TaxNumber").HasMaxLength(30);
-        builder.Property(p => p.PhoneNumber).HasColumnName("PhoneNumber").HasMaxLength(15);
-        builder.Property(p => p.FaxNumber).HasColumnName("FaxNumber").HasMaxLength(15);
+        builder.Property(p => p.PhoneNumber).HasColumnName("PhoneNumber").HasMaxLength(20);
+        builder.Property(p => p.FaxNumber).HasColumnName("FaxNumber").HasMaxLength(20);
         builder.Property(p => p.AddressId).HasColumnName("AddressId").IsRequired();
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
@@ -35,7 +35,7 @@ public class DepositorCompanyConfiguration : IEntityTypeConfiguration<DepositorC
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Address).WithOne().HasForeignKey<DepositorCompany>(p => p.AddressId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.Address).WithOne().HasForeignKey<DepositorCompany>(p => p.AddressId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.PurchaseOrderDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.PORepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.POEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +27,7 @@ public class CreatePoMemoCommand : IRequest<CreatedPoMemoResponse>, ITransaction
     public string? CacheGroupKey => "GetPoMemos";
 
     public CreatePoMemoDto PoMemo { get; set; }
+    public PoMemoDetailLevel DetailLevel { get; set; }
 
 
     public class CreatePoMemoCommandHandler : IRequestHandler<CreatePoMemoCommand, CreatedPoMemoResponse>
@@ -49,7 +53,37 @@ public class CreatePoMemoCommand : IRequest<CreatedPoMemoResponse>, ITransaction
             poMemo.Id = Guid.NewGuid();
             poMemo.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedPoMemoResponse>(await _poMemoRepository.AddAsync(poMemo));
+            await _poMemoRepository.AddAsync(poMemo);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _poMemoRepository.GetAsync(predicate: x => x.Id == poMemo.Id,
+                include: x =>
+                {
+                    IQueryable<PoMemo> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludePurchaseOrder)
+                    {
+                        query = query.Include(y => y.PurchaseOrder);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<PoMemo, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedPoMemoResponse>(response);
+            }
+            else
+            {
+                var response = await _poMemoRepository.GetAsync(predicate: x => x.Id == poMemo.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedPoMemoResponse>(response);
+            }
         }
     }
 

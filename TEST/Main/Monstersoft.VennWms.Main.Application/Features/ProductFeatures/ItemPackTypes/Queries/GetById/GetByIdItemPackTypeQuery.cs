@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -18,6 +23,7 @@ public class GetByIdItemPackTypeQuery : IRequest<GetByIdItemPackTypeResponse>, I
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public ItemPackTypeDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdItemPackTypeQueryHandler : IRequestHandler<GetByIdItemPackTypeQuery, GetByIdItemPackTypeResponse>
@@ -39,7 +45,53 @@ public class GetByIdItemPackTypeQuery : IRequest<GetByIdItemPackTypeResponse>, I
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdItemPackTypeResponse>(await _ıtemPackTypeRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdItemPackTypeResponse>(await _ıtemPackTypeRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<ItemPackType> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeLenghtUnit)
+                    {
+                        query = query.Include(y => y.LenghtUnit);
+                    }
+
+                    if (detailLevel.IncludeVolumeUnit)
+                    {
+                        query = query.Include(y => y.VolumeUnit);
+                    }
+
+                    if (detailLevel.IncludeWeightUnit)
+                    {
+                        query = query.Include(y => y.WeightUnit);
+                    }
+
+                    if (detailLevel.IncludeItemUnit)
+                    {
+                        query = query.Include(y => y.ItemUnit);
+                        if (detailLevel.ItemUnitDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.ItemUnit).ThenInclude(m => m.Unit);
+                        }
+                        if (detailLevel.ItemUnitDetailLevel.IncludeUnit)
+                        {
+                            query = query.Include(y => y.ItemUnit).ThenInclude(m => m.Unit);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ItemPackType, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdItemPackTypeResponse>(await _ıtemPackTypeRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

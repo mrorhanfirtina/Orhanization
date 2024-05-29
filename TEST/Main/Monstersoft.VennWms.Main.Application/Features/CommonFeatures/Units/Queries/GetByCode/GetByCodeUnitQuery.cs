@@ -1,13 +1,18 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Constants;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
 using Orhanization.Core.Application.Pipelines.Logging;
 using Orhanization.Core.Application.Pipelines.Transaction;
 using static Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Constants.UnitOperationClaims;
+using Unit = Monstersoft.VennWms.Main.Domain.Entities.CommonEntities.Unit;
 
 namespace Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Queries.GetByCode;
 
@@ -17,6 +22,7 @@ public class GetByCodeUnitQuery : IRequest<GetByCodeUnitResponse>, ITransactiona
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public string Code { get; set; }
+    public UnitDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeUnitQueryHandler : IRequestHandler<GetByCodeUnitQuery, GetByCodeUnitResponse>
@@ -39,9 +45,45 @@ public class GetByCodeUnitQuery : IRequest<GetByCodeUnitResponse>, ITransactiona
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            return _mapper.Map<GetByCodeUnitResponse>(await _unitRepository.GetAsync(
-            predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
-            withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByCodeUnitResponse>(await _unitRepository.GetAsync(
+                predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<Unit> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeReferenceUnit)
+                    {
+                        query = query.Include(y => y.ReferenceUnitConversions);
+
+                        if (detailLevel.ReferenceUnitDetailLevel.IncludeTargetUnit)
+                        {
+                            query = query.Include(y => y.ReferenceUnitConversions).ThenInclude(z => z.TargetUnit);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<Unit, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByCodeUnitResponse>(await _unitRepository.GetAsync(
+                predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+
+            
         }
     }
 

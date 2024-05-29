@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using Monstersoft.VennWms.Main.Application.Dtos.DtoValidators.CreateDtoValidators.CreateDtoRootValidators.StockDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributes.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributes.Dtos.DtoValidators;
 
 namespace Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributes.Validators;
 

@@ -9,7 +9,7 @@ public class ReceiverConfiguration : IEntityTypeConfiguration<Receiver>
     public void Configure(EntityTypeBuilder<Receiver> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("Receivers").HasKey(p => p.Id);
+        builder.ToTable("Receivers", "depositor").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -30,8 +30,8 @@ public class ReceiverConfiguration : IEntityTypeConfiguration<Receiver>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.Address).WithOne().HasForeignKey<Receiver>(p => p.AddressId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(p => p.Customer).WithMany().HasForeignKey(p => p.CustomerId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Address).WithOne().HasForeignKey<Receiver>(p => p.AddressId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Customer).WithMany(P => P.Receivers).HasForeignKey(p => p.CustomerId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 

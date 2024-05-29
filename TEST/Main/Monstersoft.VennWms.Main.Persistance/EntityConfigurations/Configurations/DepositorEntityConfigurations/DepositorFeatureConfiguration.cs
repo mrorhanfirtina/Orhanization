@@ -9,7 +9,7 @@ public class DepositorFeatureConfiguration : IEntityTypeConfiguration<DepositorF
     public void Configure(EntityTypeBuilder<DepositorFeature> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("DepositorFeatures").HasKey(p => p.Id);
+        builder.ToTable("DepositorFeatures", "depositor").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

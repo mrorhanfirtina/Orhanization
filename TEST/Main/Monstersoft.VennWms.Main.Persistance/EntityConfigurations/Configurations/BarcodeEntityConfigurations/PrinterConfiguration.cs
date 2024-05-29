@@ -9,7 +9,7 @@ public class PrinterConfiguration : IEntityTypeConfiguration<Printer>
     public void Configure(EntityTypeBuilder<Printer> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("Printers").HasKey(p => p.Id);
+        builder.ToTable("Printers", "barcode").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

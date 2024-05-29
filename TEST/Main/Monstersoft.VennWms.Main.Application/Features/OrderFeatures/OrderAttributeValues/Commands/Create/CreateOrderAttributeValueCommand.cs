@@ -1,8 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
-using Monstersoft.VennWms.Main.Application.Dtos.CreateCommandDtos.RootDtos.OrderDtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Constants;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Rules;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +30,7 @@ public class CreateOrderAttributeValueCommand : IRequest<CreatedOrderAttributeVa
     public string? CacheGroupKey => "GetOrderAttributeValues";
 
     public CreateOrderAttributeValueDto OrderAttributeValue { get; set; }
+    public OrderAttributeValueDetailLevel DetailLevel { get; set; }
 
 
     public class CreateOrderAttributeValueCommandHandler : IRequestHandler<CreateOrderAttributeValueCommand, CreatedOrderAttributeValueResponse>
@@ -50,7 +57,47 @@ public class CreateOrderAttributeValueCommand : IRequest<CreatedOrderAttributeVa
             orderAttributeValue.Id = Guid.NewGuid();
             orderAttributeValue.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedOrderAttributeValueResponse>(await _orderAttributeValueRepository.AddAsync(orderAttributeValue));
+            await _orderAttributeValueRepository.AddAsync(orderAttributeValue);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _orderAttributeValueRepository.GetAsync(predicate: x => x.Id == orderAttributeValue.Id,
+                include: x =>
+                {
+                    IQueryable<OrderAttributeValue> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeOrder)
+                    {
+                        query = query.Include(y => y.Order);
+                    }
+
+                    if (detailLevel.IncludeOrderAttribute)
+                    {
+                        query = query.Include(y => y.OrderAttribute);
+
+                        if (detailLevel.OrderAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.OrderAttribute).ThenInclude(m => m.AttributeInputType);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<OrderAttributeValue, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedOrderAttributeValueResponse>(response);
+            }
+            else
+            {
+                var response = await _orderAttributeValueRepository.GetAsync(predicate: x => x.Id == orderAttributeValue.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedOrderAttributeValueResponse>(response);
+            }
         }
     }
 

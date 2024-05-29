@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
@@ -13,6 +16,7 @@ using Orhanization.Core.Application.Response;
 using Orhanization.Core.Persistence.Dynamic;
 using Orhanization.Core.Persistence.Paging;
 using static Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderMemos.Constants.OrderMemoOperationClaims;
+using Monstersoft.VennWms.Main.Application.Statics;
 
 
 namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderMemos.Queries.GetListByDynamic;
@@ -24,6 +28,7 @@ public class GetListByDynamicOrderMemoQuery : IRequest<GetListResponse<GetListBy
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public OrderMemoDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicOrderMemoQueryHandler : IRequestHandler<GetListByDynamicOrderMemoQuery, GetListResponse<GetListByDynamicOrderMemoListItemDto>>
@@ -44,12 +49,39 @@ public class GetListByDynamicOrderMemoQuery : IRequest<GetListResponse<GetListBy
             _orderMemoBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<OrderMemo> orderMemoList = await _orderMemoRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<OrderMemo> orderMemoList = await _orderMemoRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<OrderMemo> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicOrderMemoListItemDto>>(orderMemoList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeOrder)
+                    {
+                        query = query.Include(y => y.Order);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<OrderMemo, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicOrderMemoListItemDto>>(orderMemoList);
+            }
+            else
+            {
+                Paginate<OrderMemo> orderMemoList = await _orderMemoRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicOrderMemoListItemDto>>(orderMemoList);
+            }
         }
     }
 

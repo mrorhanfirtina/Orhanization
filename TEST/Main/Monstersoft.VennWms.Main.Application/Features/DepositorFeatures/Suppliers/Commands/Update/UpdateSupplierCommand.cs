@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.DepositorDtos;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Receivers.Commands.Update;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Receivers.Rules;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Suppliers.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Suppliers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Suppliers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -28,35 +28,75 @@ public class UpdateSupplierCommand : IRequest<UpdatedSupplierResponse>, ITransac
     public string? CacheGroupKey => "GetSuppliers";
 
     public UpdateSupplierDto Supplier { get; set; }
+    public SupplierDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateSupplierCommandHandler : IRequestHandler<UpdateSupplierCommand, UpdatedSupplierResponse>
     {
-        private readonly ISupplierRepository _companyRepository;
-        private readonly SupplierBusinessRules _companyBusinessRules;
+        private readonly ISupplierRepository _supplierRepository;
+        private readonly SupplierBusinessRules _supplierBusinessRules;
         private readonly IMapper _mapper;
 
-        public UpdateSupplierCommandHandler(ISupplierRepository companyRepository, SupplierBusinessRules companyBusinessRules, IMapper mapper)
+        public UpdateSupplierCommandHandler(ISupplierRepository supplierRepository, SupplierBusinessRules supplierBusinessRules, IMapper mapper)
         {
-            _companyRepository = companyRepository;
-            _companyBusinessRules = companyBusinessRules;
+            _supplierRepository = supplierRepository;
+            _supplierBusinessRules = supplierBusinessRules;
             _mapper = mapper;
         }
         public async Task<UpdatedSupplierResponse> Handle(UpdateSupplierCommand request, CancellationToken cancellationToken)
         {
-            _companyBusinessRules.UpdateRequest()
+            _supplierBusinessRules.UpdateRequest()
+                .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
                 .CheckIdExistence(request.Supplier.Id)
-                .CheckAddressIdExistence(request.Supplier.AddressId)
                 .CheckCodeExistenceWhenUpdate(request.Supplier.Code, request.Supplier.Id)
                 .CheckCompanyIdExistence(request.Supplier.CompanyId);
 
-            Supplier currentSupplier = await _companyRepository.GetAsync(predicate: x => x.Id == request.Supplier.Id && !x.DeletedDate.HasValue, include: x => x.Include(y => y.Address));
+            Supplier currentSupplier = await _supplierRepository.GetAsync(predicate: x => x.Id == request.Supplier.Id && !x.DeletedDate.HasValue, include: x => x.Include(y => y.Address));
 
             Supplier? supplier = _mapper.Map(request.Supplier, currentSupplier);
             supplier.UpdatedDate = DateTime.Now;
             supplier.Address.UpdatedDate = DateTime.Now;
 
-            return _mapper.Map<UpdatedSupplierResponse>(await _companyRepository.UpdateAsync(supplier));
+            await _supplierRepository.UpdateAsync(supplier);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _supplierRepository.GetAsync(predicate: x => x.Id == supplier.Id,
+                include: x =>
+                {
+                    IQueryable<Supplier> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAddress)
+                    {
+                        query = query.Include(y => y.Address);
+                    }
+
+                    if (detailLevel.IncludeCompany)
+                    {
+                        query = query.Include(y => y.Company);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<Supplier, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedSupplierResponse>(response);
+            }
+            else
+            {
+                var response = await _supplierRepository.GetAsync(predicate: x => x.Id == supplier.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedSupplierResponse>(response);
+            }
         }
     }
 }

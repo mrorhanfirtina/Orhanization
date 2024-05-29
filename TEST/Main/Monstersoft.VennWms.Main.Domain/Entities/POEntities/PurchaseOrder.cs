@@ -13,13 +13,14 @@ public class PurchaseOrder : Entity<Guid>
     public Guid DepositorCompanyId { get; set; }
     public Guid PoTypeId { get; set; }
     public int StatusId { get; set; }
+    public PoType? PoType { get; set; }
     public virtual Supplier? Supplier { get; set; }
-    public virtual ICollection<PoAttributeValue> PoAttributeValues { get; set; }
-    public virtual ICollection<PoMemo> PoMemos { get; set; }
-    public virtual ICollection<Receipt> Receipts { get; set; }
     public virtual Depositor Depositor { get; set; }
     public virtual DepositorCompany DepositorCompany { get; set; }
     public virtual Status Status { get; set; }
+    public virtual ICollection<PoAttributeValue>? PoAttributeValues { get; set; }
+    public virtual ICollection<PoMemo>? PoMemos { get; set; }
+    public virtual ICollection<Receipt>? Receipts { get; set; }
 
     public PurchaseOrder()
     {

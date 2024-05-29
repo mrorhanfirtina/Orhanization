@@ -7,7 +7,7 @@ public class BarcodeArea : Entity<Guid>
     public Guid BarcodeId { get; set; }
     public string QueryField { get; set; }
     public string TextField { get; set; }
-
+    public virtual Barcode? Barcode { get; set; }
     public BarcodeArea()
     {
     }

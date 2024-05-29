@@ -8,7 +8,8 @@ public class OrderItemStockAttrValue : Entity<Guid>
     public Guid OrderItemId { get; set; }
     public Guid StockAttributeId { get; set; }
     public string Value { get; set; }
-    public virtual StockAttribute StockAttribute { get; set; }
+    public virtual OrderItem? OrderItem { get; set; }
+    public virtual StockAttribute? StockAttribute { get; set; }
 
     public OrderItemStockAttrValue()
     {

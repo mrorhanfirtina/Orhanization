@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Commands.Update;
 
 public class UpdatedItemPackTypeResponse
 {
@@ -15,5 +17,9 @@ public class UpdatedItemPackTypeResponse
     public int WeightUnitId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public ItemPackTypeItemUnitResponseDto? ItemUnit { get; set; }
+    public ItemPackTypeLenghtUnitResponseDto? LenghtUnit { get; set; }
+    public ItemPackTypeVolumeUnitResponseDto? VolumeUnit { get; set; }
+    public ItemPackTypeWeightUnitResponseDto? WeightUnit { get; set; }
 
 }

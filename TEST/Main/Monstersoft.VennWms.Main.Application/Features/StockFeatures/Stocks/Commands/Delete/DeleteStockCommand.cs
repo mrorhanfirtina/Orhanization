@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.Stocks.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.Stocks.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
@@ -45,8 +46,14 @@ public class DeleteStockCommand : IRequest<DeletedStockResponse>, ITransactional
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
             Stock stock = await _stockRepository.GetAsync(predicate: x => x.Id == request.Id,
+            include: x => x.Include(y => y.StockMemos)
+            .Include(y => y.StockAttributeValues)
+            .Include(y => y.StockReserveReasons)
+            .Include(y => y.StockInbounds)
+            .Include(y => y.StockPackTypes)
+            .Include(y => y.StockUnsuitReasons),
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
             await _stockRepository.DeleteAsync(stock);

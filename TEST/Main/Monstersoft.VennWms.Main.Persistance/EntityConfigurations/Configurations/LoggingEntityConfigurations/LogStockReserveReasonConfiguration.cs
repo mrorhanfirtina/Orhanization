@@ -9,14 +9,14 @@ public class LogStockReserveReasonConfiguration : IEntityTypeConfiguration<LogSt
     public void Configure(EntityTypeBuilder<LogStockReserveReason> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("LogStockReserveReasons").HasKey(p => p.Id);
+        builder.ToTable("LogStockReserveReasons", "logging").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
         builder.Property(p => p.Id).HasColumnName("Id").IsRequired();
         builder.Property(p => p.LogStockId).HasColumnName("LogStockId").IsRequired();
-        builder.Property(p => p.FromReasaonId).HasColumnName("FromReasaonId");
-        builder.Property(p => p.ToReasaonId).HasColumnName("ToReasaonId");
+        builder.Property(p => p.FromReasonId).HasColumnName("FromReasonId");
+        builder.Property(p => p.ToReasonId).HasColumnName("ToReasonId");
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
         builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
@@ -24,11 +24,12 @@ public class LogStockReserveReasonConfiguration : IEntityTypeConfiguration<LogSt
 
         #region Indexler
         builder.HasIndex(p => p.Id).IsUnique();
-        builder.HasIndex(p => new { p.LogStockId, p.FromReasaonId, p.ToReasaonId, p.CreatedDate }, name: "IX_LogStockReserveReasons_Areas");
+        builder.HasIndex(p => new { p.LogStockId, p.FromReasonId, p.ToReasonId, p.CreatedDate }, name: "IX_LogStockReserveReasons_Areas");
         #endregion
 
         #region İlişki Tanımları
-
+        builder.HasOne(p => p.FromReason).WithMany().HasForeignKey(p => p.FromReasonId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(p => p.ToReason).WithMany().HasForeignKey(p => p.ToReasonId).OnDelete(DeleteBehavior.NoAction);
         #endregion
 
         #region Filtreler

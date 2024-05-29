@@ -10,22 +10,23 @@ public class StockPackType : Entity<Guid>
     public decimal Quantity { get; set; }
     public decimal QuantityFree { get; set; }
     public decimal PackTypeRatio { get; set; }
-    public decimal CUQuantity { get; set; }
-    public decimal CUQuantityFree { get; set; }
-    public virtual Stock Stock { get; set; }
-    public virtual ItemUnit ItemUnit { get; set; }
+    public Guid? ParentId { get; set; }
+    public decimal? CUQuantity { get; set; }
+    public decimal? CUQuantityFree { get; set; }
+    public virtual ItemUnit? ItemUnit { get; set; }
 
     public StockPackType()
     {
     }
 
-    public StockPackType(Guid stockId, Guid itemUnitId, decimal quantity, decimal quantityFree, decimal packTypeRatio, decimal cUQuantity, decimal cUQuantityFree) : this()
+    public StockPackType(Guid stockId, Guid itemUnitId, decimal quantity, decimal quantityFree, decimal packTypeRatio, Guid parentId, decimal? cUQuantity = null, decimal? cUQuantityFree = null) : this()
     {
         StockId = stockId;
         ItemUnitId = itemUnitId;
         Quantity = quantity;
         QuantityFree = quantityFree;
         PackTypeRatio = packTypeRatio;
+        ParentId = parentId;
         CUQuantity = cUQuantity;
         CUQuantityFree = cUQuantityFree;
     }

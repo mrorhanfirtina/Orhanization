@@ -49,9 +49,11 @@ public class GetListByDynamicReturnQuery : IRequest<GetListResponse<GetListByDyn
 
             Paginate<Return> returnList = await _returnRepository.GetListByDynamicAsync(
             dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(x => x.Customer).Include(x => x.ReturnMemos).Include(x => x.ReturnAttributeValues)
-            .Include(x => x.ReturnItems).ThenInclude(ri => ri.ReturnItemMemos)
-            .Include(x => x.ReturnItems).ThenInclude(ri => ri.ReturnItmStockAttrValues),
+             include: x => x.Include(y => y.ReturnAttributeValues)
+                            .Include(y => y.ReturnMemos)
+                            .Include(y => y.ReturnItems)
+                            .Include(y => y.ReturnItems).ThenInclude(z => z.ReturnItemMemos)
+                            .Include(y => y.ReturnItems).ThenInclude(z => z.ReturnItmStockAttrValues),
             index: request.PageRequest.PageIndex,
             size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 

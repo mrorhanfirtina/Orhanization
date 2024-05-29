@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.POEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoTypes.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.POFeatures.PoTypes.Queries.GetById;
 
@@ -13,6 +13,7 @@ public class GetByIdPoTypeResponse
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public ICollection<PurchaseOrder> PurchaseOrders { get; set; }
+    public PoTypeDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public ICollection<PoTypePurchaseOrderResponseDto>? PurchaseOrders { get; set; }
 
 }

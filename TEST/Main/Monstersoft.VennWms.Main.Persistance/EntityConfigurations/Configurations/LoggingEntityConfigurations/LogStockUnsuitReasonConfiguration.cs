@@ -9,14 +9,14 @@ public class LogStockUnsuitReasonConfiguration : IEntityTypeConfiguration<LogSto
     public void Configure(EntityTypeBuilder<LogStockUnsuitReason> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("LogStockUnsuitReasons").HasKey(p => p.Id);
+        builder.ToTable("LogStockUnsuitReasons", "logging").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
         builder.Property(p => p.Id).HasColumnName("Id").IsRequired();
         builder.Property(p => p.LogStockId).HasColumnName("LogStockId").IsRequired();
-        builder.Property(p => p.FromReasonId).HasColumnName("FromReasonId").IsRequired();
-        builder.Property(p => p.ToReasonId).HasColumnName("ToReasonId").IsRequired();
+        builder.Property(p => p.FromReasonId).HasColumnName("FromReasonId");
+        builder.Property(p => p.ToReasonId).HasColumnName("ToReasonId");
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
         builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
@@ -28,7 +28,8 @@ public class LogStockUnsuitReasonConfiguration : IEntityTypeConfiguration<LogSto
         #endregion
 
         #region İlişki Tanımları
-
+        builder.HasOne(p => p.FromReason).WithMany().HasForeignKey(p => p.FromReasonId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(p => p.ToReason).WithMany().HasForeignKey(p => p.ToReasonId).OnDelete(DeleteBehavior.NoAction);
         #endregion
 
         #region Filtreler

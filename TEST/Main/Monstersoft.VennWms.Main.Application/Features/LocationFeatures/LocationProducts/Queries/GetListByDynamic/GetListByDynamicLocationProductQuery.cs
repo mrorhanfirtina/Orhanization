@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProducts.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProducts.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicLocationProductQuery : IRequest<GetListResponse<Get
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public LocationProductDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicLocationProductQueryHandler : IRequestHandler<GetListByDynamicLocationProductQuery, GetListResponse<GetListByDynamicLocationProductListItemDto>>
@@ -44,12 +49,43 @@ public class GetListByDynamicLocationProductQuery : IRequest<GetListResponse<Get
             _locationProductBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<LocationProduct> locationProductList = await _locationProductRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<LocationProduct> locationProductList = await _locationProductRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<LocationProduct> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicLocationProductListItemDto>>(locationProductList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeLocation)
+                    {
+                        query = query.Include(y => y.Location);
+                    }
+
+                    if (detailLevel.IncludeProduct)
+                    {
+                        query = query.Include(y => y.Product);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<LocationProduct, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicLocationProductListItemDto>>(locationProductList);
+            }
+            else
+            {
+                Paginate<LocationProduct> locationProductList = await _locationProductRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicLocationProductListItemDto>>(locationProductList);
+            }
         }
     }
 

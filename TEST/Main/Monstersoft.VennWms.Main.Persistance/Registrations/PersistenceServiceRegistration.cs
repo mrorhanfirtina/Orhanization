@@ -154,7 +154,16 @@ public static class PersistenceServiceRegistration
         services.AddScoped<ILockReasonRepository, LockReasonRepository>();
         services.AddScoped<IPickingTypeRepository, PickingTypeRepository>();
         services.AddScoped<ILocationCodeComponentRepository, LocationCodeComponentRepository>();
-
+        services.AddScoped<IAbcCategoryListRepository, AbcCategoryListRepository>();
+        services.AddScoped<IPriorityListRepository, PriorityListRepository>();
+        services.AddScoped<IProductCategoryListRepository, ProductCategoryListRepository>();
+        services.AddScoped<IProductAbcCategoryRepository, ProductAbcCategoryRepository>();
+        services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
+        services.AddScoped<ILocationProductCategoryRepository, LocationProductCategoryRepository>();
+        services.AddScoped<ILocationProductAbcCategoryRepository, LocationProductAbcCategoryRepository>();
+        services.AddScoped<IOrderPriorityRepository, OrderPriorityRepository>();
+        services.AddScoped<IUnitConversionRepository, UnitConversionRepository>();
+        services.AddScoped<IStockInboundRepository, StockInboundRepository>();
 
         services.AddScoped<IEmailAuthenticatorRepository, EmailAuthenticatorRepository>();
         services.AddScoped<IOperationClaimRepository, OperationClaimRepository>();

@@ -10,7 +10,7 @@ public class ProductStockAttributeConfiguration : IEntityTypeConfiguration<Produ
     {
 
         #region Tablo Tanımları
-        builder.ToTable("ProductStockAttributes").HasKey(p => p.Id);
+        builder.ToTable("ProductStockAttributes", "product").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

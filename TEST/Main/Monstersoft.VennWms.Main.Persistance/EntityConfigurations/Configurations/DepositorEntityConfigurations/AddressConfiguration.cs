@@ -9,7 +9,7 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
     public void Configure(EntityTypeBuilder<Address> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("Addresses").HasKey(p => p.Id);
+        builder.ToTable("Addresses", "depositor").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -19,7 +19,7 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
         builder.Property(p => p.City).HasColumnName("City").HasMaxLength(60).IsRequired();
         builder.Property(p => p.Country).HasColumnName("Country").HasMaxLength(60).IsRequired();
         builder.Property(p => p.AddressText).HasColumnName("AddressText").HasMaxLength(250).IsRequired();
-        builder.Property(p => p.ZipCode).HasColumnName("ZipCode").HasMaxLength(10).IsRequired();
+        builder.Property(p => p.ZipCode).HasColumnName("ZipCode").HasMaxLength(15).IsRequired();
         builder.Property(p => p.Latitude).HasColumnName("Latitude").HasColumnType("DECIMAL(11,7)");
         builder.Property(p => p.Longitude).HasColumnName("Longitude").HasColumnType("DECIMAL(11,7)");
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();

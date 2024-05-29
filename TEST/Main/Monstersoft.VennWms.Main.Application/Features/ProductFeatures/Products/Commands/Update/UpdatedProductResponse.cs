@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Commands.Update;
 
@@ -11,8 +11,12 @@ public class UpdatedProductResponse
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public ICollection<ProductAttributeValue> ProductAttributeValues { get; set; }
-    public ICollection<ProductBarcode> ProductBarcodes { get; set; }
-    public ICollection<ItemUnit> ItemUnits { get; set; }
-
+    public ICollection<ProductProductAttributeValueResponseDto?> ProductAttributeValues { get; set; }
+    public ICollection<ProductProductBarcodeResponseDto?> ProductBarcodes { get; set; }
+    public ICollection<ProductItemUnitResponseDto?> ItemUnits { get; set; }
+    public ICollection<ProductProductDepositorResponseDto?> ProductDepositors { get; set; }
+    public ICollection<ProductProductStockAttributeResponseDto?> ProductStockAttributes { get; set; }
+    public ProductProductAbcCategoryResponseDto? ProductAbcCategory { get; set; }
+    public ProductProductCategoryResponseDto? ProductCategory { get; set; }
+    public ProductDepositorCompanyResponseDto? DepositorCompany { get; set; }
 }

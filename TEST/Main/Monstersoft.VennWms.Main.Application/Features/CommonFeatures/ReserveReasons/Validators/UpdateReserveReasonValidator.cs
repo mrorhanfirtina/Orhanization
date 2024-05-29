@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using Monstersoft.VennWms.Main.Application.Dtos.DtoValidators.UpdateDtoValidators.UpdateDtoRootValidators.CommonDtos;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ReserveReasons.Commands.Update;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ReserveReasons.Dtos.DtoValidators;
 
 namespace Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ReserveReasons.Validators;
 

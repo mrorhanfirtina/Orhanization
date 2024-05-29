@@ -9,7 +9,7 @@ public class LocationFeatureConfiguration : IEntityTypeConfiguration<LocationFea
     public void Configure(EntityTypeBuilder<LocationFeature> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("LocationFeatures").HasKey(p => p.Id);
+        builder.ToTable("LocationFeatures", "location").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

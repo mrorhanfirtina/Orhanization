@@ -9,7 +9,7 @@ public class AttributeInputTypeConfiguration : IEntityTypeConfiguration<Attribut
     public void Configure(EntityTypeBuilder<AttributeInputType> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("AttributeInputTypes").HasKey(p => p.Id);
+        builder.ToTable("AttributeInputTypes", "common").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

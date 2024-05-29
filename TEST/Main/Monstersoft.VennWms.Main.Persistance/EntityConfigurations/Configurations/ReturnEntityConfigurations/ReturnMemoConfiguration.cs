@@ -9,7 +9,7 @@ public class ReturnMemoConfiguration : IEntityTypeConfiguration<ReturnMemo>
     public void Configure(EntityTypeBuilder<ReturnMemo> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("ReturnMemos").HasKey(p => p.Id);
+        builder.ToTable("ReturnMemos", "return").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

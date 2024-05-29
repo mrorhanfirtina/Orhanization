@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.LoggingFeatures.LogStocks.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LoggingFeatures.LogStocks.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LoggingRepositories;
@@ -20,7 +21,7 @@ public class DeleteLogStockCommand : IRequest<DeletedLogStockResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLogStocks";
+    public string? CacheGroupKey => "GetTransactionLogs";
 
     public Guid Id { get; set; }
 
@@ -45,8 +46,12 @@ public class DeleteLogStockCommand : IRequest<DeletedLogStockResponse>, ITransac
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
             LogStock logStock = await _logStockRepository.GetAsync(predicate: x => x.Id == request.Id,
+            include: x => x.Include(z => z.LogStockAttributeValues)
+                              .Include(z => z.LogStockContainers)
+                              .Include(z => z.LogStockReserveReasons)
+                              .Include(z => z.LogStockUnsuitReasons),
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
             await _logStockRepository.DeleteAsync(logStock);

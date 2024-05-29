@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
@@ -45,8 +46,16 @@ public class DeleteProductCommand : IRequest<DeletedProductResponse>, ITransacti
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
             Product product = await _productRepository.GetAsync(predicate: x => x.Id == request.Id,
+            include: x => x.Include(y => y.ProductAbcCategory)
+                           .Include(y => y.ProductCategory)
+                           .Include(y => y.ProductAttributeValues)
+                           .Include(y => y.ProductBarcodes)
+                           .Include(y => y.ProductDepositors)
+                           .Include(y => y.ProductStockAttributes)
+                           .Include(y => y.ItemUnits)
+                           .Include(y => y.ItemUnits).ThenInclude(z => z.ItemPackTypes),
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
             await _productRepository.DeleteAsync(product);

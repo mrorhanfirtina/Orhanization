@@ -13,14 +13,13 @@ using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.TaskEntities;
-using Monstersoft.VennWms.Main.Persistance.Repositories.LocationRepositories;
 using Orhanization.Core.Security.Entities;
 using System.Reflection;
 
 namespace Monstersoft.VennWms.Main.Persistance.Contexts;
 
 public class BaseDbContext : DbContext
-{
+{ 
     protected IConfiguration Configuration { get; set; }
 
     public BaseDbContext(DbContextOptions dbContextOptions, IConfiguration configuration) : base(dbContextOptions)
@@ -40,6 +39,7 @@ public class BaseDbContext : DbContext
     public DbSet<Printer> Printers { get; set; }
     public DbSet<BarcodePrinter> BarcodePrinters { get; set; }
 
+
     //Common Entities
     public DbSet<AttributeInputType> AttributeInputTypes { get; set; }
     public DbSet<ContainerUnit> ContainerUnits { get; set; }
@@ -47,10 +47,13 @@ public class BaseDbContext : DbContext
     public DbSet<ReserveReason> ReserveReasons { get; set; }
     public DbSet<Status> Status { get; set; }
     public DbSet<Unit> Units { get; set; }
+    public DbSet<UnitConversion> UnitConversions { get; set; }
     public DbSet<UnsuitReason> UnsuitReasons { get; set;}
     public DbSet<LockReason> LockReasons { get; set;}
     public DbSet<PickingType> PickingTypes { get; set;}
     public DbSet<LocationCodeComponent> LocationCodeComponents { get; set;}
+    public DbSet<AbcCategoryList> AbcCategoryLists { get; set; }
+    public DbSet<PriorityList> PriorityLists { get; set; }
 
     //Depositor Entities
     public DbSet<Branch> Branches { get; set; }
@@ -87,6 +90,8 @@ public class BaseDbContext : DbContext
     public DbSet<LocationCodeFormat> LocationCodeFormats { get; set; }
     public DbSet<BuildingDimension> BuildingDimensions { get; set; }
     public DbSet<LocationCoordinate> LocationCoordinates { get; set; }
+    public DbSet<LocationProductCategory> LocationProductCategories { get; set; }
+    public DbSet<LocationProductAbcCategory> LocationProductAbcCategories { get; set; }
 
 
     //Logging Entities
@@ -106,6 +111,7 @@ public class BaseDbContext : DbContext
     public DbSet<OrderItemStockAttrValue> OrderItemStockAttrValues { get; set;}
     public DbSet<OrderMemo> OrderMemos { get; set; }
     public DbSet<OrderType> OrderTypes { get; set; }
+    public DbSet<OrderPriority> OrderPriorities { get; set; }
 
     //PO Entities
     public DbSet<PoAttribute> PoAttributes { get; set; }
@@ -125,6 +131,9 @@ public class BaseDbContext : DbContext
     public DbSet<ItemPackType> ItemPackTypes { get; set; }
     public DbSet<ProductStockAttribute> ProductStockAttributes { get; set; }
     public DbSet<ProductDepositor> ProductDepositors { get; set; }
+    public DbSet<ProductCategoryList> ProductCategoryLists { get; set; }
+    public DbSet<ProductAbcCategory> ProductAbcCategories { get; set; }
+    public DbSet<ProductCategory> ProductCategories { get; set; }
 
 
 
@@ -169,6 +178,7 @@ public class BaseDbContext : DbContext
     public DbSet<StockUnsuitReason> StockUnsuitReasons { get;set; }
     public DbSet<TaskStock> TaskStocks { get; set; }
     public DbSet<StockPackType> StockPackTypes { get; set; }
+    public DbSet<StockInbound> StockInbounds { get; set; }
 
     //Task Entities
     public DbSet<TaskList> TaskLists { get; set; }

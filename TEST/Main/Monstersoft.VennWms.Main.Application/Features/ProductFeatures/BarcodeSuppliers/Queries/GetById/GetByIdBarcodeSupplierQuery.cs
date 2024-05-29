@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -18,6 +23,8 @@ public class GetByIdBarcodeSupplierQuery : IRequest<GetByIdBarcodeSupplierRespon
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public BarcodeSupplierDetailLevel DetailLevel { get; set; }
+
 
 
     public class GetByIdBarcodeSupplierQueryHandler : IRequestHandler<GetByIdBarcodeSupplierQuery, GetByIdBarcodeSupplierResponse>
@@ -39,7 +46,46 @@ public class GetByIdBarcodeSupplierQuery : IRequest<GetByIdBarcodeSupplierRespon
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdBarcodeSupplierResponse>(await _barcodeSupplierRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdBarcodeSupplierResponse>(await _barcodeSupplierRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<BarcodeSupplier> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeProductBarcode)
+                    {
+                        query = query.Include(y => y.ProductBarcode);
+                    }
+
+                    if (detailLevel.IncludeSupplier)
+                    {
+                        query = query.Include(y => y.Supplier);
+
+                        if (detailLevel.SupplierDetailLevel.IncludeCompany)
+                        {
+                            query = query.Include(y => y.Supplier).ThenInclude(m => m.Company);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<BarcodeSupplier, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdBarcodeSupplierResponse>(await _barcodeSupplierRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Buildings.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Buildings.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -18,6 +23,7 @@ public class GetByCodeBuildingQuery : IRequest<GetByCodeBuildingResponse>, ITran
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
+    public BuildingDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeBuildingQueryHandler : IRequestHandler<GetByCodeBuildingQuery, GetByCodeBuildingResponse>
@@ -40,9 +46,78 @@ public class GetByCodeBuildingQuery : IRequest<GetByCodeBuildingResponse>, ITran
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            return _mapper.Map<GetByCodeBuildingResponse>(await _buildingRepository.GetAsync(
-            predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
-            withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByCodeBuildingResponse>(await _buildingRepository.GetAsync(
+                predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<Building> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeSite)
+                    {
+                        query = query.Include(y => y.Site);
+
+                        if (detailLevel.SiteDetailLevel.IncludeSiteDepositor)
+                        {
+                            query = query.Include(y => y.Site).ThenInclude(m => m.SiteDepositors);
+
+                            if (detailLevel.SiteDetailLevel.DepositorDetailLevel.IncludeDepositor)
+                            {
+                                query = query.Include(y => y.Site).ThenInclude(m => m.SiteDepositors).ThenInclude(m => m.Depositor);
+                            }
+                        }
+                    }
+
+                    if (detailLevel.IncludeBuildingDimension)
+                    {
+                        query = query.Include(y => y.BuildingDimension);
+
+                        if (detailLevel.BuildingDimensionDetailLevel.IncludeLenghtUnit)
+                        {
+                            query = query.Include(y => y.BuildingDimension).ThenInclude(m => m.LenghtUnitId);
+                        }
+
+                        if (detailLevel.BuildingDimensionDetailLevel.IncludeVolumeUnit)
+                        {
+                            query = query.Include(y => y.BuildingDimension).ThenInclude(m => m.VolumeUnit);
+                        }
+                    }
+
+                    if (detailLevel.IncludeStorageSystem)
+                    {
+                        query = query.Include(y => y.StorageSystems);
+                    }
+
+                    if (detailLevel.IncludeZone)
+                    {
+                        query = query.Include(y => y.Zones);
+                    }
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<Building, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByCodeBuildingResponse>(await _buildingRepository.GetAsync(
+                predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

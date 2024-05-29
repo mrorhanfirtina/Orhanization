@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.DepositorDtos;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Distributors.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Distributors.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -26,34 +27,82 @@ public class UpdateDistributorCommand : IRequest<UpdatedDistributorResponse>, IT
     public string? CacheGroupKey => "GetDisturbitors";
 
     public UpdateDistributorDto Disturbitor { get; set; }
+    public DistributorDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateDisturbitorCommandHandler : IRequestHandler<UpdateDistributorCommand, UpdatedDistributorResponse>
     {
-        private readonly IDistributorRepository _companyRepository;
-        private readonly DistributorBusinessRules _companyBusinessRules;
+        private readonly IDistributorRepository _disturbitorRepository;
+        private readonly DistributorBusinessRules _disturbitorBusinessRules;
         private readonly IMapper _mapper;
 
-        public UpdateDisturbitorCommandHandler(IDistributorRepository companyRepository, DistributorBusinessRules companyBusinessRules, IMapper mapper)
+        public UpdateDisturbitorCommandHandler(IDistributorRepository disturbitorRepository, DistributorBusinessRules disturbitorBusinessRules, IMapper mapper)
         {
-            _companyRepository = companyRepository;
-            _companyBusinessRules = companyBusinessRules;
+            _disturbitorRepository = disturbitorRepository;
+            _disturbitorBusinessRules = disturbitorBusinessRules;
             _mapper = mapper;
         }
         public async Task<UpdatedDistributorResponse> Handle(UpdateDistributorCommand request, CancellationToken cancellationToken)
         {
-            _companyBusinessRules.UpdateRequest()
+            _disturbitorBusinessRules.UpdateRequest()
+                .CheckDepositorCompany(request.UserRequestInfo!.RequestUserLocalityId)
                 .CheckIdExistence(request.Disturbitor.Id)
-                .CheckAddressIdExistence(request.Disturbitor.AddressId)
                 .CheckCodeExistenceWhenUpdate(request.Disturbitor.Code, request.Disturbitor.Id);
 
-            Distributor currentDisturbitor = await _companyRepository.GetAsync(predicate: x => x.Id == request.Disturbitor.Id && !x.DeletedDate.HasValue, include: x => x.Include(y => y.Address));
+            Distributor? currentDisturbitor = await _disturbitorRepository.GetAsync(predicate: x => x.Id == request.Disturbitor.Id && !x.DeletedDate.HasValue, 
+                include: x => x.Include(y => y.Address));
 
             Distributor? disturbitor = _mapper.Map(request.Disturbitor, currentDisturbitor);
             disturbitor.UpdatedDate = DateTime.Now;
             disturbitor.Address.UpdatedDate = DateTime.Now;
 
-            return _mapper.Map<UpdatedDistributorResponse>(await _companyRepository.UpdateAsync(disturbitor));
+            await _disturbitorRepository.UpdateAsync(disturbitor);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _disturbitorRepository.GetAsync(predicate: x => x.Id == disturbitor.Id,
+                include: x =>
+                {
+                    IQueryable<Distributor> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeCompany)
+                    {
+                        query = query.Include(y => y.Company);
+                    }
+
+                    if (detailLevel.IncludeAddress)
+                    {
+                        query = query.Include(y => y.Address);
+                    }
+
+                    if (detailLevel.IncludeBranch)
+                    {
+                        query = query.Include(y => y.Branches);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<Distributor, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedDistributorResponse>(response);
+            }
+            else
+            {
+                var response = await _disturbitorRepository.GetAsync(predicate: x => x.Id == disturbitor.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedDistributorResponse>(response);
+
+            }
         }
     }
 }

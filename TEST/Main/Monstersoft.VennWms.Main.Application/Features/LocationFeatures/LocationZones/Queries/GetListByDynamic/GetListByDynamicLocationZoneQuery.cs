@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationZones.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationZones.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicLocationZoneQuery : IRequest<GetListResponse<GetLis
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public LocationZoneDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicLocationZoneQueryHandler : IRequestHandler<GetListByDynamicLocationZoneQuery, GetListResponse<GetListByDynamicLocationZoneListItemDto>>
@@ -44,12 +49,44 @@ public class GetListByDynamicLocationZoneQuery : IRequest<GetListResponse<GetLis
             _locationZoneBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<LocationZone> locationZoneList = await _locationZoneRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<LocationZone> locationZoneList = await _locationZoneRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<LocationZone> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicLocationZoneListItemDto>>(locationZoneList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeLocation)
+                    {
+                        query = query.Include(y => y.Location);
+                    }
+
+                    if (detailLevel.IncludeZone)
+                    {
+                        query = query.Include(y => y.Zone);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<LocationZone, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicLocationZoneListItemDto>>(locationZoneList);
+            }
+            else
+            {
+                Paginate<LocationZone> locationZoneList = await _locationZoneRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicLocationZoneListItemDto>>(locationZoneList);
+            }
         }
     }
 

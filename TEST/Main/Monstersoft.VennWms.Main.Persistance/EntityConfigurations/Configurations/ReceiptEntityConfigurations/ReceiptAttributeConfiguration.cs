@@ -9,7 +9,7 @@ public class ReceiptAttributeConfiguration : IEntityTypeConfiguration<ReceiptAtt
     public void Configure(EntityTypeBuilder<ReceiptAttribute> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("ReceiptAttributes").HasKey(p => p.Id);
+        builder.ToTable("ReceiptAttributes", "receipt").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

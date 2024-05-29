@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderTypes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -19,6 +23,8 @@ public class GetByIdOrderTypeQuery : IRequest<GetByIdOrderTypeResponse>, ITransa
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public OrderTypeDetailLevel DetailLevel { get; set; }
+
 
 
     public class GetByIdOrderTypeQueryHandler : IRequestHandler<GetByIdOrderTypeQuery, GetByIdOrderTypeResponse>
@@ -40,9 +46,51 @@ public class GetByIdOrderTypeQuery : IRequest<GetByIdOrderTypeResponse>, ITransa
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdOrderTypeResponse>(await _orderTypeRepository.GetAsync(x => x.Id == request.Id,
-                include: m => m.Include(x => x.Orders),
-                withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdOrderTypeResponse>(await _orderTypeRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<OrderType> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeOrder)
+                    {
+                        query = query.Include(y => y.Orders);
+
+                        if (detailLevel.OrderDetailLevel.IncludeDepositor)
+                        {
+                            query = query.Include(y => y.Orders).ThenInclude(y => y.Depositor);
+                        }
+
+                        if (detailLevel.OrderDetailLevel.IncludeCustomer)
+                        {
+                            query = query.Include(y => y.Orders).ThenInclude(y => y.Customer);
+                        }
+
+                        if (detailLevel.OrderDetailLevel.IncludeReceiver)
+                        {
+                            query = query.Include(y => y.Orders).ThenInclude(y => y.Receiver);
+                        }
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<OrderType, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdOrderTypeResponse>(await _orderTypeRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

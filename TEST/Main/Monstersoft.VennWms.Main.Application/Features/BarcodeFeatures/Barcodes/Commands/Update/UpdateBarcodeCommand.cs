@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Dtos.UpdateCommandDtos.RootDtos.BarcodeDtos;
-using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Constants;
+using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barcodes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -28,6 +29,7 @@ public class UpdateBarcodeCommand : IRequest<UpdatedBarcodeResponse>, ITransacti
 
 
     public UpdateBarcodeDto Barcode { get; set; }
+    public BarcodeDetailLevel DetailLevel { get; set; }
 }
 
 
@@ -54,30 +56,60 @@ public class UpdateBarcodeCommandHandler : IRequestHandler<UpdateBarcodeCommand,
             .CheckPrinterIdIsDuplicateInRequest(request.Barcode?.BarcodePrinters?.Select(x => x.PrinterId)?.ToArray() ?? new Guid[0]);
 
 
-        var currentBarcode = await _barcodeRepository.GetAsync(predicate: x => x.Id == request.Barcode.Id && !x.DeletedDate.HasValue);
+        var currentBarcode = await _barcodeRepository.GetAsync(predicate: x => x.Id == request.Barcode.Id && !x.DeletedDate.HasValue,
+            include: x => x.Include(y => y.BarcodeAreas).Include(y => y.BarcodePrinters)
+            );
 
         Barcode? barcode = _mapper.Map(request.Barcode, currentBarcode);
         barcode.UpdatedDate = DateTime.Now;
 
-        await _barcodeRepository.DeleteAsync(currentBarcode, permanent: true);
+        barcode.BarcodeAreas.ToList().ForEach(x => { x.CreatedDate = barcode.CreatedDate; x.UpdatedDate = DateTime.Now; });
+        barcode.BarcodePrinters.ToList().ForEach(x => { x.CreatedDate = barcode.CreatedDate; x.UpdatedDate = DateTime.Now; });
 
-        foreach (var newBarcodeArea in barcode.BarcodeAreas)
+        await _barcodeRepository.UpdateAsync(barcode);
+
+        if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
         {
-                newBarcodeArea.CreatedDate = barcode.CreatedDate;
-                newBarcodeArea.UpdatedDate = DateTime.Now;
-                newBarcodeArea.Id = Guid.NewGuid();
-                newBarcodeArea.BarcodeId = barcode.Id;
+            var response = await _barcodeRepository.GetAsync(predicate: x => x.Id == barcode.Id,
+            include: x =>
+            {
+                IQueryable<Barcode> query = x;
+
+                var detailLevel = request.DetailLevel;
+
+                if (detailLevel.IncludeDepositorCompany)
+                {
+                    query = query.Include(y => y.DepositorCompany);
+                }
+
+                if (detailLevel.IncludeBarcodeAreas)
+                {
+                    query = query.Include(y => y.BarcodeAreas);
+                }
+
+                if (detailLevel.IncludeBarcodePrinters)
+                {
+                    query = query.Include(y => y.BarcodePrinters);
+
+                    if (detailLevel.BarcodePrinterDetailLevel.IncludePrinter)
+                    {
+                        query = query.Include(y => y.BarcodePrinters).ThenInclude(m => m.Printer);
+                    }
+                }
+
+                var includableQuery = query as IIncludableQueryable<Barcode, object>;
+                return includableQuery;
+            }, enableTracking: false, cancellationToken: cancellationToken);
+
+            return _mapper.Map<UpdatedBarcodeResponse>(response);
+        }
+        else
+        {
+            var response = await _barcodeRepository.GetAsync(predicate: x => x.Id == barcode.Id, enableTracking: false, cancellationToken: cancellationToken);
+
+            return _mapper.Map<UpdatedBarcodeResponse>(response);
+
         }
 
-        foreach (var newBarcodePrinter in barcode.BarcodePrinters)
-        {
-            _barcodeBusinessRules.CheckPrinterIdExistence(newBarcodePrinter.PrinterId);
-            newBarcodePrinter.Id = Guid.NewGuid();
-            newBarcodePrinter.BarcodeId = barcode.Id;
-            newBarcodePrinter.CreatedDate = barcode.CreatedDate;
-            newBarcodePrinter.UpdatedDate = DateTime.Now;
-        }
-
-        return _mapper.Map<UpdatedBarcodeResponse>(await _barcodeRepository.AddAsync(barcode));
     }
 }

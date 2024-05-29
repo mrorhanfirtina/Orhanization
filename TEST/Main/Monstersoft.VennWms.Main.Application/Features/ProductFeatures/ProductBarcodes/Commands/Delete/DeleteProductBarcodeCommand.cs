@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductBarcodes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductBarcodes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
@@ -45,8 +46,9 @@ public class DeleteProductBarcodeCommand : IRequest<DeletedProductBarcodeRespons
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
             ProductBarcode productBarcode = await _productBarcodeRepository.GetAsync(predicate: x => x.Id == request.Id,
+            include: x => x.Include(y => y.BarcodeSuppliers),
             withDeleted: false,
-            enableTracking: false,
+            enableTracking: true,
             cancellationToken: cancellationToken);
 
             await _productBarcodeRepository.DeleteAsync(productBarcode);

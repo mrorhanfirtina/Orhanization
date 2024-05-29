@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Zones.Queries.GetById;
+﻿using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Zones.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Zones.Queries.GetById;
 
 public class GetByIdZoneResponse
 {
@@ -9,6 +11,8 @@ public class GetByIdZoneResponse
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public ZoneBuildingResponseDto? Building { get; set; }
+    public ZoneDepositorCompanyResponseDto? DepositorCompany { get; set; }
 
 }
 

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItems.Constants;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItems.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
@@ -45,6 +46,9 @@ public class DeleteOrderItemCommand : IRequest<DeletedOrderItemResponse>, ITrans
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
             OrderItem orderItem = await _orderItemRepository.GetAsync(predicate: x => x.Id == request.Id,
+            include: x => x.Include(y => y.OrderItemMemos)
+                              .Include(y => y.OrderItemStockAttrValues)
+                              .Include(y => y.OrderShipItems),
             withDeleted: false,
             enableTracking: false,
             cancellationToken: cancellationToken);

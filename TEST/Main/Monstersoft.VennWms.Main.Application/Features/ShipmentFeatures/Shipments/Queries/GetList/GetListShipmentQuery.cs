@@ -52,7 +52,8 @@ public class GetListShipmentQuery : IRequest<GetListResponse<GetListShipmentList
 
             Paginate<Shipment> shipmentList = await _shipmentRepository.GetListAsync(
             predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(x => x.Distributor).Include(x => x.Branch).Include(x => x.ShipmentAttributeValues).Include(x => x.ShipmentMemos),
+            include: x => x.Include(y => y.ShipmentMemos)
+            .Include(y => y.ShipmentAttributeValues),
             index: request.PageRequest.PageIndex,
             size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 

@@ -9,7 +9,7 @@ public class LogStockAttributeValueConfiguration : IEntityTypeConfiguration<LogS
     public void Configure(EntityTypeBuilder<LogStockAttributeValue> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("LogStockAttributeValues").HasKey(p => p.Id);
+        builder.ToTable("LogStockAttributeValues", "logging").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları
@@ -29,7 +29,7 @@ public class LogStockAttributeValueConfiguration : IEntityTypeConfiguration<LogS
         #endregion
 
         #region İlişki Tanımları
-
+        builder.HasOne(p => p.StockAttribute).WithMany().HasForeignKey(p => p.StockAttributeId).OnDelete(DeleteBehavior.NoAction);
         #endregion
 
         #region Filtreler

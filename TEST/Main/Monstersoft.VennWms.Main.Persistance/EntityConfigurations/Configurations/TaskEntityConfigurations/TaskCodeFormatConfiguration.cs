@@ -9,7 +9,7 @@ public class TaskCodeFormatConfiguration : IEntityTypeConfiguration<TaskCodeForm
     public void Configure(EntityTypeBuilder<TaskCodeFormat> builder)
     {
         #region Tablo Tanımları
-        builder.ToTable("TaskCodeFormats").HasKey(p => p.Id);
+        builder.ToTable("TaskCodeFormats", "task").HasKey(p => p.Id);
         #endregion
 
         #region Alan Tanımları

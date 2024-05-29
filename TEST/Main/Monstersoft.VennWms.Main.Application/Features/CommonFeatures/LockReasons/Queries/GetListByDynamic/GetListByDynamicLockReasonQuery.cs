@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Constants;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicLockReasonQuery : IRequest<GetListResponse<GetListB
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public LockReasonDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicLockReasonQueryHandler : IRequestHandler<GetListByDynamicLockReasonQuery, GetListResponse<GetListByDynamicLockReasonListItemDto>>
@@ -46,12 +51,39 @@ public class GetListByDynamicLockReasonQuery : IRequest<GetListResponse<GetListB
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<LockReason> lockReasonList = await _lockReasonRepository.GetListByDynamicAsync(
-                           dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                                      index: request.PageRequest.PageIndex,
-                                                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<LockReason> lockReasonList = await _lockReasonRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<LockReason> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicLockReasonListItemDto>>(lockReasonList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<LockReason, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicLockReasonListItemDto>>(lockReasonList);
+            }
+            else
+            {
+                Paginate<LockReason> lockReasonList = await _lockReasonRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicLockReasonListItemDto>>(lockReasonList);
+            }
         }
     }
 }
