@@ -28,7 +28,7 @@ public class GetListByDynamicCompanyQuery : IRequest<GetListResponse<GetListByDy
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public CompanyDetailLevel DetailLevel { get; set; }
+    public CompaniesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicCompanyQueryHandler : IRequestHandler<GetListByDynamicCompanyQuery, GetListResponse<GetListByDynamicCompanyListItemDto>>

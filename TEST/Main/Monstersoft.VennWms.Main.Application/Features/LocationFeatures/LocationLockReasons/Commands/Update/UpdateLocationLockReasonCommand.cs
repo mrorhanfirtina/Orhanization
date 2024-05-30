@@ -28,7 +28,7 @@ public class UpdateLocationLockReasonCommand : IRequest<UpdatedLocationLockReaso
     public string? CacheGroupKey => "GetLocationLockReasons";
 
     public UpdateLocationLockReasonDto LocationLockReason { get; set; }
-    public LocationLockReasonDetailLevel DetailLevel { get; set; }
+    public LocationLockReasonsDetailLevel DetailLevel { get; set; }
 
     public class UpdateLocationLockReasonCommandHandler : IRequestHandler<UpdateLocationLockReasonCommand, UpdatedLocationLockReasonResponse>
     {

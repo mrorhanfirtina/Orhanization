@@ -23,7 +23,7 @@ public class GetByCodeStorageSystemQuery : IRequest<GetByCodeStorageSystemRespon
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public StorageSystemDetailLevel DetailLevel { get; set; }
+    public StorageSystemsDetailLevel DetailLevel { get; set; }
 
 
 

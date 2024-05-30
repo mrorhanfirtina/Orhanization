@@ -13,9 +13,10 @@ public class StockInbound : Entity<Guid>
     public Guid CuItemUnitId { get; set; }
     public decimal CuQuantity { get; set; }
     public decimal CuQuantityFree { get; set; }
+    public virtual Stock? Stock { get; set; }
     public virtual Receipt? Receipt { get; set; }    
     public virtual Return? Return { get; set; }
-    public virtual ItemUnit? ItemUnit { get; set; }
+    public virtual ItemUnit? CuItemUnit { get; set; }
 
     public StockInbound()
     {

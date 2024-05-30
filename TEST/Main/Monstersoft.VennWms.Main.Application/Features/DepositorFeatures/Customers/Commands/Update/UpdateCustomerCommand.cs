@@ -28,7 +28,7 @@ public class UpdateCustomerCommand : IRequest<UpdatedCustomerResponse>, ITransac
     public string? CacheGroupKey => "GetCustomers";
 
     public UpdateCustomerDto Customer { get; set; }
-    public CustomerDetailLevel DetailLevel { get; set; }
+    public CustomersDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateCustomerCommandHandler : IRequestHandler<UpdateCustomerCommand, UpdatedCustomerResponse>

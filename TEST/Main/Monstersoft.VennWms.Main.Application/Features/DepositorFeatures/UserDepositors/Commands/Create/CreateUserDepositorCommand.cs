@@ -28,7 +28,7 @@ public class CreateUserDepositorCommand : IRequest<CreatedUserDepositorResponse>
     public string? CacheGroupKey => "GetUserDepositors";
 
     public CreateUserDepositorDto UserDepositor { get; set; }
-    public UserDepositorDetailLevel DetailLevel { get; set; }
+    public UserDepositorsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateUserDepositorCommandHandler : IRequestHandler<CreateUserDepositorCommand, CreatedUserDepositorResponse>

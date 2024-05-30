@@ -28,7 +28,7 @@ public class UpdateSupplierCommand : IRequest<UpdatedSupplierResponse>, ITransac
     public string? CacheGroupKey => "GetSuppliers";
 
     public UpdateSupplierDto Supplier { get; set; }
-    public SupplierDetailLevel DetailLevel { get; set; }
+    public SuppliersDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateSupplierCommandHandler : IRequestHandler<UpdateSupplierCommand, UpdatedSupplierResponse>

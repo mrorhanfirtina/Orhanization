@@ -27,7 +27,7 @@ public class UpdateBranchCommand : IRequest<UpdatedBranchResponse>, ITransaction
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public UpdateBranchDto Branch { get; set; }
-    public BranchDetailLevel DetailLevel { get; set; }
+    public BranchesDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateBranchCommandHandler : IRequestHandler<UpdateBranchCommand, UpdatedBranchResponse>

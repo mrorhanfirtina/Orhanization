@@ -1,4 +1,5 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptTypes.Dtos.ResponseDtos;
+using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 
 namespace Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptTypes.Queries.GetById;
 
@@ -13,7 +14,7 @@ public class GetByIdReceiptTypeResponse
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public ICollection<Receipt> Receipts { get; set; }
-
+    public ICollection<ReceiptTypesReceiptResponseDto>? Receipts { get; set; }
+    public ReceiptTypesDepositorCompanyResponseDto? DepositorCompany { get; set; }
 }
 

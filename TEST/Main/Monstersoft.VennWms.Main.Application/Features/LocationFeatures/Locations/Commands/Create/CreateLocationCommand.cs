@@ -28,7 +28,7 @@ public class CreateLocationCommand : IRequest<CreatedLocationResponse>, ITransac
     public string? CacheGroupKey => "GetLocations";
 
     public CreateLocationDto Location { get; set; }
-    public LocationDetailLevel DetailLevel { get; set; }
+    public LocationsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateLocationCommandHandler : IRequestHandler<CreateLocationCommand, CreatedLocationResponse>

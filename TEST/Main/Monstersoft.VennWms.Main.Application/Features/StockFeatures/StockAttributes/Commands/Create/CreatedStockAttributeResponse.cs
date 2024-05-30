@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributes.Commands.Create;
+﻿using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributes.Commands.Create;
 
 public class CreatedStockAttributeResponse
 {
@@ -9,5 +11,7 @@ public class CreatedStockAttributeResponse
     public Guid DepositorCompanyId { get; set; }
     public bool IsNecessary { get; set; }
     public DateTime CreatedDate { get; set; }
+    public StockAttributesAttributeInputTypeResponseDto? AttributeInputType { get; set; }
+    public StockAttributesDepositorCompanyResponseDto? DepositorCompany { get; set; }
 
 }

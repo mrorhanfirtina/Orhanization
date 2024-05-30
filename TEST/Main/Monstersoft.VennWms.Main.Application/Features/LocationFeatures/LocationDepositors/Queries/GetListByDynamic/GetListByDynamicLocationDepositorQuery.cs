@@ -27,7 +27,7 @@ public class GetListByDynamicLocationDepositorQuery : IRequest<GetListResponse<G
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public LocationDepositorDetailLevel DetailLevel { get; set; }
+    public LocationDepositorsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicLocationDepositorQueryHandler : IRequestHandler<GetListByDynamicLocationDepositorQuery, GetListResponse<GetListByDynamicLocationDepositorListItemDto>>

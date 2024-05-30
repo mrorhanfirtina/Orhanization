@@ -31,7 +31,7 @@ public class GetListProductAttributeQuery : IRequest<GetListResponse<GetListProd
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public ProductAttributeDetailLevel DetailLevel { get; set; }
+    public ProductAttributesDetailLevel DetailLevel { get; set; }
 
 
 

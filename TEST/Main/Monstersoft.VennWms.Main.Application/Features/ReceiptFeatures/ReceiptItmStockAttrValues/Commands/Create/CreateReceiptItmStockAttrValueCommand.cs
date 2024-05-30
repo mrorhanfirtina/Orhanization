@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItmStockAttrValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItmStockAttrValues.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItmStockAttrValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class CreateReceiptItmStockAttrValueCommand : IRequest<CreatedReceiptItmS
     public string? CacheGroupKey => "GetReceiptItmStockAttrValues";
 
     public CreateReceiptItmStockAttrValueDto ReceiptItmStockAttrValue { get; set; }
+    public ReceiptItmStockAttrValuesDetailLevel? DetailLevel { get; set; }
 
 
     public class CreateReceiptItmStockAttrValueCommandHandler : IRequestHandler<CreateReceiptItmStockAttrValueCommand, CreatedReceiptItmStockAttrValueResponse>
@@ -50,7 +55,60 @@ public class CreateReceiptItmStockAttrValueCommand : IRequest<CreatedReceiptItmS
             receiptItmStockAttrValue.Id = Guid.NewGuid();
             receiptItmStockAttrValue.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedReceiptItmStockAttrValueResponse>(await _receiptItmStockAttrValueRepository.AddAsync(receiptItmStockAttrValue));
+            await _receiptItmStockAttrValueRepository.AddAsync(receiptItmStockAttrValue);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _receiptItmStockAttrValueRepository.GetAsync(predicate: x => x.Id == receiptItmStockAttrValue.Id,
+                include: x =>
+                {
+                    IQueryable<ReceiptItmStockAttrValue> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeStockAttribute)
+                    {
+                        query = query.Include(y => y.StockAttribute);
+
+                        var stockAttrDetailLevel = detailLevel.StockAttributeDetailLevel;
+
+                        if (stockAttrDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.StockAttribute).ThenInclude(y => y.AttributeInputType);
+                        }
+                    }
+
+                    if (detailLevel.IncludeReceiptItem)
+                    {
+                        query = query.Include(y => y.ReceiptItem);
+
+                        var receiptItemDetailLevel = detailLevel.ReceiptItemDetailLevel;
+
+                        if (receiptItemDetailLevel.IncludeReceipt)
+                        {
+                            query = query.Include(y => y.ReceiptItem).ThenInclude(y => y.Receipt);
+                        }
+
+                        if (receiptItemDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.ReceiptItem).ThenInclude(y => y.Product);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReceiptItmStockAttrValue, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReceiptItmStockAttrValueResponse>(response);
+            }
+            else
+            {
+                var response = await _receiptItmStockAttrValueRepository.GetAsync(predicate: x => x.Id == receiptItmStockAttrValue.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReceiptItmStockAttrValueResponse>(response);
+            }
         }
     }
 }

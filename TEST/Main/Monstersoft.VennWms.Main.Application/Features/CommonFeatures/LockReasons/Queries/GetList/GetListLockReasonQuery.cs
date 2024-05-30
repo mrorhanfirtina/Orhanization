@@ -31,7 +31,7 @@ public class GetListLockReasonQuery : IRequest<GetListResponse<GetListLockReason
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public LockReasonDetailLevel DetailLevel { get; set; }
+    public LockReasonsDetailLevel DetailLevel { get; set; }
 
     public class GetListLockReasonQueryHandler : IRequestHandler<GetListLockReasonQuery, GetListResponse<GetListLockReasonListItemDto>>
     {

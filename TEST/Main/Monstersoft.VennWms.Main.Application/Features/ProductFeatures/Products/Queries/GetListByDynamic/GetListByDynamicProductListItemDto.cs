@@ -3,7 +3,7 @@
 namespace Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Queries.GetListByDynamic;
 
 public class GetListByDynamicProductListItemDto
-{
+{ 
     public Guid Id { get; set; }
     public string Code { get; set; }
     public string Description { get; set; }

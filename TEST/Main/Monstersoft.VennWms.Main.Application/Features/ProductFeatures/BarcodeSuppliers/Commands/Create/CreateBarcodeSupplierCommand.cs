@@ -30,7 +30,7 @@ public class CreateBarcodeSupplierCommand : IRequest<CreatedBarcodeSupplierRespo
     public string? CacheGroupKey => "GetBarcodeSuppliers";
 
     public CreateBarcodeSupplierDto BarcodeSupplier { get; set; }
-    public BarcodeSupplierDetailLevel DetailLevel { get; set; }
+    public BarcodeSuppliersDetailLevel DetailLevel { get; set; }
 
 
 

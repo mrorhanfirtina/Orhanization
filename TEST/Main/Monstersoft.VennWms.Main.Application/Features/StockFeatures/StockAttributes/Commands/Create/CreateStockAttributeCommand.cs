@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributes.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class CreateStockAttributeCommand : IRequest<CreatedStockAttributeRespons
     public string? CacheGroupKey => "GetStockAttributes";
 
     public CreateStockAttributeDto StockAttribute { get; set; }
+    public StockAttributesDetailLevel? DetailLevel { get; set; }
 
 
     public class CreateStockAttributeCommandHandler : IRequestHandler<CreateStockAttributeCommand, CreatedStockAttributeResponse>
@@ -51,7 +56,41 @@ public class CreateStockAttributeCommand : IRequest<CreatedStockAttributeRespons
             stockAttribute.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
             stockAttribute.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedStockAttributeResponse>(await _stockAttributeRepository.AddAsync(stockAttribute));
+            await _stockAttributeRepository.AddAsync(stockAttribute);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _stockAttributeRepository.GetAsync(predicate: x => x.Id == stockAttribute.Id,
+                include: x =>
+                {
+                    IQueryable<StockAttribute> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAttributeInputType)
+                    {
+                        query = query.Include(y => y.AttributeInputType);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<StockAttribute, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedStockAttributeResponse>(response);
+            }
+            else
+            {
+                var response = await _stockAttributeRepository.GetAsync(predicate: x => x.Id == stockAttribute.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedStockAttributeResponse>(response);
+            }
         }
     }
 }

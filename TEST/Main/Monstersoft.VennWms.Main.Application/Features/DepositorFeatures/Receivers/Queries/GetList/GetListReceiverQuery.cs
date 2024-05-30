@@ -31,7 +31,7 @@ public class GetListReceiverQuery : IRequest<GetListResponse<GetListReceiverList
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public ReceiverDetailLevel DetailLevel { get; set; }
+    public ReceiversDetailLevel DetailLevel { get; set; }
 
 
     public class GetListReceiverQueryHandler : IRequestHandler<GetListReceiverQuery, GetListResponse<GetListReceiverListItemDto>>

@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentMemos.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentMemos.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentMemos.Commands.Update;
 
 public class UpdatedShipmentMemoResponse
 {
@@ -7,8 +9,8 @@ public class UpdatedShipmentMemoResponse
     public string Description { get; set; }
     public string Text { get; set; }
     public DateTime InputDate { get; set; }
-    public DateTime EditDate { get; set; }
+    public DateTime? EditDate { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public ShipmentMemosShipmentResponseDto? Shipment { get; set; }
 }

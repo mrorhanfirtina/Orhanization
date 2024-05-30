@@ -31,7 +31,7 @@ public class GetListPoAttributeQuery : IRequest<GetListResponse<GetListPoAttribu
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public PoAttributeDetailLevel DetailLevel { get; set; }
+    public PoAttributesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListPoAttributeQueryHandler : IRequestHandler<GetListPoAttributeQuery, GetListResponse<GetListPoAttributeListItemDto>>

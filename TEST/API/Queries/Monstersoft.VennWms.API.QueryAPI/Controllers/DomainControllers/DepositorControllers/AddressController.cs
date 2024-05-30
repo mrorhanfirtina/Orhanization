@@ -10,7 +10,7 @@ using Orhanization.Core.Persistence.Dynamic;
 namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.DepositorControllers;
 
 public class AddressController : BaseController
-{
+{ 
     [HttpGet("GetById/{id}")]
     public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
     {

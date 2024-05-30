@@ -23,7 +23,7 @@ public class GetByIdOrderAttributeValueQuery : IRequest<GetByIdOrderAttributeVal
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public OrderAttributeValueDetailLevel DetailLevel { get; set; }
+    public OrderAttributeValuesDetailLevel DetailLevel { get; set; }
 
 
 

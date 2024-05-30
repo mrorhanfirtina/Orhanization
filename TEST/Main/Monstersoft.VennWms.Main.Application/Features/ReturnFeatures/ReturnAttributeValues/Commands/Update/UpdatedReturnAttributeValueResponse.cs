@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributeValues.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributeValues.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributeValues.Commands.Update;
 
 public class UpdatedReturnAttributeValueResponse
 {
@@ -8,6 +10,7 @@ public class UpdatedReturnAttributeValueResponse
     public string Value { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public ReturnAttributeValuesReturnAttributeResponseDto? ReturnAttribute { get; set; }
+    public ReturnAttributeValuesReturnResponseDto? Return { get; set; }
 }
 

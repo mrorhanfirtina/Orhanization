@@ -22,7 +22,7 @@ public class GetByIdLocationDepositorQuery : IRequest<GetByIdLocationDepositorRe
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public LocationDepositorDetailLevel DetailLevel { get; set; }
+    public LocationDepositorsDetailLevel DetailLevel { get; set; }
 
     public class GetByIdLocationDepositorQueryHandler : IRequestHandler<GetByIdLocationDepositorQuery, GetByIdLocationDepositorResponse>
     {

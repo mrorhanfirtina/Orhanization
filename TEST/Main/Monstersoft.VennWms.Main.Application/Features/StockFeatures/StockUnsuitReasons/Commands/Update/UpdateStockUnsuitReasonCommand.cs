@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockUnsuitReasons.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockUnsuitReasons.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockUnsuitReasons.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockUnsuitReasons.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,7 @@ public class UpdateStockUnsuitReasonCommand : IRequest<UpdatedStockUnsuitReasonR
     public string? CacheGroupKey => "GetStockUnsuitReasons";
 
     public UpdateStockUnsuitReasonDto StockUnsuitReason { get; set; }
+    public StockUnsuitReasonsDetailLevel? DetailLevel { get; set; }
 
 
     public class UpdateStockUnsuitReasonCommandHandler : IRequestHandler<UpdateStockUnsuitReasonCommand, UpdatedStockUnsuitReasonResponse>
@@ -54,8 +59,41 @@ public class UpdateStockUnsuitReasonCommand : IRequest<UpdatedStockUnsuitReasonR
             StockUnsuitReason? stockUnsuitReason = _mapper.Map(request.StockUnsuitReason, currentStockUnsuitReason);
             stockUnsuitReason.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedStockUnsuitReasonResponse>(await _stockUnsuitReasonRepository.UpdateAsync(stockUnsuitReason));
+            await _stockUnsuitReasonRepository.UpdateAsync(stockUnsuitReason);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _stockUnsuitReasonRepository.GetAsync(predicate: x => x.Id == stockUnsuitReason.Id,
+                include: x =>
+                {
+                    IQueryable<StockUnsuitReason> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeStock)
+                    {
+                        query = query.Include(y => y.Stock);
+                    }
+
+                    if (detailLevel.IncludeUnsuitReason)
+                    {
+                        query = query.Include(y => y.UnsuitReason);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<StockUnsuitReason, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedStockUnsuitReasonResponse>(response);
+            }
+            else
+            {
+                var response = await _stockUnsuitReasonRepository.GetAsync(predicate: x => x.Id == stockUnsuitReason.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedStockUnsuitReasonResponse>(response);
+            }
         }
     }
 }

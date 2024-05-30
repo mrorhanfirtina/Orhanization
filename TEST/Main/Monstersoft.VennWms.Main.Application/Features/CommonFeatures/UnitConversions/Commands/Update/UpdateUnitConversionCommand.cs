@@ -27,7 +27,7 @@ public class UpdateUnitConversionCommand : IRequest<UpdatedUnitConversionRespons
     public string? CacheGroupKey => "GetUnitConversions";
 
     public UpdateUnitConversionDto UnitConversion { get; set; }
-    public UnitConversionDetailLevel DetailLevel { get; set; }
+    public UnitConversionsDetailLevel DetailLevel { get; set; }
 
     public class UpdateUnitConversionCommandHandler : IRequestHandler<UpdateUnitConversionCommand, UpdatedUnitConversionResponse>
     {

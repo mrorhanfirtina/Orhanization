@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -18,6 +23,7 @@ public class GetByIdReceiptMemoQuery : IRequest<GetByIdReceiptMemoResponse>, ITr
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public ReceiptMemosDetailLevel? DetailLevel { get; set; }
 
 
     public class GetByIdReceiptMemoQueryHandler : IRequestHandler<GetByIdReceiptMemoQuery, GetByIdReceiptMemoResponse>
@@ -39,7 +45,30 @@ public class GetByIdReceiptMemoQuery : IRequest<GetByIdReceiptMemoResponse>, ITr
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdReceiptMemoResponse>(await _receiptMemoRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdReceiptMemoResponse>(await _receiptMemoRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<ReceiptMemo> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReceipt)
+                    {
+                        query = query.Include(y => y.Receipt);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReceiptMemo, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdReceiptMemoResponse>(await _receiptMemoRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

@@ -32,7 +32,7 @@ public class GetListReserveReasonQuery : IRequest<GetListResponse<GetListReserve
 
 
     public PageRequest PageRequest { get; set; }
-    public ReserveReasonDetailLevel DetailLevel { get; set; }
+    public ReserveReasonsDetailLevel DetailLevel { get; set; }
 
 
 

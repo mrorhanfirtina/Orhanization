@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributes.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributes.Commands.Update;
 
 public class UpdatedShipmentAttributeResponse
 {
@@ -10,5 +12,6 @@ public class UpdatedShipmentAttributeResponse
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public ShipmentAttributesDepositorCompanyResponseDto DepositorCompany { get; set; }
+    public ShipmentAttributesAttributeInputTypeResponseDto? AttributeInputType { get; set; }
 }

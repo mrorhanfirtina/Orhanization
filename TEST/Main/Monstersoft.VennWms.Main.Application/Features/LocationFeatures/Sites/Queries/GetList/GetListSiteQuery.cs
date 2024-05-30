@@ -31,7 +31,7 @@ public class GetListSiteQuery : IRequest<GetListResponse<GetListSiteListItemDto>
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public SiteDetailLevel DetailLevel { get; set; }
+    public SitesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListSiteQueryHandler : IRequestHandler<GetListSiteQuery, GetListResponse<GetListSiteListItemDto>>

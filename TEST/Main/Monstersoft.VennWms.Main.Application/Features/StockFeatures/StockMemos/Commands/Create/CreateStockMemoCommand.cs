@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockMemos.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class CreateStockMemoCommand : IRequest<CreatedStockMemoResponse>, ITrans
     public string? CacheGroupKey => "GetStockMemos";
 
     public CreateStockMemoDto StockMemo { get; set; }
+    public StockMemosDetailLevel? DetailLevel { get; set; }
 
 
     public class CreateStockMemoCommandHandler : IRequestHandler<CreateStockMemoCommand, CreatedStockMemoResponse>
@@ -49,7 +54,36 @@ public class CreateStockMemoCommand : IRequest<CreatedStockMemoResponse>, ITrans
             stockMemo.Id = Guid.NewGuid();
             stockMemo.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedStockMemoResponse>(await _stockMemoRepository.AddAsync(stockMemo));
+            await _stockMemoRepository.AddAsync(stockMemo);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _stockMemoRepository.GetAsync(predicate: x => x.Id == stockMemo.Id,
+                include: x =>
+                {
+                    IQueryable<StockMemo> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeStock)
+                    {
+                        query = query.Include(y => y.Stock);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<StockMemo, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedStockMemoResponse>(response);
+            }
+            else
+            {
+                var response = await _stockMemoRepository.GetAsync(predicate: x => x.Id == stockMemo.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedStockMemoResponse>(response);
+            }
         }
     }
 }

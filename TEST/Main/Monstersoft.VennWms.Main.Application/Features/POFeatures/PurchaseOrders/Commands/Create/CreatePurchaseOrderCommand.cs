@@ -30,7 +30,7 @@ public class CreatePurchaseOrderCommand : IRequest<CreatedPurchaseOrderResponse>
     public string? CacheGroupKey => "GetPurchaseOrders";
 
     public CreatePurchaseOrderDto PurchaseOrder { get; set; }
-    public PurchaseOrderDetailLevel DetailLevel { get; set; }
+    public PurchaseOrdersDetailLevel DetailLevel { get; set; }
 
 
     public class CreatePurchaseOrderCommandHandler : IRequestHandler<CreatePurchaseOrderCommand, CreatedPurchaseOrderResponse>

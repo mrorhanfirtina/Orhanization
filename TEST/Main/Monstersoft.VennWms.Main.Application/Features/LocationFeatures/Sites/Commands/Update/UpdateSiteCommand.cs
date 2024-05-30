@@ -29,7 +29,7 @@ public class UpdateSiteCommand : IRequest<UpdatedSiteResponse>, ITransactionalRe
     public string? CacheGroupKey => "GetSites";
 
     public UpdateSiteDto Site { get; set; }
-    public SiteDetailLevel DetailLevel { get; set; }
+    public SitesDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateSiteCommandHandler : IRequestHandler<UpdateSiteCommand, UpdatedSiteResponse>

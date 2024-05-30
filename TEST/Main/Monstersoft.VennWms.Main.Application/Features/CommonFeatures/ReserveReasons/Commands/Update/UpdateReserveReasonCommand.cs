@@ -27,7 +27,7 @@ public class UpdateReserveReasonCommand : IRequest<UpdatedReserveReasonResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public UpdateReserveReasonDto ReserveReason { get; set; }
-    public ReserveReasonDetailLevel DetailLevel { get; set; }
+    public ReserveReasonsDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateReserveReasonCommandHandler : IRequestHandler<UpdateReserveReasonCommand, UpdatedReserveReasonResponse>

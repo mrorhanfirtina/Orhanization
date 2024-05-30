@@ -23,7 +23,7 @@ public class GetByIdProductDepositorQuery : IRequest<GetByIdProductDepositorResp
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public ProductDepositorDetailLevel DetailLevel { get; set; }
+    public ProductDepositorsDetailLevel DetailLevel { get; set; }
 
 
 

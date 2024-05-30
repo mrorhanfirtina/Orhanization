@@ -1,4 +1,5 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItems.Dtos.ResponseDtos;
+using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 
 namespace Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItems.Queries.GetListByDynamic;
 
@@ -13,8 +14,10 @@ public class GetListByDynamicReceiptItemListItemDto
     public int StatusId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public Receipt Receipt { get; set; }
-    public ICollection<ReceiptItemMemo> ReceiptItemMemos { get; set; }
-    public ICollection<ReceiptItmStockAttrValue> ReceiptItmStockAttrValues { get; set; }
-
+    public ICollection<ReceiptItemsReceiptItemMemoResponseDto>? ReceiptItemMemos { get; set; }
+    public ICollection<ReceiptItemsReceiptItmStockAttrValueResponseDto>? ReceiptItmStockAttrValues { get; set; }
+    public ReceiptItemsProductResponseDto? Product { get; set; }
+    public ReceiptItemsItemUnitResponseDto? ItemUnit { get; set; }
+    public ReceiptItemsStatusResponseDto? Status { get; set; }
+    public ReceiptItemsReceiptResponseDto? Receipt { get; set; }
 }

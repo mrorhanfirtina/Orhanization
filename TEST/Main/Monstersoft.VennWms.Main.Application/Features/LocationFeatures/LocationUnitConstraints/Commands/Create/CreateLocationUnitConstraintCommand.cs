@@ -29,7 +29,7 @@ public class CreateLocationUnitConstraintCommand : IRequest<CreatedLocationUnitC
     public string? CacheGroupKey => "GetLocationUnitConstraints";
 
     public CreateLocationUnitConstraintDto LocationUnitConstraint { get; set; }
-    public LocationUnitConstraintDetailLevel DetailLevel { get; set; }
+    public LocationUnitConstraintsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateLocationUnitConstraintCommandHandler : IRequestHandler<CreateLocationUnitConstraintCommand, CreatedLocationUnitConstraintResponse>

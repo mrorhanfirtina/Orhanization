@@ -13,6 +13,7 @@ public class UpdateReceiptDto
     public DateTime ExpectedDate { get; set; }
     public DateTime ReceiveDate { get; set; }
     public Guid PurchaseOrderId { get; set; }
+    public Guid SupplierId { get; set; }
     public Guid ReceiptTypeId { get; set; }
     public int StatusId { get; set; }
     public UpdatePurchaseOrderSubDto? PurchaseOrder { get; set; }

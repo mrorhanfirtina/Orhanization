@@ -29,7 +29,7 @@ public class CreateZoneCommand : IRequest<CreatedZoneResponse>, ITransactionalRe
     public string? CacheGroupKey => "GetZones";
 
     public CreateZoneDto Zone { get; set; }
-    public ZoneDetailLevel DetailLevel { get; set; }
+    public ZonesDetailLevel DetailLevel { get; set; }
 
 
     public class CreateZoneCommandHandler : IRequestHandler<CreateZoneCommand, CreatedZoneResponse>

@@ -8,7 +8,8 @@ public class ReturnItmStockAttrValue : Entity<Guid>
     public Guid ReturnItemId { get; set; }
     public Guid StockAttributeId { get; set; }
     public string Value { get; set; }
-    public virtual StockAttribute StockAttribute { get; set; }
+    public virtual StockAttribute? StockAttribute { get; set; }
+    public virtual ReturnItem? ReturnItem { get; set; }
 
     public ReturnItmStockAttrValue()
     {

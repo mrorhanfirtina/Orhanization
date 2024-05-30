@@ -30,7 +30,7 @@ public class CreateLocationProductCommand : IRequest<CreatedLocationProductRespo
     public string? CacheGroupKey => "GetLocationProducts";
 
     public CreateLocationProductDto LocationProduct { get; set; }
-    public LocationProductDetailLevel DetailLevel { get; set; }
+    public LocationProductsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateLocationProductCommandHandler : IRequestHandler<CreateLocationProductCommand, CreatedLocationProductResponse>

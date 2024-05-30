@@ -7,7 +7,8 @@ public class StockReserveReason : Entity<Guid>
 {
     public Guid StockId { get; set; }
     public Guid ReserveReasonId { get; set; }
-    public virtual ReserveReason ReserveReason { get; set; }
+    public virtual ReserveReason? ReserveReason { get; set; }
+    public virtual Stock? Stock { get; set; }
 
     public StockReserveReason()
     {

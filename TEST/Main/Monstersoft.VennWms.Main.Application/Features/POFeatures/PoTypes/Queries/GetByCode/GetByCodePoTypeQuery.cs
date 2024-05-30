@@ -23,7 +23,7 @@ public class GetByCodePoTypeQuery : IRequest<GetByCodePoTypeResponse>, ITransact
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public PoTypeDetailLevel DetailLevel { get; set; }
+    public PoTypesDetailLevel DetailLevel { get; set; }
 
     public class GetByCodePoTypeQueryHandler : IRequestHandler<GetByCodePoTypeQuery, GetByCodePoTypeResponse>
     {

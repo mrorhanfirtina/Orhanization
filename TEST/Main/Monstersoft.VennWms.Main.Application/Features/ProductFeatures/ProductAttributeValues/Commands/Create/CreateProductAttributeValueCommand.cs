@@ -30,7 +30,7 @@ public class CreateProductAttributeValueCommand : IRequest<CreatedProductAttribu
     public string? CacheGroupKey => "GetProductAttributeValues";
 
     public CreateProductAttributeValueDto ProductAttributeValue { get; set; }
-    public ProductAttributeValueDetailLevel DetailLevel { get; set; }
+    public ProductAttributeValuesDetailLevel DetailLevel { get; set; }
 
 
 

@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -18,6 +23,7 @@ public class GetByIdShipmentMemoQuery : IRequest<GetByIdShipmentMemoResponse>, I
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public ShipmentMemosDetailLevel? DetailLevel { get; set; }
 
 
     public class GetByIdShipmentMemoQueryHandler : IRequestHandler<GetByIdShipmentMemoQuery, GetByIdShipmentMemoResponse>
@@ -39,7 +45,30 @@ public class GetByIdShipmentMemoQuery : IRequest<GetByIdShipmentMemoResponse>, I
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdShipmentMemoResponse>(await _shipmentMemoRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdShipmentMemoResponse>(await _shipmentMemoRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<ShipmentMemo> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeShipment)
+                    {
+                        query = query.Include(y => y.Shipment);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ShipmentMemo, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdShipmentMemoResponse>(await _shipmentMemoRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

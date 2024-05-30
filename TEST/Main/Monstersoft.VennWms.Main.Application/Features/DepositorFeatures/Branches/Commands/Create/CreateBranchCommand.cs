@@ -27,7 +27,7 @@ public class CreateBranchCommand : IRequest<CreatedBranchResponse>, ITransaction
     public string[] Roles => [Admin, User, Add, Write];
 
     public CreateBranchDto Branch { get; set; }
-    public BranchDetailLevel DetailLevel { get; set; }
+    public BranchesDetailLevel DetailLevel { get; set; }
 
 
     public class CreateBranchCommandHandler : IRequestHandler<CreateBranchCommand, CreatedBranchResponse>

@@ -29,7 +29,7 @@ public class UpdateDepositorCompanyCommand : IRequest<UpdatedDepositorCompanyRes
     public string? CacheGroupKey => "GetDepositorCompanies";
 
     public UpdateDepositorCompanyDto DepositorCompany { get; set; }
-    public DepositorCompanyDetailLevel DetailLevel { get; set; }
+    public DepositorCompaniesDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateDepositorCompanyCommandHandler : IRequestHandler<UpdateDepositorCompanyCommand, UpdatedDepositorCompanyResponse>

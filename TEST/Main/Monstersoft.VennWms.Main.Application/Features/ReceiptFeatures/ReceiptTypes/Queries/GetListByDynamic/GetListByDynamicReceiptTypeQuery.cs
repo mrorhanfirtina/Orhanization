@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptTypes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +28,7 @@ public class GetListByDynamicReceiptTypeQuery : IRequest<GetListResponse<GetList
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public ReceiptTypesDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListByDynamicReceiptTypeQueryHandler : IRequestHandler<GetListByDynamicReceiptTypeQuery, GetListResponse<GetListByDynamicReceiptTypeListItemDto>>
@@ -47,13 +51,43 @@ public class GetListByDynamicReceiptTypeQuery : IRequest<GetListResponse<GetList
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ReceiptType> receiptTypeList = await _receiptTypeRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(x => x.Receipts),
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ReceiptType> receiptTypeList = await _receiptTypeRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<ReceiptType> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicReceiptTypeListItemDto>>(receiptTypeList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReceipt)
+                    {
+                        query = query.Include(y => y.Receipts);
+                    }
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReceiptType, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReceiptTypeListItemDto>>(receiptTypeList);
+            }
+            else
+            {
+                Paginate<ReceiptType> receiptTypeList = await _receiptTypeRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReceiptTypeListItemDto>>(receiptTypeList);
+            }
         }
     }
 

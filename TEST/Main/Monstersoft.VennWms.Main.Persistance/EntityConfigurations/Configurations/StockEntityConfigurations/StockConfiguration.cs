@@ -33,18 +33,18 @@ public class StockConfiguration : IEntityTypeConfiguration<Stock>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.StockContainer).WithMany().HasForeignKey(p => p.StockContainerId).OnDelete(DeleteBehavior.NoAction);
-        builder.HasMany(p => p.StockAttributeValues).WithOne().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.StockMemos).WithOne().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.StockReserveReasons).WithOne().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.StockUnsuitReasons).WithOne().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.StockContainer).WithMany(p => p.Stocks).HasForeignKey(p => p.StockContainerId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasMany(p => p.StockAttributeValues).WithOne(p => p.Stock).HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.StockMemos).WithOne(p => p.Stock).HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.StockReserveReasons).WithOne(p => p.Stock).HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.StockUnsuitReasons).WithOne(p => p.Stock).HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(p => p.Product).WithMany().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Depositor).WithMany().HasForeignKey(p => p.DepositorId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Location).WithMany().HasForeignKey(p => p.LocationId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasOne(p => p.ItemUnit).WithMany().HasForeignKey(p => p.CuItemUnitId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasMany(p => p.StockInbounds).WithOne().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.StockPackTypes).WithOne().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.CuItemUnit).WithMany().HasForeignKey(p => p.CuItemUnitId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(p => p.StockInbounds).WithOne(p => p.Stock).HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.StockPackTypes).WithOne(p => p.Stock).HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Filtreler

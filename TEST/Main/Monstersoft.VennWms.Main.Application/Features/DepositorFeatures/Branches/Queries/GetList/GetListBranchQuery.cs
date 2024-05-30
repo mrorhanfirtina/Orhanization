@@ -30,7 +30,7 @@ public class GetListBranchQuery : IRequest<GetListResponse<GetListBranchListItem
     public string[] Roles => [Admin, User, Read];
 
     public PageRequest PageRequest { get; set; }
-    public BranchDetailLevel DetailLevel { get; set; }
+    public BranchesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListBranchQueryHandler : IRequestHandler<GetListBranchQuery, GetListResponse<GetListBranchListItemDto>>

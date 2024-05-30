@@ -27,7 +27,7 @@ public class CreateDepositorCommand : IRequest<CreatedDepositorResponse>, ITrans
     public string? CacheGroupKey => "GetDepositors";
 
     public CreateDepositorDto Depositor { get; set; }
-    public DepositorDetailLevel DetailLevel { get; set; }
+    public DepositorsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateDepositorCommandHandler : IRequestHandler<CreateDepositorCommand, CreatedDepositorResponse>

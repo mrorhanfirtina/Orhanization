@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockPackTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockPackTypes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -17,6 +22,7 @@ public class GetByIdStockPackTypeQuery : IRequest<GetByIdStockPackTypeResponse>,
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public StockPackTypesDetailLevel? DetailLevel { get; set; }
 
 
     public class GetByIdStockPackTypeQueryHandler : IRequestHandler<GetByIdStockPackTypeQuery, GetByIdStockPackTypeResponse>
@@ -38,7 +44,83 @@ public class GetByIdStockPackTypeQuery : IRequest<GetByIdStockPackTypeResponse>,
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdStockPackTypeResponse>(await _stockPackTypeRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdStockPackTypeResponse>(await _stockPackTypeRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<StockPackType> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeItemUnit)
+                    {
+                        query = query.Include(y => y.ItemUnit);
+
+                        var itemUnitDetailLevel = detailLevel.ItemUnitDetailLevel;
+
+                        if (itemUnitDetailLevel.IncludeUnit)
+                        {
+                            query = query.Include(y => y.ItemUnit).ThenInclude(m => m.Unit);
+                        }
+                    }
+
+                    if (detailLevel.IncludeStock)
+                    {
+                        query = query.Include(y => y.Stock);
+
+                        var stockDetailLevel = detailLevel.StockDetailLevel;
+
+                        if (stockDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.Stock).ThenInclude(m => m.Product);
+                        }
+
+                        if (stockDetailLevel.IncludeDepositorCompany)
+                        {
+                            query = query.Include(y => y.Stock).ThenInclude(m => m.DepositorCompany);
+                        }
+
+                        if (stockDetailLevel.IncludeLocation)
+                        {
+                            query = query.Include(y => y.Stock).ThenInclude(m => m.Location);
+                        }
+
+                        if (stockDetailLevel.IncludeDepositor)
+                        {
+                            query = query.Include(y => y.Stock).ThenInclude(m => m.Depositor);
+
+                            var depositorDetailLevel = stockDetailLevel.DepositorDetailLevel;
+
+                            if (depositorDetailLevel.IncludeCompany)
+                            {
+                                query = query.Include(y => y.Stock).ThenInclude(m => m.Depositor).ThenInclude(m => m.Company);
+                            }
+                        }
+
+                        if (stockDetailLevel.IncludeCuItemUnit)
+                        {
+                            query = query.Include(y => y.Stock).ThenInclude(m => m.CuItemUnit);
+
+                            var cuItemUnitDetailLevel = stockDetailLevel.ItemUnitDetailLevel;
+
+                            if (cuItemUnitDetailLevel.IncludeUnit)
+                            {
+                                query = query.Include(y => y.Stock).ThenInclude(m => m.CuItemUnit).ThenInclude(m => m.Unit);
+                            }
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<StockPackType, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdStockPackTypeResponse>(await _stockPackTypeRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

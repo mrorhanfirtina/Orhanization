@@ -23,7 +23,7 @@ public class GetByIdPoMemoQuery : IRequest<GetByIdPoMemoResponse>, ITransactiona
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public PoMemoDetailLevel DetailLevel { get; set; }
+    public PoMemosDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdPoMemoQueryHandler : IRequestHandler<GetByIdPoMemoQuery, GetByIdPoMemoResponse>

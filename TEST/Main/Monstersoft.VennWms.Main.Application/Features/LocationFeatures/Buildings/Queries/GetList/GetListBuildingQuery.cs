@@ -31,7 +31,7 @@ public class GetListBuildingQuery : IRequest<GetListResponse<GetListBuildingList
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public BuildingDetailLevel DetailLevel { get; set; }
+    public BuildingsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListBuildingQueryHandler : IRequestHandler<GetListBuildingQuery, GetListResponse<GetListBuildingListItemDto>>

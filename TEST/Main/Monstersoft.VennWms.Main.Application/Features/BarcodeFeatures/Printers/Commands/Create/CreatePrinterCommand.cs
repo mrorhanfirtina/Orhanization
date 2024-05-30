@@ -28,7 +28,7 @@ public class CreatePrinterCommand : IRequest<CreatedPrinterResponse>, ITransacti
     public string? CacheGroupKey => "GetBarcodes";
 
     public CreatePrinterDto Printer { get; set; }
-    public PrinterDetailLevel DetailLevel { get; set; }
+    public PrintersDetailLevel DetailLevel { get; set; }
 
 
     public class CreatePrinterCommandHandler : IRequestHandler<CreatePrinterCommand, CreatedPrinterResponse>

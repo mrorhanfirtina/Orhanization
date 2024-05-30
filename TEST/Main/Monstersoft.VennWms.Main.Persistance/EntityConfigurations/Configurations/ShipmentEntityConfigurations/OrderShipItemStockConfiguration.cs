@@ -32,6 +32,7 @@ public class OrderShipItemStockConfiguration : IEntityTypeConfiguration<OrderShi
         #region İlişki Tanımları
         builder.HasOne(p => p.Stock).WithMany().HasForeignKey(p => p.StockId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.StockPackType).WithMany().HasForeignKey(p => p.StockPackTypeId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.OrderShipItem).WithMany().HasForeignKey(p => p.OrderShipItemId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

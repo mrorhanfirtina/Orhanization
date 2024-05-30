@@ -28,7 +28,7 @@ public class CreateOrderAttributeCommand : IRequest<CreatedOrderAttributeRespons
     public string? CacheGroupKey => "GetOrderAttributes";
 
     public CreateOrderAttributeDto OrderAttribute { get; set; }
-    public OrderAttributeDetailLevel DetailLevel { get; set; }
+    public OrderAttributesDetailLevel DetailLevel { get; set; }
 
 
 

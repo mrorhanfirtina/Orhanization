@@ -1,5 +1,5 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Dtos.ResponseDtos;
+using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.Returns.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.Returns.Commands.Update;
 
@@ -13,14 +13,16 @@ public class UpdatedReturnResponse
     public Guid DepositorCompanyId { get; set; }
     public Guid ReturnTypeId { get; set; }
     public DateTime InputDate { get; set; }
-    public DateTime ExpectedDate { get; set; }
-    public DateTime ReceiveDate { get; set; }
+    public DateTime? ExpectedDate { get; set; }
+    public DateTime? ReceiveDate { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public ReturnType ReturnType { get; set; }
-    public Customer Customer { get; set; }
-    public ICollection<ReturnAttributeValue> ReturnAttributeValues { get; set; }
-    public ICollection<ReturnItem> ReturnItems { get; set; }
-    public ICollection<ReturnMemo> ReturnMemos { get; set; }
-
+    public ReturnsCustomerResponseDto? Customer { get; set; }
+    public ReturnsReturnTypeResponseDto? ReturnType { get; set; }
+    public ICollection<ReturnsReturnAttributeValueResponseDto>? ReturnAttributeValues { get; set; }
+    public ICollection<ReturnsReturnItemResponseDto> ReturnItems { get; set; }
+    public ICollection<ReturnsReturnMemoResponseDto>? ReturnMemos { get; set; }
+    public ReturnsDepositorResponseDto Depositor { get; set; }
+    public DepositorCompanyResponseDto DepositorCompany { get; set; }
+    public ReturnsStatusResponseDto Status { get; set; }
 }

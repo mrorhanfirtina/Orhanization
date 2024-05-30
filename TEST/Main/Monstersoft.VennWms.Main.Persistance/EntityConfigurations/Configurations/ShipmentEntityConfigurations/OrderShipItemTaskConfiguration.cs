@@ -28,8 +28,8 @@ public class OrderShipItemTaskConfiguration : IEntityTypeConfiguration<OrderShip
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.OrderShipItemStocks).WithOne().HasForeignKey(p => p.OrderShipItemTaskId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(p => p.WorkTask).WithMany().HasForeignKey(p => p.WorkTaskId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(p => p.OrderShipItemStocks).WithOne(p => p.OrderShipItemTask).HasForeignKey(p => p.OrderShipItemTaskId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.WorkTask).WithMany(p => p.OrderShipItemTasks).HasForeignKey(p => p.WorkTaskId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.TaskStocks.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.TaskStocks.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicTaskStockQuery : IRequest<GetListResponse<GetListBy
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public TaskStocksDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListByDynamicTaskStockQueryHandler : IRequestHandler<GetListByDynamicTaskStockQuery, GetListResponse<GetListByDynamicTaskStockListItemDto>>
@@ -44,12 +49,43 @@ public class GetListByDynamicTaskStockQuery : IRequest<GetListResponse<GetListBy
             _taskStockBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<TaskStock> taskStockList = await _taskStockRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<TaskStock> taskStockList = await _taskStockRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<TaskStock> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicTaskStockListItemDto>>(taskStockList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeStock)
+                    {
+                        query = query.Include(y => y.Stock);
+                    }
+
+                    if (detailLevel.IncludeWorkTask)
+                    {
+                        query = query.Include(y => y.WorkTask);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<TaskStock, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicTaskStockListItemDto>>(taskStockList);
+            }
+            else
+            {
+                Paginate<TaskStock> taskStockList = await _taskStockRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicTaskStockListItemDto>>(taskStockList);
+            }
         }
     }
 }

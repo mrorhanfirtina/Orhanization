@@ -28,7 +28,7 @@ public class UpdateUnitCommand : IRequest<UpdatedUnitResponse>, ITransactionalRe
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public UpdateUnitDto Unit { get; set; }
-    public UnitDetailLevel DetailLevel { get; set; }
+    public UnitsDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateUnitCommandHandler : IRequestHandler<UpdateUnitCommand, UpdatedUnitResponse>

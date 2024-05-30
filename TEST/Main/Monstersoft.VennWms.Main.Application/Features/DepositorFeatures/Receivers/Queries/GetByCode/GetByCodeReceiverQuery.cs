@@ -23,7 +23,7 @@ public class GetByCodeReceiverQuery : IRequest<GetByCodeReceiverResponse>, ITran
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public ReceiverDetailLevel DetailLevel { get; set; }
+    public ReceiversDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeReceiverQueryHandler : IRequestHandler<GetByCodeReceiverQuery, GetByCodeReceiverResponse>

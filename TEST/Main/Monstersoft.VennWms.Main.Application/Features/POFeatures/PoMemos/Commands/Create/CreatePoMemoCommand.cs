@@ -27,7 +27,7 @@ public class CreatePoMemoCommand : IRequest<CreatedPoMemoResponse>, ITransaction
     public string? CacheGroupKey => "GetPoMemos";
 
     public CreatePoMemoDto PoMemo { get; set; }
-    public PoMemoDetailLevel DetailLevel { get; set; }
+    public PoMemosDetailLevel DetailLevel { get; set; }
 
 
     public class CreatePoMemoCommandHandler : IRequestHandler<CreatePoMemoCommand, CreatedPoMemoResponse>

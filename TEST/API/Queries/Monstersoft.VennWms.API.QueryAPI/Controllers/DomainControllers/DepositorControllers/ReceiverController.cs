@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Monstersoft.VennWms.API.QueryAPI.Controllers.Base;
+using Monstersoft.VennWms.API.QueryAPI.Models.DynamicModels.DepositorDynamicModels;
+using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Receivers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Receivers.Queries.GetByCode;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Receivers.Queries.GetById;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Receivers.Queries.GetList;
@@ -14,9 +16,9 @@ namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.Deposit
 public class ReceiverController : BaseController
 {
     [HttpGet("GetByCode/{code}")]
-    public async Task<IActionResult> GetByCodeAsync([FromRoute] string code)
+    public async Task<IActionResult> GetByCodeAsync([FromRoute] string code, [FromBody] ReceiversDetailLevel detailLevel)
     {
-        GetByCodeReceiverQuery query = new() { Code = code };
+        GetByCodeReceiverQuery query = new() { Code = code, DetailLevel = detailLevel };
 
         GetByCodeReceiverResponse result = await Mediator.Send(query);
 
@@ -24,9 +26,9 @@ public class ReceiverController : BaseController
     }
 
     [HttpGet("GetById/{id}")]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
+    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id, [FromBody] ReceiversDetailLevel detailLevel)
     {
-        GetByIdReceiverQuery query = new() { Id = id };
+        GetByIdReceiverQuery query = new() { Id = id, DetailLevel = detailLevel };
 
         GetByIdReceiverResponse result = await Mediator.Send(query);
 
@@ -34,17 +36,17 @@ public class ReceiverController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] ReceiversDetailLevel detailLevel)
     {
-        GetListReceiverQuery query = new() { PageRequest = pageRequest };
+        GetListReceiverQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
         GetListResponse<GetListReceiverListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }
 
     [HttpPost("GetListByDynamic")]
-    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] DynamicQuery? dynamicQuery = null)
+    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] ReceiverDynamicModel? dynamicModel = null)
     {
-        GetListByDynamicReceiverQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicQuery };
+        GetListByDynamicReceiverQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicModel.DynamicQuery, DetailLevel = dynamicModel.DetailLevel };
         GetListResponse<GetListByDynamicReceiverListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

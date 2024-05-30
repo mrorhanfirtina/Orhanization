@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Queries.GetById;
+﻿using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Queries.GetById;
 
 public class GetByIdReceiptAttributeValueResponse
 {
@@ -7,6 +9,7 @@ public class GetByIdReceiptAttributeValueResponse
     public Guid ReceiptAttributeId { get; set; }
     public string Value { get; set; }
     public DateTime CreatedDate { get; set; }
-    public DateTime UpdatedDate { get; set; }
+    public ReceiptAttributeValuesReceiptAttributeResponseDto? ReceiptAttribute { get; set; }
+    public ReceiptAttributeValuesReceiptResponseDto? Receipt { get; set; }
 
 }

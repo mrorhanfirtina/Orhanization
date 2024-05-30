@@ -23,7 +23,7 @@ public class GetByIdItemPackTypeQuery : IRequest<GetByIdItemPackTypeResponse>, I
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public ItemPackTypeDetailLevel DetailLevel { get; set; }
+    public ItemPackTypesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdItemPackTypeQueryHandler : IRequestHandler<GetByIdItemPackTypeQuery, GetByIdItemPackTypeResponse>

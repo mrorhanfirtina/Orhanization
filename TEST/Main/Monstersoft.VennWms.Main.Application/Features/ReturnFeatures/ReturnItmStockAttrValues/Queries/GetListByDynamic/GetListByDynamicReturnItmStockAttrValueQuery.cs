@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItmStockAttrValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItmStockAttrValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReturnRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicReturnItmStockAttrValueQuery : IRequest<GetListResp
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public ReturnItmStockAttrValuesDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListByDynamicReturnItmStockAttrValueQueryHandler : IRequestHandler<GetListByDynamicReturnItmStockAttrValueQuery, GetListResponse<GetListByDynamicReturnItmStockAttrValueListItemDto>>
@@ -44,12 +49,62 @@ public class GetListByDynamicReturnItmStockAttrValueQuery : IRequest<GetListResp
             _returnItmStockAttrValueBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ReturnItmStockAttrValue> returnItmStockAttrValueList = await _returnItmStockAttrValueRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ReturnItmStockAttrValue> returnItmStockAttrValueList = await _returnItmStockAttrValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<ReturnItmStockAttrValue> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicReturnItmStockAttrValueListItemDto>>(returnItmStockAttrValueList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReturnItem)
+                    {
+                        query = query.Include(y => y.ReturnItem);
+
+                        var returnItemDetailLevel = detailLevel.ReturnItemDetailLevel;
+
+                        if (returnItemDetailLevel.IncludeReturn)
+                        {
+                            query = query.Include(y => y.ReturnItem).ThenInclude(y => y.Return);
+                        }
+
+                        if (returnItemDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.ReturnItem).ThenInclude(y => y.Product);
+                        }
+                    }
+
+                    if (detailLevel.IncludeStockAttribute)
+                    {
+                        query = query.Include(y => y.StockAttribute);
+
+                        var stockAttributeDetailLevel = detailLevel.StockAttributeDetailLevel;
+
+                        if (stockAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.StockAttribute).ThenInclude(y => y.AttributeInputType);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReturnItmStockAttrValue, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReturnItmStockAttrValueListItemDto>>(returnItmStockAttrValueList);
+            }
+            else
+            {
+                Paginate<ReturnItmStockAttrValue> returnItmStockAttrValueList = await _returnItmStockAttrValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReturnItmStockAttrValueListItemDto>>(returnItmStockAttrValueList);
+            }
         }
     }
 

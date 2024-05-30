@@ -28,7 +28,7 @@ public class GetListByDynamicDistributorQuery : IRequest<GetListResponse<GetList
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public DistributorDetailLevel DetailLevel { get; set; }
+    public DistributorsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicDisturbitorQueryHandler : IRequestHandler<GetListByDynamicDistributorQuery, GetListResponse<GetListByDynamicDistributorListItemDto>>

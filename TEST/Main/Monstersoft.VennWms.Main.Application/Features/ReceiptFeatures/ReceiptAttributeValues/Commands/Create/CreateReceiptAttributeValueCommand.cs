@@ -1,8 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +29,7 @@ public class CreateReceiptAttributeValueCommand : IRequest<CreatedReceiptAttribu
     public string? CacheGroupKey => "GetReceiptAttributeValues";
 
     public CreateReceiptAttributeValueDto ReceiptAttributeValue { get; set; }
+    public ReceiptAttributeValuesDetailLevel? DetailLevel { get; set; }
 
 
     public class CreateReceiptAttributeValueCommandHandler : IRequestHandler<CreateReceiptAttributeValueCommand, CreatedReceiptAttributeValueResponse>
@@ -50,7 +56,46 @@ public class CreateReceiptAttributeValueCommand : IRequest<CreatedReceiptAttribu
             receiptAttributeValue.Id = Guid.NewGuid();
             receiptAttributeValue.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedReceiptAttributeValueResponse>(await _receiptAttributeValueRepository.AddAsync(receiptAttributeValue));
+            await _receiptAttributeValueRepository.AddAsync(receiptAttributeValue);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _receiptAttributeValueRepository.GetAsync(predicate: x => x.Id == receiptAttributeValue.Id,
+                include: x =>
+                {
+                    IQueryable<ReceiptAttributeValue> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReceipt)
+                    {
+                        query = query.Include(y => y.Receipt);
+                    }
+
+                    if (detailLevel.IncludeReceiptAttribute)
+                    {
+                        query = query.Include(y => y.ReceiptAttribute);
+
+                        if (detailLevel.ReceiptAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.ReceiptAttribute).ThenInclude(y => y.AttributeInputType);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReceiptAttributeValue, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReceiptAttributeValueResponse>(response);
+            }
+            else
+            {
+                var response = await _receiptAttributeValueRepository.GetAsync(predicate: x => x.Id == receiptAttributeValue.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReceiptAttributeValueResponse>(response);
+            }
         }
     }
 

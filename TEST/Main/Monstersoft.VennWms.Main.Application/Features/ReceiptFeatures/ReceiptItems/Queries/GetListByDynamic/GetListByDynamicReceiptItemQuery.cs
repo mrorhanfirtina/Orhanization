@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItems.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItems.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +28,7 @@ public class GetListByDynamicReceiptItemQuery : IRequest<GetListResponse<GetList
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public ReceiptItemsDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListByDynamicReceiptItemQueryHandler : IRequestHandler<GetListByDynamicReceiptItemQuery, GetListResponse<GetListByDynamicReceiptItemListItemDto>>
@@ -45,13 +49,82 @@ public class GetListByDynamicReceiptItemQuery : IRequest<GetListResponse<GetList
             _receiptItemBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ReceiptItem> receiptItemList = await _receiptItemRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            include: m => m.Include(x => x.ReceiptItemMemos).Include(x => x.ReceiptItmStockAttrValues),
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ReceiptItem> receiptItemList = await _receiptItemRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<ReceiptItem> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicReceiptItemListItemDto>>(receiptItemList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReceiptItemMemo)
+                    {
+                        query = query.Include(y => y.ReceiptItemMemos);
+                    }
+
+                    if (detailLevel.IncludeReceiptItmStockAttrValue)
+                    {
+                        query = query.Include(y => y.ReceiptItmStockAttrValues);
+
+                        var stockAttrDetailLevel = detailLevel.ReceiptItmStockAttrValueDetailLevel;
+
+                        if (stockAttrDetailLevel.IncludeStockAttribute)
+                        {
+                            query = query.Include(y => y.ReceiptItmStockAttrValues).ThenInclude(y => y.StockAttribute);
+
+                            if (stockAttrDetailLevel.StockAttributeDetailLevel.IncludeAttributeInputType)
+                            {
+                                query = query.Include(y => y.ReceiptItmStockAttrValues).ThenInclude(y => y.StockAttribute).ThenInclude(y => y.AttributeInputType);
+                            }
+                        }
+                    }
+
+                    if (detailLevel.IncludeProduct)
+                    {
+                        query = query.Include(y => y.Product);
+                    }
+
+                    if (detailLevel.IncludeItemUnit)
+                    {
+                        query = query.Include(y => y.ItemUnit);
+
+                        var itemUnitDetailLevel = detailLevel.ItemUnitDetailLevel;
+
+                        if (itemUnitDetailLevel.IncludeUnit)
+                        {
+                            query = query.Include(y => y.ItemUnit).ThenInclude(y => y.Unit);
+                        }
+                    }
+
+                    if (detailLevel.IncludeStatus)
+                    {
+                        query = query.Include(y => y.Status);
+                    }
+
+                    if (detailLevel.IncludeReceipt)
+                    {
+                        query = query.Include(y => y.Receipt);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReceiptItem, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReceiptItemListItemDto>>(receiptItemList);
+            }
+            else
+            {
+                Paginate<ReceiptItem> receiptItemList = await _receiptItemRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReceiptItemListItemDto>>(receiptItemList);
+            }
         }
     }
 

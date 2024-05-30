@@ -28,7 +28,7 @@ public class GetListByDynamicPoAttributeValueQuery : IRequest<GetListResponse<Ge
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public PoAttributeValueDetailLevel DetailLevel { get; set; }
+    public PoAttributeValuesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicPoAttributeValueQueryHandler : IRequestHandler<GetListByDynamicPoAttributeValueQuery, GetListResponse<GetListByDynamicPoAttributeValueListItemDto>>

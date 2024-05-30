@@ -22,7 +22,7 @@ public class GetByCodeReserveReasonQuery : IRequest<GetByCodeReserveReasonRespon
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public string Code { get; set; }
-    public ReserveReasonDetailLevel DetailLevel { get; set; }
+    public ReserveReasonsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeReserveReasonQueryHandler : IRequestHandler<GetByCodeReserveReasonQuery, GetByCodeReserveReasonResponse>

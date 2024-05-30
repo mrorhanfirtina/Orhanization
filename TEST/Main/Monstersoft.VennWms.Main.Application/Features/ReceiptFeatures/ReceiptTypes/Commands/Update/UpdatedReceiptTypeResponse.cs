@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptTypes.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptTypes.Commands.Update;
 
@@ -13,7 +13,7 @@ public class UpdatedReceiptTypeResponse
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public ICollection<Receipt> Receipts { get; set; }
-
+    public ICollection<ReceiptTypesReceiptResponseDto>? Receipts { get; set; }
+    public ReceiptTypesDepositorCompanyResponseDto? DepositorCompany { get; set; }
 }
 

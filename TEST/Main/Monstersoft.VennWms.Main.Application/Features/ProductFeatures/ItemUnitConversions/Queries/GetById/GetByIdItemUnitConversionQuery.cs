@@ -23,7 +23,7 @@ public class GetByIdItemUnitConversionQuery : IRequest<GetByIdItemUnitConversion
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public ItemUnitConversionDetailLevel DetailLevel { get; set; }
+    public ItemUnitConversionsDetailLevel DetailLevel { get; set; }
 
 
 

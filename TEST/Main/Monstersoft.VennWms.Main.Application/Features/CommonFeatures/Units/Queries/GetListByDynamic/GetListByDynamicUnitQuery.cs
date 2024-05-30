@@ -29,7 +29,7 @@ public class GetListByDynamicUnitQuery : IRequest<GetListResponse<GetListByDynam
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public UnitDetailLevel DetailLevel { get; set; }
+    public UnitsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicUnitQueryHandler : IRequestHandler<GetListByDynamicUnitQuery, GetListResponse<GetListByDynamicUnitListItemDto>>

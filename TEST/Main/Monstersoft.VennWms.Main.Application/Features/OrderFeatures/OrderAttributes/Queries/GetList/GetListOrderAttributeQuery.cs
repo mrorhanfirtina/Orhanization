@@ -31,7 +31,7 @@ public class GetListOrderAttributeQuery : IRequest<GetListResponse<GetListOrderA
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public OrderAttributeDetailLevel DetailLevel { get; set; }
+    public OrderAttributesDetailLevel DetailLevel { get; set; }
 
 
 

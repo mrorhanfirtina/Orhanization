@@ -28,7 +28,7 @@ public class GetListByDynamicLocationZoneQuery : IRequest<GetListResponse<GetLis
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public LocationZoneDetailLevel DetailLevel { get; set; }
+    public LocationZonesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicLocationZoneQueryHandler : IRequestHandler<GetListByDynamicLocationZoneQuery, GetListResponse<GetListByDynamicLocationZoneListItemDto>>

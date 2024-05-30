@@ -14,6 +14,7 @@ public class CreateReceiptDto
     public DateTime ReceiveDate { get; set; }
     public Guid PurchaseOrderId { get; set; }
     public Guid ReceiptTypeId { get; set; }
+    public Guid SupplierId { get; set; }
     public int StatusId { get; set; }
     public CreatePurchaseOrderSubDto? PurchaseOrder { get; set; }
     public ICollection<CreateReceiptAttributeValueSubDto> ReceiptAttributeValues { get; set; }

@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.StockFeatures.Stocks.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.StockFeatures.Stocks.Queries.GetList;
 
@@ -9,21 +9,23 @@ public class GetListStockListItemDto
     public Guid ProductId { get; set; }
     public Guid DepositorId { get; set; }
     public Guid DepositorCompanyId { get; set; }
-    public decimal Quantity { get; set; }
-    public decimal FreeQuantity { get; set; }
+    public decimal CuQuantity { get; set; }
+    public decimal CuQuantityFree { get; set; }
     public Guid LocationId { get; set; }
-    public Guid UnitId { get; set; }
-    public Guid ReceiptId { get; set; }
-    public Guid ReturnId { get; set; }
+    public Guid CuItemUnitId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public StockContainer StockContainer { get; set; }
-    public ICollection<StockAttributeValue> StockAttributeValues { get; set; }
-    public ICollection<StockInbound> StockInbounds { get; set; }
-    public ICollection<StockPackType> StockPackTypes { get; set; }
-    public ICollection<StockMemo> StockMemos { get; set; }
-    public ICollection<StockReserveReason> StockReserveReasons { get; set; }
-    public ICollection<StockUnsuitReason> StockUnsuitReasons { get; set; }
-
+    public StocksStockContainerResponseDto? StockContainer { get; set; }
+    public ICollection<StocksStockAttributeValueResponseDto>? StockAttributeValues { get; set; }
+    public ICollection<StocksStockMemoResponseDto>? StockMemos { get; set; }
+    public ICollection<StocksStockReserveReasonResponseDto>? StockReserveReasons { get; set; }
+    public ICollection<StocksStockUnsuitReasonResponseDto>? StockUnsuitReasons { get; set; }
+    public ICollection<StocksStockInboundResponseDto>? StockInbounds { get; set; }
+    public ICollection<StocksStockPackTypeResponseDto>? StockPackTypes { get; set; }
+    public StocksProductResponseDto? Product { get; set; }
+    public StocksDepositorResponseDto? Depositor { get; set; }
+    public StocksDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public StocksLocationResponseDto? Location { get; set; }
+    public StocksItemUnitResponseDto? CuItemUnit { get; set; }
 }
 

@@ -10,6 +10,7 @@ public class CreateReceiptSubDto
     public Guid DepositorId { get; set; }
     public DateTime ExpectedDate { get; set; }
     public Guid ReceiptTypeId { get; set; }
+    public Guid SupplierId { get; set; }
     public CreateReceiptTypeSubDto? ReceiptType { get; set; }
     public ICollection<CreateReceiptAttributeValueSubDto> ReceiptAttributeValues { get; set; }
     public ICollection<CreateReceiptItemSubDto> ReceiptItems { get; set; }

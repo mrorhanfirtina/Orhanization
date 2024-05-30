@@ -28,7 +28,7 @@ public class UpdateDepositorCommand : IRequest<UpdatedDepositorResponse>, ITrans
     public string? CacheGroupKey => "GetDepositors";
 
     public UpdateDepositorDto Depositor { get; set; }
-    public DepositorDetailLevel DetailLevel { get; set; }
+    public DepositorsDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateDepositorCommandHandler : IRequestHandler<UpdateDepositorCommand, UpdatedDepositorResponse>

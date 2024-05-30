@@ -31,7 +31,7 @@ public class GetListPrinterQuery : IRequest<GetListResponse<GetListPrinterListIt
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public PrinterDetailLevel DetailLevel { get; set; }
+    public PrintersDetailLevel DetailLevel { get; set; }
 
 
     public class GetListPrinterQueryHandler : IRequestHandler<GetListPrinterQuery, GetListResponse<GetListPrinterListItemDto>>

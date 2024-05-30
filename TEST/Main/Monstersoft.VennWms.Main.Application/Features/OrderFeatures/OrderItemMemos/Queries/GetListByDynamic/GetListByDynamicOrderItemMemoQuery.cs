@@ -28,7 +28,7 @@ public class GetListByDynamicOrderItemMemoQuery : IRequest<GetListResponse<GetLi
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public OrderItemMemoDetailLevel DetailLevel { get; set; }
+    public OrderItemMemosDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicOrderItemMemoQueryHandler : IRequestHandler<GetListByDynamicOrderItemMemoQuery, GetListResponse<GetListByDynamicOrderItemMemoListItemDto>>

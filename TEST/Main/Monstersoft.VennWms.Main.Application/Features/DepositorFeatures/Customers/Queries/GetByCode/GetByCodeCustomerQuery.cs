@@ -22,7 +22,7 @@ public class GetByCodeCustomerQuery : IRequest<GetByCodeCustomerResponse>, ITran
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public CustomerDetailLevel DetailLevel { get; set; }
+    public CustomersDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeCustomerQueryHandler : IRequestHandler<GetByCodeCustomerQuery, GetByCodeCustomerResponse>

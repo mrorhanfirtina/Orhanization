@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnMemos.Dtos.CreateDtos;
+using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnMemos.Dtos.ResponseDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnMemos.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
 
@@ -13,5 +14,7 @@ public class ReturnMemoDtoMappingProfiles : Profile
         CreateMap<ReturnMemo, CreateReturnMemoSubDto>().ReverseMap();
         CreateMap<ReturnMemo, UpdateReturnMemoDto>().ReverseMap();
         CreateMap<ReturnMemo, UpdateReturnMemoSubDto>().ReverseMap();
+
+        CreateMap<Return, ReturnMemosReturnResponseDto>().ReverseMap();
     }
 }

@@ -31,7 +31,7 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         #region İlişki Tanımları
         builder.HasMany(p => p.OrderItemMemos).WithOne(p => p.OrderItem).HasForeignKey(p => p.OrderItemId).OnDelete(DeleteBehavior.Cascade);
         builder.HasMany(p => p.OrderItemStockAttrValues).WithOne(p => p.OrderItem).HasForeignKey(p => p.OrderItemId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.OrderShipItems).WithOne().HasForeignKey(p => p.OrderItemId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasMany(p => p.OrderShipItems).WithOne(p => p.OrderItem).HasForeignKey(p => p.OrderItemId).OnDelete(DeleteBehavior.NoAction);
         builder.HasOne(p => p.Product).WithMany().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.ItemUnit).WithMany().HasForeignKey(p => p.ItemUnitId).OnDelete(DeleteBehavior.Restrict);
         #endregion

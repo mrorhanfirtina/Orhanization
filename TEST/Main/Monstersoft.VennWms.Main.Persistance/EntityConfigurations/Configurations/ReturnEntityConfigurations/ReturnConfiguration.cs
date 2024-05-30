@@ -35,9 +35,9 @@ public class ReturnConfiguration : IEntityTypeConfiguration<Return>
 
         #region İlişki Tanımları
         builder.HasOne(p => p.Customer).WithMany().HasForeignKey(p => p.CustomerId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasMany(p => p.ReturnAttributeValues).WithOne().HasForeignKey(p => p.ReturnId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.ReturnItems).WithOne().HasForeignKey(p => p.ReturnId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.ReturnMemos).WithOne().HasForeignKey(p => p.ReturnId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ReturnAttributeValues).WithOne(p => p.Return).HasForeignKey(p => p.ReturnId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ReturnItems).WithOne(p => p.Return).HasForeignKey(p => p.ReturnId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ReturnMemos).WithOne(p => p.Return).HasForeignKey(p => p.ReturnId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(p => p.Status).WithMany().HasForeignKey(p => p.StatusId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Depositor).WithMany().HasForeignKey(p => p.DepositorId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);

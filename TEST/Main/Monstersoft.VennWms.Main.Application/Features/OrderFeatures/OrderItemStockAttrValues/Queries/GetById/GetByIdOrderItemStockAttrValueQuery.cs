@@ -23,7 +23,7 @@ public class GetByIdOrderItemStockAttrValueQuery : IRequest<GetByIdOrderItemStoc
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public OrderItemStockAttrValueDetailLevel DetailLevel { get; set; }
+    public OrderItemStockAttrValuesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdOrderItemStockAttrValueQueryHandler : IRequestHandler<GetByIdOrderItemStockAttrValueQuery, GetByIdOrderItemStockAttrValueResponse>

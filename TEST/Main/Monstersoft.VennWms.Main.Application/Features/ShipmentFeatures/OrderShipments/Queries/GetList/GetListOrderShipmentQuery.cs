@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipments.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipments.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -28,6 +31,7 @@ public class GetListOrderShipmentQuery : IRequest<GetListResponse<GetListOrderSh
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
+    public OrderShipmentsDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListOrderShipmentQueryHandler : IRequestHandler<GetListOrderShipmentQuery, GetListResponse<GetListOrderShipmentListItemDto>>
@@ -50,13 +54,88 @@ public class GetListOrderShipmentQuery : IRequest<GetListResponse<GetListOrderSh
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<OrderShipment> orderShipmentList = await _orderShipmentRepository.GetListAsync(
-            predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(x => x.OrderShipItems).ThenInclude(os => os.OrderShipItemTasks).ThenInclude(ot => ot.OrderShipItemStocks),
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<OrderShipment> orderShipmentList = await _orderShipmentRepository.GetListAsync(
+                predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<OrderShipment> query = x;
 
-            return _mapper.Map<GetListResponse<GetListOrderShipmentListItemDto>>(orderShipmentList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeShipment)
+                    {
+                        query = query.Include(y => y.Shipment);
+                    }
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeProgressStatus)
+                    {
+                        query = query.Include(y => y.ProgressStatus);
+                    }
+
+                    if (detailLevel.IncludeOrder)
+                    {
+                        query = query.Include(y => y.Order);
+                    }
+
+                    if (detailLevel.IncludeOrderShipItem)
+                    {
+                        query = query.Include(y => y.OrderShipItems);
+
+                        if (detailLevel.OrderShipItemDetailLevel.IncludeOrderItem)
+                        {
+                            query = query.Include(y => y.OrderShipItems).ThenInclude(y => y.OrderItem);
+
+                            if (detailLevel.OrderShipItemDetailLevel.OrderItemDetailLevel.IncludeProduct)
+                            {
+                                query = query.Include(y => y.OrderShipItems).ThenInclude(y => y.OrderItem).ThenInclude(y => y.Product);
+                            }
+
+                            if (detailLevel.OrderShipItemDetailLevel.OrderItemDetailLevel.IncludeItemUnit)
+                            {
+                                query = query.Include(y => y.OrderShipItems).ThenInclude(y => y.OrderItem).ThenInclude(y => y.ItemUnit);
+
+                                if (detailLevel.OrderShipItemDetailLevel.OrderItemDetailLevel.ItemUnitDetailLevel.IncludeUnit)
+                                {
+                                    query = query.Include(y => y.OrderShipItems).ThenInclude(y => y.OrderItem).ThenInclude(y => y.ItemUnit).ThenInclude(y => y.Unit);
+                                }
+                            }
+                        }
+
+                        if (detailLevel.OrderShipItemDetailLevel.IncludeOrderShipItemTasks)
+                        {
+                            query = query.Include(y => y.OrderShipItems).ThenInclude(y => y.OrderShipItemTasks);
+
+                            if (detailLevel.OrderShipItemDetailLevel.OrderShipItemTaskDetailLevel.IncludeOrderShipItemStock)
+                            {
+                                query = query.Include(y => y.OrderShipItems).ThenInclude(y => y.OrderShipItemTasks).ThenInclude(y => y.OrderShipItemStocks);
+                            }
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<OrderShipment, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListOrderShipmentListItemDto>>(orderShipmentList);
+            }
+            else
+            {
+                Paginate<OrderShipment> orderShipmentList = await _orderShipmentRepository.GetListAsync(
+                predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListOrderShipmentListItemDto>>(orderShipmentList);
+            }
         }
     }
 

@@ -28,7 +28,7 @@ public class GetListByDynamicLogStockQuery : IRequest<GetListResponse<GetListByD
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public LogStockDetailLevel DetailLevel { get; set; }
+    public LogStocksDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicLogStockQueryHandler : IRequestHandler<GetListByDynamicLogStockQuery, GetListResponse<GetListByDynamicLogStockListItemDto>>

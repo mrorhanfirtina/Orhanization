@@ -29,7 +29,7 @@ public class CreateSiteDepositorCommand : IRequest<CreatedSiteDepositorResponse>
     public string? CacheGroupKey => "GetSiteDepositors";
 
     public CreateSiteDepositorDto SiteDepositor { get; set; }
-    public SiteDepositorDetailLevel DetailLevel { get; set; }
+    public SiteDepositorsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateSiteDepositorCommandHandler : IRequestHandler<CreateSiteDepositorCommand, CreatedSiteDepositorResponse>

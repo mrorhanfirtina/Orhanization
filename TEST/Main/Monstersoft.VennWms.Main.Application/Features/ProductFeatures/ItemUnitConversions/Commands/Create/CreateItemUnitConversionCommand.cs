@@ -30,7 +30,7 @@ public class CreateItemUnitConversionCommand : IRequest<CreatedItemUnitConversio
     public string? CacheGroupKey => "GetItemUnitConversions";
 
     public CreateItemUnitConversionDto ItemUnitConversion { get; set; }
-    public ItemUnitConversionDetailLevel DetailLevel { get; set; }
+    public ItemUnitConversionsDetailLevel DetailLevel { get; set; }
 
 
 

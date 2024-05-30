@@ -30,7 +30,7 @@ public class CreateItemPackTypeCommand : IRequest<CreatedItemPackTypeResponse>, 
     public string? CacheGroupKey => "GetItemPackTypes";
 
     public CreateItemPackTypeDto ItemPackType { get; set; }
-    public ItemPackTypeDetailLevel DetailLevel { get; set; }
+    public ItemPackTypesDetailLevel DetailLevel { get; set; }
 
 
     public class CreateItemPackTypeCommandHandler : IRequestHandler<CreateItemPackTypeCommand, CreatedItemPackTypeResponse>

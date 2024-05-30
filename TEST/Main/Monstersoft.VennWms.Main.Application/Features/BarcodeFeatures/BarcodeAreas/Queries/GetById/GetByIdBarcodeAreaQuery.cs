@@ -22,7 +22,7 @@ public class GetByIdBarcodeAreaQuery : IRequest<GetByIdBarcodeAreaResponse>, ITr
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public BarcodeAreaDetailLevel DetailLevel { get; set; }
+    public BarcodeAreasDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdBarcodeAreaQueryHandler : IRequestHandler<GetByIdBarcodeAreaQuery, GetByIdBarcodeAreaResponse>

@@ -30,7 +30,7 @@ public class ReceiptTypeConfiguration : IEntityTypeConfiguration<ReceiptType>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.Receipts).WithOne().HasForeignKey(p => p.ReceiptTypeId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(p => p.Receipts).WithOne(p => p.ReceiptType).HasForeignKey(p => p.ReceiptTypeId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 

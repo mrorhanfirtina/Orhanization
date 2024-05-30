@@ -28,7 +28,7 @@ public class GetListByDynamicDepositorCompanyQuery : IRequest<GetListResponse<Ge
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public DepositorCompanyDetailLevel DetailLevel { get; set; }
+    public DepositorCompaniesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicDepositorCompanyQueryHandler : IRequestHandler<GetListByDynamicDepositorCompanyQuery, GetListResponse<GetListByDynamicDepositorCompanyListItemDto>>

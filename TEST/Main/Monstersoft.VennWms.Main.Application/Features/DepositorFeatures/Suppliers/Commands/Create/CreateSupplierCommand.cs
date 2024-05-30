@@ -30,7 +30,7 @@ public class CreateSupplierCommand : IRequest<CreatedSupplierResponse>, ITransac
     public string? CacheGroupKey => "GetSuppliers";
 
     public CreateSupplierDto Supplier { get; set; }
-    public SupplierDetailLevel DetailLevel { get; set; }
+    public SuppliersDetailLevel DetailLevel { get; set; }
 
 
     public class CreateSupplierCommandHandler : IRequestHandler<CreateSupplierCommand, CreatedSupplierResponse>

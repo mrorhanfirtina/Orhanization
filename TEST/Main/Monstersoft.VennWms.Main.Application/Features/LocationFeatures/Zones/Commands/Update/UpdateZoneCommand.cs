@@ -28,7 +28,7 @@ public class UpdateZoneCommand : IRequest<UpdatedZoneResponse>, ITransactionalRe
     public string? CacheGroupKey => "GetZones";
 
     public UpdateZoneDto Zone { get; set; }
-    public ZoneDetailLevel DetailLevel { get; set; }
+    public ZonesDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateZoneCommandHandler : IRequestHandler<UpdateZoneCommand, UpdatedZoneResponse>

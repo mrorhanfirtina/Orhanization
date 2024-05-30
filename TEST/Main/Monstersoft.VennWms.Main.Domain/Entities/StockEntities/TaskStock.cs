@@ -8,8 +8,8 @@ public class TaskStock : Entity<Guid>
     public Guid WorkTaskId { get; set; }
     public Guid StockId { get; set; }
     public decimal Quantity { get; set; }
-    public virtual Stock Stock { get; set; }
-    public virtual WorkTask WorkTask { get; set; }
+    public virtual Stock? Stock { get; set; }
+    public virtual WorkTask? WorkTask { get; set; }
 
     public TaskStock()
     {

@@ -23,7 +23,7 @@ public class GetByCodeCompanyQuery : IRequest<GetByCodeCompanyResponse>, ITransa
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public CompanyDetailLevel DetailLevel { get; set; }
+    public CompaniesDetailLevel DetailLevel { get; set; }
 
     public class GetByCodeCompanyQueryHandler : IRequestHandler<GetByCodeCompanyQuery, GetByCodeCompanyResponse>
     {

@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItmStockAttrValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItmStockAttrValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicReceiptItmStockAttrValueQuery : IRequest<GetListRes
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public ReceiptItmStockAttrValuesDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListByDynamicReceiptItmStockAttrValueQueryHandler : IRequestHandler<GetListByDynamicReceiptItmStockAttrValueQuery, GetListResponse<GetListByDynamicReceiptItmStockAttrValueListItemDto>>
@@ -44,12 +49,62 @@ public class GetListByDynamicReceiptItmStockAttrValueQuery : IRequest<GetListRes
             _receiptItmStockAttrValueBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ReceiptItmStockAttrValue> receiptItmStockAttrValueList = await _receiptItmStockAttrValueRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ReceiptItmStockAttrValue> receiptItmStockAttrValueList = await _receiptItmStockAttrValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<ReceiptItmStockAttrValue> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicReceiptItmStockAttrValueListItemDto>>(receiptItmStockAttrValueList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeStockAttribute)
+                    {
+                        query = query.Include(y => y.StockAttribute);
+
+                        var stockAttrDetailLevel = detailLevel.StockAttributeDetailLevel;
+
+                        if (stockAttrDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.StockAttribute).ThenInclude(y => y.AttributeInputType);
+                        }
+                    }
+
+                    if (detailLevel.IncludeReceiptItem)
+                    {
+                        query = query.Include(y => y.ReceiptItem);
+
+                        var receiptItemDetailLevel = detailLevel.ReceiptItemDetailLevel;
+
+                        if (receiptItemDetailLevel.IncludeReceipt)
+                        {
+                            query = query.Include(y => y.ReceiptItem).ThenInclude(y => y.Receipt);
+                        }
+
+                        if (receiptItemDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.ReceiptItem).ThenInclude(y => y.Product);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReceiptItmStockAttrValue, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReceiptItmStockAttrValueListItemDto>>(receiptItmStockAttrValueList);
+            }
+            else
+            {
+                Paginate<ReceiptItmStockAttrValue> receiptItmStockAttrValueList = await _receiptItmStockAttrValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReceiptItmStockAttrValueListItemDto>>(receiptItmStockAttrValueList);
+            }
         }
     }
 }

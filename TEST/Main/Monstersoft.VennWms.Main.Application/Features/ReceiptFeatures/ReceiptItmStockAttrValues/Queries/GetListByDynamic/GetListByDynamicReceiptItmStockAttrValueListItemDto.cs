@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItmStockAttrValues.Queries.GetListByDynamic;
+﻿using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItmStockAttrValues.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItmStockAttrValues.Queries.GetListByDynamic;
 
 public class GetListByDynamicReceiptItmStockAttrValueListItemDto
 {
@@ -8,6 +10,7 @@ public class GetListByDynamicReceiptItmStockAttrValueListItemDto
     public string Value { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public ReceiptItmStockAttrValuesStockAttributeResponseDto? StockAttribute { get; set; }
+    public ReceiptItmStockAttrValuesReceiptItemResponseDto? ReceiptItem { get; set; }
 }
 

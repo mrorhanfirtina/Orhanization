@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptMemos.Dtos.CreateDtos;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptMemos.Dtos.ResponseDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptMemos.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 
@@ -13,5 +14,7 @@ public class ReceiptMemoDtoMappingProfiles : Profile
         CreateMap<ReceiptMemo, CreateReceiptMemoSubDto>().ReverseMap();
         CreateMap<ReceiptMemo, UpdateReceiptMemoDto>().ReverseMap();
         CreateMap<ReceiptMemo, UpdateReceiptMemoSubDto>().ReverseMap();
+
+        CreateMap<Receipt, ReceiptMemosReceiptResponseDto>().ReverseMap();
     }
 }

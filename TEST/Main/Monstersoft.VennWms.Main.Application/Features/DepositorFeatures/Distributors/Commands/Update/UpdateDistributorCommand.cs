@@ -27,7 +27,7 @@ public class UpdateDistributorCommand : IRequest<UpdatedDistributorResponse>, IT
     public string? CacheGroupKey => "GetDisturbitors";
 
     public UpdateDistributorDto Disturbitor { get; set; }
-    public DistributorDetailLevel DetailLevel { get; set; }
+    public DistributorsDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateDisturbitorCommandHandler : IRequestHandler<UpdateDistributorCommand, UpdatedDistributorResponse>

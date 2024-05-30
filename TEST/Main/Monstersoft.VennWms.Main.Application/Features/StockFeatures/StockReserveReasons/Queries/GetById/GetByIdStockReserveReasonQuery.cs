@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockReserveReasons.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockReserveReasons.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -18,6 +23,7 @@ public class GetByIdStockReserveReasonQuery : IRequest<GetByIdStockReserveReason
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public StockReserveReasonsDetailLevel? DetailLevel { get; set; }
 
 
     public class GetByIdStockReserveReasonQueryHandler : IRequestHandler<GetByIdStockReserveReasonQuery, GetByIdStockReserveReasonResponse>
@@ -39,7 +45,35 @@ public class GetByIdStockReserveReasonQuery : IRequest<GetByIdStockReserveReason
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdStockReserveReasonResponse>(await _stockReserveReasonRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdStockReserveReasonResponse>(await _stockReserveReasonRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<StockReserveReason> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeStock)
+                    {
+                        query = query.Include(y => y.Stock);
+                    }
+
+                    if (detailLevel.IncludeReserveReason)
+                    {
+                        query = query.Include(y => y.ReserveReason);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<StockReserveReason, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdStockReserveReasonResponse>(await _stockReserveReasonRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

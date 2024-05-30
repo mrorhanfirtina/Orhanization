@@ -1,11 +1,14 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockContainers.Queries.GetById;
+﻿using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockContainers.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockContainers.Queries.GetById;
 
 public class GetByIdStockContainerResponse
 {
     public Guid Id { get; set; }
     public string Sscc { get; set; }
-    public Guid ContainerUnitId { get; set; }
+    public int ContainerUnitId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public StockContainersContainerUnitResponseDto? ContainerUnit { get; set; }
+    public ICollection<StockContainersStockResponseDto>? Stocks { get; set; }
 }

@@ -31,7 +31,7 @@ public class GetListBarcodeSupplierQuery : IRequest<GetListResponse<GetListBarco
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public BarcodeSupplierDetailLevel DetailLevel { get; set; }
+    public BarcodeSuppliersDetailLevel DetailLevel { get; set; }
 
 
 

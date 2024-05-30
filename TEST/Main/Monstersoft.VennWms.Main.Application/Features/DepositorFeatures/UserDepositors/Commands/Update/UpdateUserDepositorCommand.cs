@@ -29,7 +29,7 @@ public class UpdateUserDepositorCommand : IRequest<UpdatedUserDepositorResponse>
     public string? CacheGroupKey => "GetUserDepositors";
 
     public UpdateUserDepositorDto UserDepositor { get; set; }
-    public UserDepositorDetailLevel DetailLevel { get; set; }
+    public UserDepositorsDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateUserDepositorCommandHandler : IRequestHandler<UpdateUserDepositorCommand, UpdatedUserDepositorResponse>

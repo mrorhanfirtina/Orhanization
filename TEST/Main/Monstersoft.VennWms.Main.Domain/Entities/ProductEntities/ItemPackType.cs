@@ -16,9 +16,9 @@ public class ItemPackType : Entity<Guid>
     public decimal? NetWeight { get; set; }
     public int WeightUnitId { get; set; }
     public virtual ItemUnit? ItemUnit { get; set; }
-    public virtual Unit LenghtUnit { get; set; }
-    public virtual Unit VolumeUnit { get; set; }
-    public virtual Unit WeightUnit { get; set; }
+    public virtual Unit? LenghtUnit { get; set; }
+    public virtual Unit? VolumeUnit { get; set; }
+    public virtual Unit? WeightUnit { get; set; }
 
     public ItemPackType()
     {

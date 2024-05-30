@@ -22,7 +22,7 @@ public class GetByIdZoneQuery : IRequest<GetByIdZoneResponse>, ITransactionalReq
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public ZoneDetailLevel DetailLevel { get; set; }
+    public ZonesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdZoneQueryHandler : IRequestHandler<GetByIdZoneQuery, GetByIdZoneResponse>

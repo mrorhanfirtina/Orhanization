@@ -31,7 +31,7 @@ public class GetListPurchaseOrderQuery : IRequest<GetListResponse<GetListPurchas
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public PurchaseOrderDetailLevel DetailLevel { get; set; }
+    public PurchaseOrdersDetailLevel DetailLevel { get; set; }
 
 
     public class GetListPurchaseOrderQueryHandler : IRequestHandler<GetListPurchaseOrderQuery, GetListResponse<GetListPurchaseOrderListItemDto>>

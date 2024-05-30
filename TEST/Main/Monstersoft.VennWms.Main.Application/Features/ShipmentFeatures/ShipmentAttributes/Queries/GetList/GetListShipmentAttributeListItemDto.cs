@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributes.Queries.GetList;
+﻿using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributes.Queries.GetList;
 
 public class GetListShipmentAttributeListItemDto
 {
@@ -10,5 +12,6 @@ public class GetListShipmentAttributeListItemDto
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public ShipmentAttributesDepositorCompanyResponseDto DepositorCompany { get; set; }
+    public ShipmentAttributesAttributeInputTypeResponseDto? AttributeInputType { get; set; }
 }

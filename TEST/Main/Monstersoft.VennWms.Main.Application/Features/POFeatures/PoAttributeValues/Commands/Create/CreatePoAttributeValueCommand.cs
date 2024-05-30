@@ -30,7 +30,7 @@ public class CreatePoAttributeValueCommand : IRequest<CreatedPoAttributeValueRes
     public string? CacheGroupKey => "GetPoAttributeValues";
 
     public CreatePoAttributeValueDto PoAttributeValue { get; set; }
-    public PoAttributeValueDetailLevel DetailLevel { get; set; }
+    public PoAttributeValuesDetailLevel DetailLevel { get; set; }
 
 
     public class CreatePoAttributeValueCommandHandler : IRequestHandler<CreatePoAttributeValueCommand, CreatedPoAttributeValueResponse>

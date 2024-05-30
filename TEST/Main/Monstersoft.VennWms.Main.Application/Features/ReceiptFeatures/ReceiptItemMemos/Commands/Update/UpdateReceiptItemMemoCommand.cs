@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItemMemos.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItemMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItemMemos.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItemMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,7 @@ public class UpdateReceiptItemMemoCommand : IRequest<UpdatedReceiptItemMemoRespo
     public string? CacheGroupKey => "GetReceiptItemMemos";
 
     public UpdateReceiptItemMemoDto ReceiptItemMemo { get; set; }
+    public ReceiptItemMemosDetailLevel? DetailLevel { get; set; }
 
 
     public class UpdateReceiptItemMemoCommandHandler : IRequestHandler<UpdateReceiptItemMemoCommand, UpdatedReceiptItemMemoResponse>
@@ -53,8 +58,46 @@ public class UpdateReceiptItemMemoCommand : IRequest<UpdatedReceiptItemMemoRespo
             ReceiptItemMemo? receiptItemMemo = _mapper.Map(request.ReceiptItemMemo, currentReceiptItemMemo);
             receiptItemMemo.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedReceiptItemMemoResponse>(await _receiptItemMemoRepository.UpdateAsync(receiptItemMemo));
+            await _receiptItemMemoRepository.UpdateAsync(receiptItemMemo);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _receiptItemMemoRepository.GetAsync(predicate: x => x.Id == receiptItemMemo.Id,
+                include: x =>
+                {
+                    IQueryable<ReceiptItemMemo> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReceiptItem)
+                    {
+                        query = query.Include(y => y.ReceiptItem);
+
+                        if (detailLevel.ReceiptItemDetailLevel.IncludeReceipt)
+                        {
+                            query = query.Include(y => y.ReceiptItem).ThenInclude(y => y.Receipt);
+                        }
+
+                        if (detailLevel.ReceiptItemDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.ReceiptItem).ThenInclude(y => y.Product);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReceiptItemMemo, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedReceiptItemMemoResponse>(response);
+            }
+            else
+            {
+                var response = await _receiptItemMemoRepository.GetAsync(predicate: x => x.Id == receiptItemMemo.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedReceiptItemMemoResponse>(response);
+            }
         }
     }
 }

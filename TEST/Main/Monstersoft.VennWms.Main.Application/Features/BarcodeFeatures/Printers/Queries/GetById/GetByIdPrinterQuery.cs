@@ -23,7 +23,7 @@ public class GetByIdPrinterQuery : IRequest<GetByIdPrinterResponse>, ITransactio
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public PrinterDetailLevel DetailLevel { get; set; }
+    public PrintersDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdPrinterQueryHandler : IRequestHandler<GetByIdPrinterQuery, GetByIdPrinterResponse>

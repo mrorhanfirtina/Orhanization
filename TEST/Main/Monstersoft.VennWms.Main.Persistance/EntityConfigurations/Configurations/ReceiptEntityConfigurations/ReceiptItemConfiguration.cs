@@ -31,8 +31,8 @@ public class ReceiptItemConfiguration : IEntityTypeConfiguration<ReceiptItem>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.ReceiptItemMemos).WithOne().HasForeignKey(p => p.ReceiptItemId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.ReceiptItmStockAttrValues).WithOne().HasForeignKey(p => p.ReceiptItemId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ReceiptItemMemos).WithOne(p => p.ReceiptItem).HasForeignKey(p => p.ReceiptItemId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ReceiptItmStockAttrValues).WithOne(p => p.ReceiptItem).HasForeignKey(p => p.ReceiptItemId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(p => p.Product).WithMany().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.ItemUnit).WithMany().HasForeignKey(p => p.ItemUnitId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Status).WithMany().HasForeignKey(p => p.StatusId).OnDelete(DeleteBehavior.Restrict);

@@ -28,7 +28,7 @@ public class GetListByDynamicProductStockAttributeQuery : IRequest<GetListRespon
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public ProductStockAttributeDetailLevel DetailLevel { get; set; }
+    public ProductStockAttributesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicProductStockAttributeQueryHandler : IRequestHandler<GetListByDynamicProductStockAttributeQuery, GetListResponse<GetListByDynamicProductStockAttributeListItemDto>>

@@ -23,7 +23,7 @@ public class GetByCodeSiteQuery : IRequest<GetByCodeSiteResponse>, ITransactiona
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public SiteDetailLevel DetailLevel { get; set; }
+    public SitesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeSiteQueryHandler : IRequestHandler<GetByCodeSiteQuery, GetByCodeSiteResponse>

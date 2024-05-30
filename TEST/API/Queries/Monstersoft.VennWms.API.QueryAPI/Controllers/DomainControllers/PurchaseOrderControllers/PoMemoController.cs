@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Monstersoft.VennWms.API.QueryAPI.Controllers.Base;
+using Monstersoft.VennWms.API.QueryAPI.Models.DynamicModels.PurchaseOrderDynamicModels;
+using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Queries.GetById;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Queries.GetListByDynamic;
 using Orhanization.Core.Application.Requests;
 using Orhanization.Core.Application.Response;
-using Orhanization.Core.Persistence.Dynamic;
 
 
 namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.PurchaseOrderControllers;
@@ -12,9 +13,9 @@ namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.Purchas
 public class PoMemoController : BaseController
 {
     [HttpGet("GetById/{id}")]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
+    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id, [FromBody] PoMemosDetailLevel detailLevel)
     {
-        GetByIdPoMemoQuery query = new() { Id = id };
+        GetByIdPoMemoQuery query = new() { Id = id, DetailLevel = detailLevel };
 
         GetByIdPoMemoResponse result = await Mediator.Send(query);
 
@@ -22,9 +23,9 @@ public class PoMemoController : BaseController
     }
 
     [HttpPost("GetListByDynamic")]
-    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] DynamicQuery? dynamicQuery = null)
+    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] PoMemoDynamicModel? dynamicModel = null)
     {
-        GetListByDynamicPoMemoQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicQuery };
+        GetListByDynamicPoMemoQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicModel.DynamicQuery, DetailLevel = dynamicModel.DetailLevel };
         GetListResponse<GetListByDynamicPoMemoListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

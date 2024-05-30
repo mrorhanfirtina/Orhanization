@@ -31,8 +31,8 @@ public class ReturnItemConfiguration : IEntityTypeConfiguration<ReturnItem>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.ReturnItemMemos).WithOne().HasForeignKey(p => p.ReturnItemId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.ReturnItmStockAttrValues).WithOne().HasForeignKey(p => p.ReturnItemId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ReturnItemMemos).WithOne(p => p.ReturnItem).HasForeignKey(p => p.ReturnItemId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ReturnItmStockAttrValues).WithOne(p => p.ReturnItem).HasForeignKey(p => p.ReturnItemId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(p => p.Product).WithMany().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.ItemUnit).WithMany().HasForeignKey(p => p.ItemUnitId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Status).WithMany().HasForeignKey(p => p.StatusId).OnDelete(DeleteBehavior.Restrict);

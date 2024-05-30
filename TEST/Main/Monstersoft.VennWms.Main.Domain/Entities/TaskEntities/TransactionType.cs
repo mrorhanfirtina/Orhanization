@@ -1,5 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
-using Orhanization.Core.Persistence.Repositories;
+﻿using Orhanization.Core.Persistence.Repositories;
 
 namespace Monstersoft.VennWms.Main.Domain.Entities.TaskEntities;
 

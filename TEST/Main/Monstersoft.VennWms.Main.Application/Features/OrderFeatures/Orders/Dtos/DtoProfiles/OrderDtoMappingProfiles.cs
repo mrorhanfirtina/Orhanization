@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItems.Dtos.ResponseDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Dtos.ResponseDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Dtos.UpdateDtos;
@@ -44,6 +45,7 @@ public class OrderDtoMappingProfiles : Profile
         CreateMap<Status, OrderStatusResponseDto>().ReverseMap();
         CreateMap<StockAttribute, OrderStockAttributeResponseDto>().ReverseMap();
         CreateMap<Unit, OrderUnitResponseDto>().ReverseMap();
+        CreateMap<ItemUnit, OrderItemUnitResponseDto>().ReverseMap();
 
     }
 }

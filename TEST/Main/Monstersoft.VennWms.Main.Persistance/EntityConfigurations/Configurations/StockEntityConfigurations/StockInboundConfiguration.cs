@@ -31,7 +31,7 @@ public class StockInboundConfiguration : IEntityTypeConfiguration<StockInbound>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasOne(p => p.ItemUnit).WithMany().HasForeignKey(p => p.CuItemUnitId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.CuItemUnit).WithMany().HasForeignKey(p => p.CuItemUnitId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Receipt).WithMany().HasForeignKey(p => p.ReceiptId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Return).WithMany().HasForeignKey(p => p.ReturnId).OnDelete(DeleteBehavior.Restrict);
         #endregion

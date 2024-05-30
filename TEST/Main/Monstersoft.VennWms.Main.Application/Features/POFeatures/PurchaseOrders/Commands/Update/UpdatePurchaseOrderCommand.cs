@@ -29,7 +29,7 @@ public class UpdatePurchaseOrderCommand : IRequest<UpdatedPurchaseOrderResponse>
     public string? CacheGroupKey => "GetPurchaseOrders";
 
     public UpdatePurchaseOrderDto PurchaseOrder { get; set; }
-    public PurchaseOrderDetailLevel DetailLevel { get; set; }
+    public PurchaseOrdersDetailLevel DetailLevel { get; set; }
 
 
     public class UpdatePurchaseOrderCommandHandler : IRequestHandler<UpdatePurchaseOrderCommand, UpdatedPurchaseOrderResponse>

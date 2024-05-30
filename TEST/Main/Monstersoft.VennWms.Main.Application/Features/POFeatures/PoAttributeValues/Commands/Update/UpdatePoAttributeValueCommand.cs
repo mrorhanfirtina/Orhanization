@@ -29,7 +29,7 @@ public class UpdatePoAttributeValueCommand : IRequest<UpdatedPoAttributeValueRes
     public string? CacheGroupKey => "GetPoAttributeValues";
 
     public UpdatePoAttributeValueDto PoAttributeValue { get; set; }
-    public PoAttributeValueDetailLevel DetailLevel { get; set; }
+    public PoAttributeValuesDetailLevel DetailLevel { get; set; }
 
 
     public class UpdatePoAttributeValueCommandHandler : IRequestHandler<UpdatePoAttributeValueCommand, UpdatedPoAttributeValueResponse>

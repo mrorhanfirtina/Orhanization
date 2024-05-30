@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockUnsuitReasons.Dtos.CreateDtos;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockUnsuitReasons.Dtos.ResponseDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockUnsuitReasons.Dtos.UpdateDtos;
+using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 
 namespace Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockUnsuitReasons.Dtos.DtoProfiles;
@@ -13,5 +15,8 @@ public class StockUnsuitReasonDtoMappingProfiles : Profile
         CreateMap<StockUnsuitReason, CreateStockUnsuitReasonSubDto>().ReverseMap();
         CreateMap<StockUnsuitReason, UpdateStockUnsuitReasonDto>().ReverseMap();
         CreateMap<StockUnsuitReason, UpdateStockUnsuitReasonSubDto>().ReverseMap();
+
+        CreateMap<Stock, StockUnsuitReasonsStockResponseDto>().ReverseMap();
+        CreateMap<UnsuitReason, StockUnsuitReasonsUnsuitReasonResponseDto>().ReverseMap();
     }
 }

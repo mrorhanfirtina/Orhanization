@@ -29,7 +29,7 @@ public class CreateLocationDepositorCommand : IRequest<CreatedLocationDepositorR
     public string? CacheGroupKey => "GetLocationDepositors";
 
     public CreateLocationDepositorDto LocationDepositor { get; set; }
-    public LocationDepositorDetailLevel DetailLevel { get; set; }
+    public LocationDepositorsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateLocationDepositorCommandHandler : IRequestHandler<CreateLocationDepositorCommand, CreatedLocationDepositorResponse>

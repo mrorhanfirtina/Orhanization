@@ -27,7 +27,7 @@ public class GetListByDynamicLocationUnitConstraintQuery : IRequest<GetListRespo
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public LocationUnitConstraintDetailLevel DetailLevel { get; set; }
+    public LocationUnitConstraintsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicLocationUnitConstraintQueryHandler : IRequestHandler<GetListByDynamicLocationUnitConstraintQuery, GetListResponse<GetListByDynamicLocationUnitConstraintListItemDto>>

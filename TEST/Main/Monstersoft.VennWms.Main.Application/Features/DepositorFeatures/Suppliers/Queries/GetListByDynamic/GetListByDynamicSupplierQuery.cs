@@ -28,7 +28,7 @@ public class GetListByDynamicSupplierQuery : IRequest<GetListResponse<GetListByD
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public SupplierDetailLevel DetailLevel { get; set; }
+    public SuppliersDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicSupplierQueryHandler : IRequestHandler<GetListByDynamicSupplierQuery, GetListResponse<GetListByDynamicSupplierListItemDto>>

@@ -23,7 +23,7 @@ public class GetByIdPoAttributeQuery : IRequest<GetByIdPoAttributeResponse>, ITr
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public PoAttributeDetailLevel DetailLevel { get; set; }
+    public PoAttributesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdPoAttributeQueryHandler : IRequestHandler<GetByIdPoAttributeQuery, GetByIdPoAttributeResponse>

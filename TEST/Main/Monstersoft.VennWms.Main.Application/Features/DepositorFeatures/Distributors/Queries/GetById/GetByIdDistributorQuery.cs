@@ -23,7 +23,7 @@ public class GetByIdDistributorQuery : IRequest<GetByIdDistributorResponse>, ITr
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public DistributorDetailLevel DetailLevel { get; set; }
+    public DistributorsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdDisturbitorQueryHandler : IRequestHandler<GetByIdDistributorQuery, GetByIdDistributorResponse>

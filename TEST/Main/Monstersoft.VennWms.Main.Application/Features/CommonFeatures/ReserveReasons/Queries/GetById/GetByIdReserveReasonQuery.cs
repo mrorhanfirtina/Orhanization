@@ -22,7 +22,7 @@ public class GetByIdReserveReasonQuery : IRequest<GetByIdReserveReasonResponse>,
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public Guid Id { get; set; }
-    public ReserveReasonDetailLevel DetailLevel { get; set; }
+    public ReserveReasonsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdReserveReasonQueryHandler : IRequestHandler<GetByIdReserveReasonQuery, GetByIdReserveReasonResponse>

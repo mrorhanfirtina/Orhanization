@@ -28,7 +28,7 @@ public class UpdateLocationCommand : IRequest<UpdatedLocationResponse>, ITransac
     public string? CacheGroupKey => "GetLocations";
 
     public UpdateLocationDto Location { get; set; }
-    public LocationDetailLevel DetailLevel { get; set; }
+    public LocationsDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateLocationCommandHandler : IRequestHandler<UpdateLocationCommand, UpdatedLocationResponse>

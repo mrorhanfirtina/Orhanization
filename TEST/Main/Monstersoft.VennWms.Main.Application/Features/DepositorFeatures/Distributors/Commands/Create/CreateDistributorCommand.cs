@@ -30,7 +30,7 @@ public class CreateDistributorCommand : IRequest<CreatedDistributorResponse>, IT
     public string? CacheGroupKey => "GetDisturbitors";
 
     public CreateDistributorDto Disturbitor { get; set; }
-    public DistributorDetailLevel DetailLevel { get; set; }
+    public DistributorsDetailLevel DetailLevel { get; set; }
 
 
 

@@ -36,8 +36,8 @@ public class ShipmentConfiguration : IEntityTypeConfiguration<Shipment>
         #region İlişki Tanımları
         builder.HasOne(p => p.Distributor).WithMany().HasForeignKey(p => p.DistributorId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Branch).WithMany().HasForeignKey(p => p.BranchId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasMany(p => p.ShipmentAttributeValues).WithOne().HasForeignKey(p => p.ShipmentId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.ShipmentMemos).WithOne().HasForeignKey(p => p.ShipmentId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ShipmentAttributeValues).WithOne(p => p.Shipment).HasForeignKey(p => p.ShipmentId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ShipmentMemos).WithOne(p => p.Shipment).HasForeignKey(p => p.ShipmentId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(p => p.Depositor).WithMany().HasForeignKey(p => p.DepositorId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion

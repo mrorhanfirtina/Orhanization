@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Monstersoft.VennWms.API.CommandAPI;
 using Monstersoft.VennWms.Main.Application.Registrations;
 using Monstersoft.VennWms.Main.Persistance.Registrations;
 using Orhanization.Core.CrossCuttingConcerns.Exceptions.Extensions;

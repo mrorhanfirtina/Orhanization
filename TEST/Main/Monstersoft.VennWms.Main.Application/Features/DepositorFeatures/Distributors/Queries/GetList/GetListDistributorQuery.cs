@@ -31,7 +31,7 @@ public class GetListDistributorQuery : IRequest<GetListResponse<GetListDistribut
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public DistributorDetailLevel DetailLevel { get; set; }
+    public DistributorsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListDisturbitorQueryHandler : IRequestHandler<GetListDistributorQuery, GetListResponse<GetListDistributorListItemDto>>

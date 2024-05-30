@@ -28,7 +28,7 @@ public class UpdateLocationProductAbcCategoryCommand : IRequest<UpdatedLocationP
     public string? CacheGroupKey => "GetLocationProductAbcCategorys";
 
     public UpdateLocationProductAbcCategoryDto LocationProductAbcCategory { get; set; }
-    public LocationProductAbcCategoryDetailLevel DetailLevel { get; set; }
+    public LocationProductAbcCategoriesDetailLevel DetailLevel { get; set; }
 
     public class UpdateLocationProductAbcCategoryCommandHandler : IRequestHandler<UpdateLocationProductAbcCategoryCommand, UpdatedLocationProductAbcCategoryResponse>
     {

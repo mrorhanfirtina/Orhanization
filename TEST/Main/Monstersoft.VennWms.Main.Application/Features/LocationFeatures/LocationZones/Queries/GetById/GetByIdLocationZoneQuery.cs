@@ -23,7 +23,7 @@ public class GetByIdLocationZoneQuery : IRequest<GetByIdLocationZoneResponse>, I
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public LocationZoneDetailLevel DetailLevel { get; set; }
+    public LocationZonesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdLocationZoneQueryHandler : IRequestHandler<GetByIdLocationZoneQuery, GetByIdLocationZoneResponse>

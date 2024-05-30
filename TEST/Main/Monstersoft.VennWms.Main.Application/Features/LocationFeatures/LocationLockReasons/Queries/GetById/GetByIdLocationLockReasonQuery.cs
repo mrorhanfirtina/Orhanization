@@ -22,7 +22,7 @@ public class GetByIdLocationLockReasonQuery : IRequest<GetByIdLocationLockReason
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public LocationLockReasonDetailLevel DetailLevel { get; set; }
+    public LocationLockReasonsDetailLevel DetailLevel { get; set; }
 
     public class GetByIdLocationLockReasonQueryHandler : IRequestHandler<GetByIdLocationLockReasonQuery, GetByIdLocationLockReasonResponse>
     {

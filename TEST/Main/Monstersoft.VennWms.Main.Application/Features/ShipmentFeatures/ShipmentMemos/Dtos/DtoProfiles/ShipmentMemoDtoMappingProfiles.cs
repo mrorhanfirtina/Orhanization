@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentMemos.Dtos.CreateDtos;
+using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentMemos.Dtos.ResponseDtos;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentMemos.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 
@@ -13,5 +14,7 @@ public class ShipmentMemoDtoMappingProfiles : Profile
         CreateMap<ShipmentMemo, CreateShipmentMemoSubDto>().ReverseMap();
         CreateMap<ShipmentMemo, UpdateShipmentMemoDto>().ReverseMap();
         CreateMap<ShipmentMemo, UpdateShipmentMemoSubDto>().ReverseMap();
+
+        CreateMap<Shipment, ShipmentMemosShipmentResponseDto>().ReverseMap();
     }
 }

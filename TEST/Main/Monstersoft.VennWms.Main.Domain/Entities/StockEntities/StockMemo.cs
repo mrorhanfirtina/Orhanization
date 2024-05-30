@@ -9,6 +9,7 @@ public class StockMemo : Entity<Guid>
     public string Text { get; set; }
     public DateTime InputDate { get; set; }
     public DateTime? EditDate { get; set; }
+    public virtual Stock? Stock { get; set; }
 
     public StockMemo()
     {

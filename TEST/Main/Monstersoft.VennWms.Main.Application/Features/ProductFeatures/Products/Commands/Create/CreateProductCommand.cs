@@ -30,7 +30,7 @@ public class CreateProductCommand : IRequest<CreatedProductResponse>, ITransacti
     public string? CacheGroupKey => "GetProducts";
 
     public CreateProductDto Product { get; set; }
-    public ProductDetailLevel DetailLevel { get; set; }
+    public ProductsDetailLevel DetailLevel { get; set; }
 
 
 

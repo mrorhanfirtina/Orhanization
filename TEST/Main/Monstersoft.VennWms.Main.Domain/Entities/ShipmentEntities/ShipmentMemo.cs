@@ -9,6 +9,7 @@ public class ShipmentMemo : Entity<Guid>
     public string Text { get; set; }
     public DateTime InputDate { get; set; }
     public DateTime? EditDate { get; set; }
+    public virtual Shipment? Shipment { get; set; }
 
     public ShipmentMemo()
     {

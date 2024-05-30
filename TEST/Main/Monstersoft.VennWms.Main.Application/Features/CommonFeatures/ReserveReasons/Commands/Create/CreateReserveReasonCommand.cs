@@ -28,7 +28,7 @@ public class CreateReserveReasonCommand : IRequest<CreatedReserveReasonResponse>
     public string[] Roles => [Admin, User, Add, Write];
 
     public CreateReserveReasonDto ReserveReason { get; set; }
-    public ReserveReasonDetailLevel DetailLevel { get; set; }
+    public ReserveReasonsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateReserveReasonCommandHandler : IRequestHandler<CreateReserveReasonCommand, CreatedReserveReasonResponse>

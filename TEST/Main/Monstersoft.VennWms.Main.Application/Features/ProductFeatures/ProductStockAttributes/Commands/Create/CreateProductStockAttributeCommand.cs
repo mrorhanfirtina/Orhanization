@@ -27,7 +27,7 @@ public class CreateProductStockAttributeCommand : IRequest<CreatedProductStockAt
     public string? CacheGroupKey => "GetProductStockAttributes";
 
     public CreateProductStockAttributeDto ProductStockAttribute { get; set; }
-    public ProductStockAttributeDetailLevel DetailLevel { get; set; }
+    public ProductStockAttributesDetailLevel DetailLevel { get; set; }
 
 
 

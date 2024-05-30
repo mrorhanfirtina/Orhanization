@@ -29,7 +29,7 @@ public class UpdatePoTypeCommand : IRequest<UpdatedPoTypeResponse>, ITransaction
     public string? CacheGroupKey => "GetPoTypes";
 
     public UpdatePoTypeDto PoType { get; set; }
-    public PoTypeDetailLevel DetailLevel { get; set; }
+    public PoTypesDetailLevel DetailLevel { get; set; }
 
 
     public class UpdatePoTypeCommandHandler : IRequestHandler<UpdatePoTypeCommand, UpdatedPoTypeResponse>

@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItems.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItems.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReturnRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +28,7 @@ public class GetListByDynamicReturnItemQuery : IRequest<GetListResponse<GetListB
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public ReturnItemsDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListByDynamicReturnItemQueryHandler : IRequestHandler<GetListByDynamicReturnItemQuery, GetListResponse<GetListByDynamicReturnItemListItemDto>>
@@ -45,13 +49,84 @@ public class GetListByDynamicReturnItemQuery : IRequest<GetListResponse<GetListB
             _returnItemBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ReturnItem> returnItemList = await _returnItemRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            include: m => m.Include(x => x.ReturnItemMemos).Include(x => x.ReturnItmStockAttrValues),
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ReturnItem> returnItemList = await _returnItemRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<ReturnItem> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicReturnItemListItemDto>>(returnItemList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReturn)
+                    {
+                        query = query.Include(y => y.Return);
+                    }
+
+                    if (detailLevel.IncludeReturnItemMemo)
+                    {
+                        query = query.Include(y => y.ReturnItemMemos);
+                    }
+
+                    if (detailLevel.IncludeReturnItmStockAttrValue)
+                    {
+                        query = query.Include(y => y.ReturnItmStockAttrValues);
+
+                        var returnItmStockAttrValueDetailLevel = detailLevel.ReturnItmStockAttrValueDetailLevel;
+
+                        if (returnItmStockAttrValueDetailLevel.IncludeStockAttribute)
+                        {
+                            query = query.Include(y => y.ReturnItmStockAttrValues).ThenInclude(y => y.StockAttribute);
+
+                            var stockAttributeDetailLevel = returnItmStockAttrValueDetailLevel.StockAttributeDetailLevel;
+
+                            if (stockAttributeDetailLevel.IncludeAttributeInputType)
+                            {
+                                query = query.Include(y => y.ReturnItmStockAttrValues).ThenInclude(y => y.StockAttribute).ThenInclude(y => y.AttributeInputType);
+                            }
+                        }
+                    }
+
+                    if (detailLevel.IncludeProduct)
+                    {
+                        query = query.Include(y => y.Product);
+                    }
+
+                    if (detailLevel.IncludeItemUnit)
+                    {
+                        query = query.Include(y => y.ItemUnit);
+
+                        var itemUnitDetailLevel = detailLevel.ItemUnitDetailLevel;
+
+                        if (itemUnitDetailLevel.IncludeUnit)
+                        {
+                            query = query.Include(y => y.ItemUnit).ThenInclude(y => y.Unit);
+                        }
+                    }
+
+                    if (detailLevel.IncludeStatus)
+                    {
+                        query = query.Include(y => y.Status);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReturnItem, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReturnItemListItemDto>>(returnItemList);
+            }
+            else
+            {
+                Paginate<ReturnItem> returnItemList = await _returnItemRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReturnItemListItemDto>>(returnItemList);
+            }
         }
     }
 

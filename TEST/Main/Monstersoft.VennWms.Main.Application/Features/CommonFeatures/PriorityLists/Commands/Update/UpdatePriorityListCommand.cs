@@ -28,7 +28,7 @@ public class UpdatePriorityListCommand : IRequest<UpdatedPriorityListResponse>, 
     public string? CacheGroupKey => "GetPriorityLists";
 
     public UpdatePriorityListDto PriorityList { get; set; }
-    public PriorityListDetailLevel DetailLevel { get; set; }
+    public PriorityListsDetailLevel DetailLevel { get; set; }
 
     public class UpdatePriorityListCommandHandler : IRequestHandler<UpdatePriorityListCommand, UpdatedPriorityListResponse>
     {

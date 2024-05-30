@@ -7,7 +7,8 @@ public class ShipmentAttributeValue : Entity<Guid>
     public Guid ShipmentId { get; set; }
     public Guid ShipmentAttributeId { get; set; }
     public string Value { get; set; }
-    public virtual ShipmentAttribute ShipmentAttribute { get; set; }
+    public virtual ShipmentAttribute? ShipmentAttribute { get; set; }
+    public virtual Shipment? Shipment { get; set; }
 
     public ShipmentAttributeValue()
     {

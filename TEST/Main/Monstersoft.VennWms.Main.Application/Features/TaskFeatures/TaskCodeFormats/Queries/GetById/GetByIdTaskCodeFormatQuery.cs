@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskCodeFormats.Constants;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskCodeFormats.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.TaskRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.TaskEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -17,6 +22,7 @@ public class GetByIdTaskCodeFormatQuery : IRequest<GetByIdTaskCodeFormatResponse
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public TaskCodeFormatsDetailLevel? DetailLevel { get; set; }
 
 
     public class GetByIdTaskCodeFormatQueryHandler : IRequestHandler<GetByIdTaskCodeFormatQuery, GetByIdTaskCodeFormatResponse>
@@ -38,7 +44,35 @@ public class GetByIdTaskCodeFormatQuery : IRequest<GetByIdTaskCodeFormatResponse
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdTaskCodeFormatResponse>(await _taskCodeFormatRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdTaskCodeFormatResponse>(await _taskCodeFormatRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<TaskCodeFormat> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeTransactionType)
+                    {
+                        query = query.Include(y => y.TransactionType);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<TaskCodeFormat, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdTaskCodeFormatResponse>(await _taskCodeFormatRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

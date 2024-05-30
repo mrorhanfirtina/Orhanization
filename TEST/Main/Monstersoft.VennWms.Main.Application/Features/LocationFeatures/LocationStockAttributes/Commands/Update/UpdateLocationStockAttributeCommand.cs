@@ -29,7 +29,7 @@ public class UpdateLocationStockAttributeCommand : IRequest<UpdatedLocationStock
     public string? CacheGroupKey => "GetLocationStockAttributes";
 
     public UpdateLocationStockAttributeDto LocationStockAttribute { get; set; }
-    public LocationStockAttributeDetailLevel DetailLevel { get; set; }
+    public LocationStockAttributesDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateLocationStockAttributeCommandHandler : IRequestHandler<UpdateLocationStockAttributeCommand, UpdatedLocationStockAttributeResponse>

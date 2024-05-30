@@ -19,6 +19,7 @@ public class ReceiptConfiguration : IEntityTypeConfiguration<Receipt>
         builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.PurchaseOrderId).HasColumnName("PurchaseOrderId");
         builder.Property(p => p.ReceiptTypeId).HasColumnName("ReceiptTypeId").IsRequired();
+        builder.Property(p => p.SupplierId).HasColumnName("SupplierId");
         builder.Property(p => p.StatusId).HasColumnName("StatusId").IsRequired();
         builder.Property(p => p.InputDate).HasColumnName("InputDate").IsRequired();
         builder.Property(p => p.ExpectedDate).HasColumnName("ExpectedDate");
@@ -30,16 +31,17 @@ public class ReceiptConfiguration : IEntityTypeConfiguration<Receipt>
 
         #region Indexler
         builder.HasIndex(p => p.Id).IsUnique();
-        builder.HasIndex(p => new { p.Code, p.DepositorId, p.DepositorCompanyId, p.PurchaseOrderId, p.ReceiptTypeId, p.StatusId, p.InputDate, p.ExpectedDate, p.ReceiveDate, p.CreatedDate }, name: "IX_Receipts_Areas");
+        builder.HasIndex(p => new { p.Code, p.DepositorId, p.DepositorCompanyId, p.PurchaseOrderId, p.ReceiptTypeId, p.SupplierId , p.StatusId, p.InputDate, p.ExpectedDate, p.ReceiveDate, p.CreatedDate }, name: "IX_Receipts_Areas");
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.ReceiptAttributeValues).WithOne().HasForeignKey(p => p.ReceiptId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.ReceiptItems).WithOne().HasForeignKey(p => p.ReceiptId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany(p => p.ReceiptMemos).WithOne().HasForeignKey(p => p.ReceiptId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ReceiptAttributeValues).WithOne(p => p.Receipt).HasForeignKey(p => p.ReceiptId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ReceiptItems).WithOne(p => p.Receipt).HasForeignKey(p => p.ReceiptId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.ReceiptMemos).WithOne(p => p.Receipt).HasForeignKey(p => p.ReceiptId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(p => p.Status).WithMany().HasForeignKey(p => p.StatusId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Depositor).WithMany().HasForeignKey(p => p.DepositorId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne(p => p.Supplier).WithMany().HasForeignKey(p => p.SupplierId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 
         #region Filtreler

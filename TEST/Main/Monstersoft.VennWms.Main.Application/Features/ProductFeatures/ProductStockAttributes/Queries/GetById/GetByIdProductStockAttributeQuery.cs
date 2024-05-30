@@ -22,7 +22,7 @@ public class GetByIdProductStockAttributeQuery : IRequest<GetByIdProductStockAtt
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public ProductStockAttributeDetailLevel DetailLevel { get; set; }
+    public ProductStockAttributesDetailLevel DetailLevel { get; set; }
 
     public class GetByIdProductStockAttributeQueryHandler : IRequestHandler<GetByIdProductStockAttributeQuery, GetByIdProductStockAttributeResponse>
     {

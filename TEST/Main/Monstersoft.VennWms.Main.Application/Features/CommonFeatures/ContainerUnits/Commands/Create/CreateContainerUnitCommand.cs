@@ -30,7 +30,7 @@ public class CreateContainerUnitCommand : IRequest<CreatedContainerUnitResponse>
 
 
     public CreateContainerUnitDto? ContainerUnit { get; set; }
-    public ContainerUnitDetaillevel DetailLevel { get; set; }
+    public ContainerUnitsDetaillevel DetailLevel { get; set; }
 
 
 

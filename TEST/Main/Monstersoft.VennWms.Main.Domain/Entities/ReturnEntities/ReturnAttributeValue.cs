@@ -7,7 +7,8 @@ public class ReturnAttributeValue : Entity<Guid>
     public Guid ReturnId { get; set; }
     public Guid ReturnAttributeId { get; set; }
     public string Value { get; set; }
-    public virtual ReturnAttribute ReturnAttribute { get; set; }
+    public virtual ReturnAttribute? ReturnAttribute { get; set; }
+    public virtual Return? Return { get; set; }
 
     public ReturnAttributeValue()
     {

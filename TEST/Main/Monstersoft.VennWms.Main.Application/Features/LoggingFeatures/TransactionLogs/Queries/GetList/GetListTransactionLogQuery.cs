@@ -31,7 +31,7 @@ public class GetListTransactionLogQuery : IRequest<GetListResponse<GetListTransa
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public TransactionLogDetailLevel DetailLevel { get; set; }
+    public TransactionLogsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListTransactionLogQueryHandler : IRequestHandler<GetListTransactionLogQuery, GetListResponse<GetListTransactionLogListItemDto>>

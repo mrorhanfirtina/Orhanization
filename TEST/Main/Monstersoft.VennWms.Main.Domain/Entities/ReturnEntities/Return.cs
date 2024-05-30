@@ -16,6 +16,7 @@ public class Return : Entity<Guid>
     public DateTime? ExpectedDate { get; set; }
     public DateTime? ReceiveDate { get; set; }
     public virtual Customer? Customer { get; set; }
+    public virtual ReturnType? ReturnType { get; set; }
     public virtual ICollection<ReturnAttributeValue>? ReturnAttributeValues { get; set; }
     public virtual ICollection<ReturnItem> ReturnItems { get; set; }
     public virtual ICollection<ReturnMemo>? ReturnMemos { get; set; }

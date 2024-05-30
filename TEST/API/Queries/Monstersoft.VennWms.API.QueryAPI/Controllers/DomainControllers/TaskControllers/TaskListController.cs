@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Monstersoft.VennWms.API.QueryAPI.Controllers.Base;
+using Monstersoft.VennWms.API.QueryAPI.Models.DynamicModels.WorkTaskDynamicModels;
+using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskLists.Constants;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskLists.Queries.GetByCode;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskLists.Queries.GetById;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskLists.Queries.GetList;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskLists.Queries.GetListByDynamic;
 using Orhanization.Core.Application.Requests;
 using Orhanization.Core.Application.Response;
-using Orhanization.Core.Persistence.Dynamic;
 
 
 namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.TaskControllers;
@@ -14,9 +15,9 @@ namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.TaskCon
 public class TaskListController : BaseController
 {
     [HttpGet("GetByCode/{code}")]
-    public async Task<IActionResult> GetByCodeAsync([FromRoute] string code)
+    public async Task<IActionResult> GetByCodeAsync([FromRoute] string code, [FromBody] TaskListsDetailLevel detailLevel)
     {
-        GetByCodeTaskListQuery query = new() { Code = code };
+        GetByCodeTaskListQuery query = new() { Code = code, DetailLevel = detailLevel };
 
         GetByCodeTaskListResponse result = await Mediator.Send(query);
 
@@ -24,9 +25,9 @@ public class TaskListController : BaseController
     }
 
     [HttpGet("GetById/{id}")]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
+    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id, [FromBody] TaskListsDetailLevel detailLevel)
     {
-        GetByIdTaskListQuery query = new() { Id = id };
+        GetByIdTaskListQuery query = new() { Id = id, DetailLevel = detailLevel };
 
         GetByIdTaskListResponse result = await Mediator.Send(query);
 
@@ -34,17 +35,17 @@ public class TaskListController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] TaskListsDetailLevel detailLevel)
     {
-        GetListTaskListQuery query = new() { PageRequest = pageRequest };
+        GetListTaskListQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
         GetListResponse<GetListTaskListListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }
 
     [HttpPost("GetListByDynamic")]
-    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] DynamicQuery? dynamicQuery = null)
+    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] TaskListDynamicModel? dynamicModel = null)
     {
-        GetListByDynamicTaskListQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicQuery };
+        GetListByDynamicTaskListQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicModel.DynamicQuery, DetailLevel = dynamicModel.DetailLevel };
         GetListResponse<GetListByDynamicTaskListListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

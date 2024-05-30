@@ -29,7 +29,7 @@ public class CreateLocationLockReasonCommand : IRequest<CreatedLocationLockReaso
     public string? CacheGroupKey => "GetLocationLockReasons";
 
     public CreateLocationLockReasonDto LocationLockReason { get; set; }
-    public LocationLockReasonDetailLevel DetailLevel { get; set; }
+    public LocationLockReasonsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateLocationLockReasonCommandHandler : IRequestHandler<CreateLocationLockReasonCommand, CreatedLocationLockReasonResponse>

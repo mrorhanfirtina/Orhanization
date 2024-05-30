@@ -23,7 +23,7 @@ public class GetByIdStorageSystemQuery : IRequest<GetByIdStorageSystemResponse>,
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public StorageSystemDetailLevel DetailLevel { get; set; }
+    public StorageSystemsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdStorageSystemQueryHandler : IRequestHandler<GetByIdStorageSystemQuery, GetByIdStorageSystemResponse>

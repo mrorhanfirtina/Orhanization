@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributes.Commands.Create;
+﻿using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributes.Commands.Create;
 
 public class CreatedShipmentAttributeResponse
 {
@@ -9,5 +11,6 @@ public class CreatedShipmentAttributeResponse
     public bool IsNecessary { get; set; }
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
-
+    public ShipmentAttributesDepositorCompanyResponseDto DepositorCompany { get; set; }
+    public ShipmentAttributesAttributeInputTypeResponseDto? AttributeInputType { get; set; }
 }

@@ -28,7 +28,7 @@ public class GetListByDynamicProductQuery : IRequest<GetListResponse<GetListByDy
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public ProductDetailLevel DetailLevel { get; set; }
+    public ProductsDetailLevel DetailLevel { get; set; }
 
 
 

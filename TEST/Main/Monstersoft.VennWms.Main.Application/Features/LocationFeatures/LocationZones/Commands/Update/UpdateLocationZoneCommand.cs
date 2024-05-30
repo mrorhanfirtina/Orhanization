@@ -29,7 +29,7 @@ public class UpdateLocationZoneCommand : IRequest<UpdatedLocationZoneResponse>, 
     public string? CacheGroupKey => "GetLocationZones";
 
     public UpdateLocationZoneDto LocationZone { get; set; }
-    public LocationZoneDetailLevel DetailLevel { get; set; }
+    public LocationZonesDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateLocationZoneCommandHandler : IRequestHandler<UpdateLocationZoneCommand, UpdatedLocationZoneResponse>

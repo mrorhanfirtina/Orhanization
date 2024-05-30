@@ -28,7 +28,7 @@ public class GetListByDynamicLockReasonQuery : IRequest<GetListResponse<GetListB
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public LockReasonDetailLevel DetailLevel { get; set; }
+    public LockReasonsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicLockReasonQueryHandler : IRequestHandler<GetListByDynamicLockReasonQuery, GetListResponse<GetListByDynamicLockReasonListItemDto>>

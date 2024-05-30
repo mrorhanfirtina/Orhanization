@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockInbounds.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockInbounds.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockInbounds.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +27,7 @@ public class CreateStockInboundCommand : IRequest<CreatedStockInboundResponse>, 
     public string? CacheGroupKey => "GetStockInbounds";
 
     public CreateStockInboundDto StockInbound { get; set; }
+    public StockInboundsDetailLevel? DetailLevel { get; set; }
 
 
     public class CreateStockInboundCommandHandler : IRequestHandler<CreateStockInboundCommand, CreatedStockInboundResponse>
@@ -48,7 +52,58 @@ public class CreateStockInboundCommand : IRequest<CreatedStockInboundResponse>, 
             stockInbound.Id = Guid.NewGuid();
             stockInbound.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedStockInboundResponse>(await _stockInboundRepository.AddAsync(stockInbound));
+            await _stockInboundRepository.AddAsync(stockInbound);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _stockInboundRepository.GetAsync(predicate: x => x.Id == stockInbound.Id,
+                include: x =>
+                {
+                    IQueryable<StockInbound> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReceipt)
+                    {
+                        query = query.Include(y => y.Receipt);
+                    }
+
+                    if (detailLevel.IncludeReturn)
+                    {
+                        query = query.Include(y => y.Return);
+                    }
+
+                    if (detailLevel.IncludeStock)
+                    {
+                        query = query.Include(y => y.Stock);
+                    }
+
+                    if (detailLevel.IncludeItemUnit)
+                    {
+                        query = query.Include(y => y.CuItemUnit);
+
+                        var itemUnitDetailLevel = detailLevel.ItemUnitDetailLevel;
+
+                        if (itemUnitDetailLevel.IncludeUnit)
+                        {
+                            query = query.Include(y => y.CuItemUnit).ThenInclude(m => m.Unit);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<StockInbound, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedStockInboundResponse>(response);
+            }
+            else
+            {
+                var response = await _stockInboundRepository.GetAsync(predicate: x => x.Id == stockInbound.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedStockInboundResponse>(response);
+            }
         }
     }
 }

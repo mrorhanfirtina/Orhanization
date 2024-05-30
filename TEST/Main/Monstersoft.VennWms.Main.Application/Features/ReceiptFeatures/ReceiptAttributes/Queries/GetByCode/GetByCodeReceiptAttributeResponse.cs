@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Queries.GetByCode;
+﻿using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Queries.GetByCode;
 
 public class GetByCodeReceiptAttributeResponse
 {
@@ -9,7 +11,7 @@ public class GetByCodeReceiptAttributeResponse
     public Guid DepositorCompanyId { get; set; }
     public bool IsNecessary { get; set; }
     public DateTime CreatedDate { get; set; }
-    public DateTime UpdatedDate { get; set; }
-
+    public ReceiptAttributesAttributeInputTypeResponseDto AttributeInputType { get; set; }
+    public ReceiptAttributesDepositorCompanyResponseDto DepositorCompany { get; set; }
 }
 

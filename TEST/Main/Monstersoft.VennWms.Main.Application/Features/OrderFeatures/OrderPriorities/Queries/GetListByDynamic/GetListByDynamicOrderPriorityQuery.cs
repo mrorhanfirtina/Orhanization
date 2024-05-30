@@ -27,7 +27,7 @@ public class GetListByDynamicOrderPriorityQuery : IRequest<GetListResponse<GetLi
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public OrderPriorityDetailLevel DetailLevel { get; set; }
+    public OrderPrioritiesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicOrderPriorityQueryHandler : IRequestHandler<GetListByDynamicOrderPriorityQuery, GetListResponse<GetListByDynamicOrderPriorityListItemDto>>

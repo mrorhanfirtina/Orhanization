@@ -27,7 +27,7 @@ public class CreateUnitCommand : IRequest<CreatedUnitResponse>, ITransactionalRe
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public CreateUnitDto Unit { get; set; }
-    public UnitDetailLevel DetailLevel { get; set; }
+    public UnitsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateUnitCommandHandler : IRequestHandler<CreateUnitCommand, CreatedUnitResponse>

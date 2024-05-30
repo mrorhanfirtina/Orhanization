@@ -26,7 +26,7 @@ public class UpdateBarcodePrinterCommand : IRequest<UpdatedBarcodePrinterRespons
     public string? CacheGroupKey => "GetBarcodes";
 
     public UpdateBarcodePrinterDto BarcodePrinter { get; set; }
-    public BarcodePrinterDetailLevel DetailLevel { get; set; }
+    public BarcodePrintersDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateBarcodePrinterCommandHandler : IRequestHandler<UpdateBarcodePrinterCommand, UpdatedBarcodePrinterResponse>

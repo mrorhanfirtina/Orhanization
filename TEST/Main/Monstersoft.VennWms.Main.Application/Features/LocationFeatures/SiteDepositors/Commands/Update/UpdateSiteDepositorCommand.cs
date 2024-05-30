@@ -28,7 +28,7 @@ public class UpdateSiteDepositorCommand : IRequest<UpdatedSiteDepositorResponse>
     public string? CacheGroupKey => "GetSiteDepositors";
 
     public UpdateSiteDepositorDto SiteDepositor { get; set; }
-    public SiteDepositorDetailLevel DetailLevel { get; set; }
+    public SiteDepositorsDetailLevel DetailLevel { get; set; }
 
     public class UpdateSiteDepositorCommandHandler : IRequestHandler<UpdateSiteDepositorCommand, UpdatedSiteDepositorResponse>
     {

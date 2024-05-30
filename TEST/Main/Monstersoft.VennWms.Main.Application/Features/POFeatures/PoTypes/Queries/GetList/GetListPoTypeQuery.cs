@@ -31,7 +31,7 @@ public class GetListPoTypeQuery : IRequest<GetListResponse<GetListPoTypeListItem
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public PoTypeDetailLevel DetailLevel { get; set; }
+    public PoTypesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListPoTypeQueryHandler : IRequestHandler<GetListPoTypeQuery, GetListResponse<GetListPoTypeListItemDto>>

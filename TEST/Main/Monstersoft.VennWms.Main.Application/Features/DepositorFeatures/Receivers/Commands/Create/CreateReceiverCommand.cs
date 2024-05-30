@@ -28,7 +28,7 @@ public class CreateReceiverCommand : IRequest<CreatedReceiverResponse>, ITransac
     public string? CacheGroupKey => "GetReceivers";
 
     public CreateReceiverDto Receiver { get; set; }
-    public ReceiverDetailLevel DetailLevel { get; set; }
+    public ReceiversDetailLevel DetailLevel { get; set; }
 
 
     public class CreateReceiverCommandHandler : IRequestHandler<CreateReceiverCommand, CreatedReceiverResponse>

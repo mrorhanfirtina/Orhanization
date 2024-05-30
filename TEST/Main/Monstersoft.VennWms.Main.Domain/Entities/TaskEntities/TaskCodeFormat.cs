@@ -12,7 +12,7 @@ public class TaskCodeFormat : Entity<Guid>
     public int TaskListCounter { get; set; }
     public int TransactionTypeId { get; set; }
     public Guid DepositorCompanyId { get; set; }
-    public virtual TransactionType TransactionType { get; set; }
+    public virtual TransactionType? TransactionType { get; set; }
     public virtual DepositorCompany DepositorCompany { get; set; }
 
     public TaskCodeFormat()

@@ -22,7 +22,7 @@ public class GetByIdLocationUnitConstraintQuery : IRequest<GetByIdLocationUnitCo
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public LocationUnitConstraintDetailLevel DetailLevel { get; set; }
+    public LocationUnitConstraintsDetailLevel DetailLevel { get; set; }
 
     public class GetByIdLocationUnitConstraintQueryHandler : IRequestHandler<GetByIdLocationUnitConstraintQuery, GetByIdLocationUnitConstraintResponse>
     {

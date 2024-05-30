@@ -32,7 +32,7 @@ public class GetListContainerUnitQuery : IRequest<GetListResponse<GetListContain
 
 
     public PageRequest PageRequest { get; set; }
-    public ContainerUnitDetaillevel DetailLevel { get; set; }
+    public ContainerUnitsDetaillevel DetailLevel { get; set; }
 
 
     public class GetListContainerUnitQueryHandler : IRequestHandler<GetListContainerUnitQuery, GetListResponse<GetListContainerUnitListItemDto>>

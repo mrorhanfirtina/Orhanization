@@ -30,7 +30,7 @@ public class CreateStorageSystemCommand : IRequest<CreatedStorageSystemResponse>
     public string? CacheGroupKey => "GetStorageSystems";
 
     public CreateStorageSystemDto StorageSystem { get; set; }
-    public StorageSystemDetailLevel DetailLevel { get; set; }
+    public StorageSystemsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateStorageSystemCommandHandler : IRequestHandler<CreateStorageSystemCommand, CreatedStorageSystemResponse>

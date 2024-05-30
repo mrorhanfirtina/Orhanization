@@ -1,6 +1,4 @@
 ﻿using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Dtos.ResponseDtos;
-using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 
 namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Queries.GetList;
 

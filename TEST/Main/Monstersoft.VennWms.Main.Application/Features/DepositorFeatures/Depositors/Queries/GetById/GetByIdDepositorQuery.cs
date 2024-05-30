@@ -23,7 +23,7 @@ public class GetByIdDepositorQuery : IRequest<GetByIdDepositorResponse>, ITransa
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public DepositorDetailLevel DetailLevel { get; set; }
+    public DepositorsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdDepositorQueryHandler : IRequestHandler<GetByIdDepositorQuery, GetByIdDepositorResponse>

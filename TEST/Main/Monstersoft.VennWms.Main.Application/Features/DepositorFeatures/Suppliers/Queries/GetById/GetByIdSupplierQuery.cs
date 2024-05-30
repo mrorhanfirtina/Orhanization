@@ -23,7 +23,7 @@ public class GetByIdSupplierQuery : IRequest<GetByIdSupplierResponse>, ITransact
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public SupplierDetailLevel DetailLevel { get; set; }
+    public SuppliersDetailLevel DetailLevel { get; set; }
 
     public class GetByIdSupplierQueryHandler : IRequestHandler<GetByIdSupplierQuery, GetByIdSupplierResponse>
     {

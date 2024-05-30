@@ -134,6 +134,8 @@ public static class IQueryableDynamicFilterExtensions
         string navStartPosition = "(";
         string navEndPosition = ")";
         string final = "";
+        string[] lambdaArray = new string[] { "x", "y", "z", "m", "o", "n", "t", "f", "a", "e" };
+        int lambdaIndex = 0;
 
         if (filterOperator == "doesnotcontain")
         {
@@ -149,9 +151,14 @@ public static class IQueryableDynamicFilterExtensions
 
             if (isCollection)
             {
+                string lambda = lambdaArray[lambdaIndex].ToString();
+
+
                 arrayField = arrayField.Replace("[]", "");
-                navStartPosition = navStartPosition + $"{arrayField}.Any(x => x.";
+                navStartPosition = navStartPosition + $"{arrayField}.Any({lambda} => {lambda}.";
                 navEndPosition = navEndPosition + ")";
+
+                lambdaIndex++;
             }
             else
             {

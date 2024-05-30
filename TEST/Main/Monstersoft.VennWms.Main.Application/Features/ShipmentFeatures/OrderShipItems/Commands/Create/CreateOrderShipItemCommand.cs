@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItems.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItems.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItems.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class CreateOrderShipItemCommand : IRequest<CreatedOrderShipItemResponse>
     public string? CacheGroupKey => "GetOrderShipItems";
 
     public CreateOrderShipItemDto OrderShipItem { get; set; }
+    public OrderShipItemsDetailLevel? DetailLevel { get; set; }
 
 
     public class CreateOrderShipItemCommandHandler : IRequestHandler<CreateOrderShipItemCommand, CreatedOrderShipItemResponse>
@@ -47,8 +52,78 @@ public class CreateOrderShipItemCommand : IRequest<CreatedOrderShipItemResponse>
             OrderShipItem? orderShipItem = _mapper.Map<OrderShipItem>(request.OrderShipItem);
 
             orderShipItem.CreatedDate = DateTime.Now;
+            orderShipItem.Id = Guid.NewGuid();
 
-            return _mapper.Map<CreatedOrderShipItemResponse>(await _orderShipItemRepository.AddAsync(orderShipItem));
+            await _orderShipItemRepository.AddAsync(orderShipItem);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _orderShipItemRepository.GetAsync(predicate: x => x.Id == orderShipItem.Id,
+                include: x =>
+                {
+                    IQueryable<OrderShipItem> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeProgressStatus)
+                    {
+                        query = query.Include(y => y.ProgressStatus);
+                    }
+
+                    if (detailLevel.IncludeOrderItem)
+                    {
+                        query = query.Include(y => y.OrderItem);
+
+                        if (detailLevel.OrderItemDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.OrderItem).ThenInclude(y => y.Product);
+                        }
+
+                        if (detailLevel.OrderItemDetailLevel.IncludeItemUnit)
+                        {
+                            query = query.Include(y => y.OrderItem).ThenInclude(y => y.ItemUnit);
+
+                            if (detailLevel.OrderItemDetailLevel.ItemUnitDetailLevel.IncludeUnit)
+                            {
+                                query = query.Include(y => y.OrderItem).ThenInclude(y => y.ItemUnit).ThenInclude(y => y.Unit);
+                            }
+                        }
+                    }
+
+                    if (detailLevel.IncludeOrderShipment)
+                    {
+                        query = query.Include(y => y.OrderShipment);
+
+                        if (detailLevel.OrderShipmentDetailLevel.IncludeShipment)
+                        {
+                            query = query.Include(y => y.OrderShipment).ThenInclude(y => y.Shipment);
+                        }
+                    }
+
+                    if (detailLevel.IncludeOrderShipItemTask)
+                    {
+                        query = query.Include(y => y.OrderShipItemTasks);
+
+                        if (detailLevel.OrderShipItemTaskDetailLevel.IncludeOrderShipItemStock)
+                        {
+                            query = query.Include(y => y.OrderShipItemTasks).ThenInclude(y => y.OrderShipItemStocks);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<OrderShipItem, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedOrderShipItemResponse>(response);
+            }
+            else
+            {
+                var response = await _orderShipItemRepository.GetAsync(predicate: x => x.Id == orderShipItem.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedOrderShipItemResponse>(response);
+            }
         }
     }
 }

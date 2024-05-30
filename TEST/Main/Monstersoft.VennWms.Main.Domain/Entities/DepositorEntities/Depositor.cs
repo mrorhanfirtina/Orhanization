@@ -7,7 +7,7 @@ public class Depositor : Entity<Guid>
     public string Code { get; set; }
     public Guid DepositorCompanyId { get; set; }
     public Guid CompanyId { get; set; }
-    public Company? Company { get; set; }
+    public virtual Company? Company { get; set; }
     public virtual DepositorCompany? DepositorCompany { get; set; }
     public virtual DepositorFeature? DepositorFeature { get; set; }
     public Depositor()

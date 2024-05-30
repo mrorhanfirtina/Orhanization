@@ -7,7 +7,8 @@ namespace Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities
         public Guid ReceiptId { get; set; }
         public Guid ReceiptAttributeId { get; set; }
         public string Value { get; set; }
-        public virtual ReceiptAttribute ReceiptAttribute { get; set; }
+        public virtual ReceiptAttribute? ReceiptAttribute { get; set; }
+        public virtual Receipt? Receipt { get; set; }
 
         public ReceiptAttributeValue()
         {

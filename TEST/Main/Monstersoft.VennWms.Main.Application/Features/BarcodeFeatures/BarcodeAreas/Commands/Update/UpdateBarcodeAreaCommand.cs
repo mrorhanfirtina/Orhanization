@@ -27,7 +27,7 @@ public class UpdateBarcodeAreaCommand : IRequest<UpdatedBarcodeAreaResponse>, IT
     public string? CacheGroupKey => "GetBarcodes";
 
     public UpdateBarcodeAreaDto BarcodeArea { get; set; }
-    public BarcodeAreaDetailLevel? DetailLevel { get; set; }
+    public BarcodeAreasDetailLevel? DetailLevel { get; set; }
 
 
     public class UpdateBarcodeAreaCommandHandler : IRequestHandler<UpdateBarcodeAreaCommand, UpdatedBarcodeAreaResponse>

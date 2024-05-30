@@ -23,7 +23,7 @@ public class GetByCodeSupplierQuery : IRequest<GetByCodeSupplierResponse>, ITran
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public SupplierDetailLevel DetailLevel { get; set; }
+    public SuppliersDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeSupplierQueryHandler : IRequestHandler<GetByCodeSupplierQuery, GetByCodeSupplierResponse>

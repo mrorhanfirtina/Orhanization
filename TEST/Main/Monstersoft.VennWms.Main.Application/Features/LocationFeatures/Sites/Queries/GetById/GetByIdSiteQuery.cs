@@ -23,7 +23,7 @@ public class GetByIdSiteQuery : IRequest<GetByIdSiteResponse>, ITransactionalReq
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public SiteDetailLevel DetailLevel { get; set; }
+    public SitesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdSiteQueryHandler : IRequestHandler<GetByIdSiteQuery, GetByIdSiteResponse>

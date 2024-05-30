@@ -23,7 +23,7 @@ public class GetByIdLogStockQuery : IRequest<GetByIdLogStockResponse>, ITransact
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public LogStockDetailLevel DetailLevel { get; set; }
+    public LogStocksDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdLogStockQueryHandler : IRequestHandler<GetByIdLogStockQuery, GetByIdLogStockResponse>

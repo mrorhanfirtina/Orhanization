@@ -23,7 +23,7 @@ public class GetByCodeLocationQuery : IRequest<GetByCodeLocationResponse>, ITran
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public LocationDetailLevel DetailLevel { get; set; }
+    public LocationsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeLocationQueryHandler : IRequestHandler<GetByCodeLocationQuery, GetByCodeLocationResponse>

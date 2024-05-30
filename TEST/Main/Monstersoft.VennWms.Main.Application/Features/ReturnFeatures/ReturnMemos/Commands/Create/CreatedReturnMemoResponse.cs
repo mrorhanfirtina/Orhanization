@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnMemos.Commands.Create;
+﻿using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnMemos.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnMemos.Commands.Create;
 
 public class CreatedReturnMemoResponse
 {
@@ -7,7 +9,8 @@ public class CreatedReturnMemoResponse
     public string Description { get; set; }
     public string Text { get; set; }
     public DateTime InputDate { get; set; }
-    public DateTime EditDate { get; set; }
+    public DateTime? EditDate { get; set; }
     public DateTime CreatedDate { get; set; }
+    public ReturnMemosReturnResponseDto? Return { get; set; }
 
 }

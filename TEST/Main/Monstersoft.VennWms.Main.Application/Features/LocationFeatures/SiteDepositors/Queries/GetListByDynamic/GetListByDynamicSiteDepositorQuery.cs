@@ -27,7 +27,7 @@ public class GetListByDynamicSiteDepositorQuery : IRequest<GetListResponse<GetLi
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public SiteDepositorDetailLevel DetailLevel { get; set; }
+    public SiteDepositorsDetailLevel DetailLevel { get; set; }
 
     public class GetListByDynamicSiteDepositorQueryHandler : IRequestHandler<GetListByDynamicSiteDepositorQuery, GetListResponse<GetListByDynamicSiteDepositorListItemDto>>
     {

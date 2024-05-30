@@ -27,7 +27,7 @@ public class CreatePriorityListCommand : IRequest<CreatedPriorityListResponse>, 
     public string? CacheGroupKey => "GetPriorityLists";
 
     public CreatePriorityListDto PriorityList { get; set; }
-    public PriorityListDetailLevel DetailLevel { get; set; }
+    public PriorityListsDetailLevel DetailLevel { get; set; }
 
 
     public class CreatePriorityListCommandHandler : IRequestHandler<CreatePriorityListCommand, CreatedPriorityListResponse>

@@ -30,7 +30,7 @@ public class CreateSiteCommand : IRequest<CreatedSiteResponse>, ITransactionalRe
     public string? CacheGroupKey => "GetSites";
 
     public CreateSiteDto Site { get; set; }
-    public SiteDetailLevel DetailLevel { get; set; }
+    public SitesDetailLevel DetailLevel { get; set; }
 
 
     public class CreateSiteCommandHandler : IRequestHandler<CreateSiteCommand, CreatedSiteResponse>

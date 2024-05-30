@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Monstersoft.VennWms.API.QueryAPI.Controllers.Base;
+using Monstersoft.VennWms.API.QueryAPI.Models.DynamicModels.CommonDynamicModels;
+using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Constants;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Queries.GetByCode;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Queries.GetById;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Queries.GetList;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Queries.GetListByDynamic;
 using Orhanization.Core.Application.Requests;
 using Orhanization.Core.Application.Response;
-using Orhanization.Core.Persistence.Dynamic;
 
 
 namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.CommonControllers;
@@ -14,9 +15,9 @@ namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.CommonC
 public class UnsuitReasonController : BaseController
 {
     [HttpGet("GetByCode/{code}")]
-    public async Task<IActionResult> GetByCodeAsync([FromRoute] string code)
+    public async Task<IActionResult> GetByCodeAsync([FromRoute] string code, [FromBody] UnsuitReasonsDetailLevel detailLevel)
     {
-        GetByCodeUnsuitReasonQuery query = new() { Code = code };
+        GetByCodeUnsuitReasonQuery query = new() { Code = code, DetailLevel = detailLevel };
 
         GetByCodeUnsuitReasonResponse result = await Mediator.Send(query);
 
@@ -24,9 +25,9 @@ public class UnsuitReasonController : BaseController
     }
 
     [HttpGet("GetById/{id}")]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
+    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id, [FromBody] UnsuitReasonsDetailLevel detailLevel)
     {
-        GetByIdUnsuitReasonQuery query = new() { Id = id };
+        GetByIdUnsuitReasonQuery query = new() { Id = id, DetailLevel = detailLevel };
 
         GetByIdUnsuitReasonResponse result = await Mediator.Send(query);
 
@@ -34,17 +35,17 @@ public class UnsuitReasonController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] UnsuitReasonsDetailLevel detailLevel)
     {
-        GetListUnsuitReasonQuery query = new() { PageRequest = pageRequest };
+        GetListUnsuitReasonQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
         GetListResponse<GetListUnsuitReasonListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }
 
     [HttpPost("GetListByDynamic")]
-    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] DynamicQuery? dynamicQuery = null)
+    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] UnsuitReasonDynamicModel? dynamicModel = null)
     {
-        GetListByDynamicUnsuitReasonQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicQuery };
+        GetListByDynamicUnsuitReasonQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicModel.DynamicQuery, DetailLevel = dynamicModel.DetailLevel };
         GetListResponse<GetListByDynamicUnsuitReasonListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

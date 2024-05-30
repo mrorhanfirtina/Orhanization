@@ -29,7 +29,7 @@ public class CreateLocationProductConstraintCommand : IRequest<CreatedLocationPr
     public string? CacheGroupKey => "GetLocationProductConstraints";
 
     public CreateLocationProductConstraintDto LocationProductConstraint { get; set; }
-    public LocationProductConstraintDetailLevel DetailLevel { get; set; }
+    public LocationProductConstraintsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateLocationProductConstraintCommandHandler : IRequestHandler<CreateLocationProductConstraintCommand, CreatedLocationProductConstraintResponse>

@@ -23,7 +23,7 @@ public class GetByCodeBarcodeQuery : IRequest<GetByCodeBarcodeResponse>, ITransa
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public BarcodeDetailLevel DetailLevel { get; set; }
+    public BarcodesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeBarcodeQueryHandler : IRequestHandler<GetByCodeBarcodeQuery, GetByCodeBarcodeResponse>

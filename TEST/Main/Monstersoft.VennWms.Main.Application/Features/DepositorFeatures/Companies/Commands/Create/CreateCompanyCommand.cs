@@ -29,7 +29,7 @@ public class CreateCompanyCommand : IRequest<CreatedCompanyResponse>, ITransacti
     public string? CacheGroupKey => "GetCompanies";
 
     public CreateCompanyDto Company { get; set; }
-    public CompanyDetailLevel DetailLevel { get; set; }
+    public CompaniesDetailLevel DetailLevel { get; set; }
 
 
     public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand, CreatedCompanyResponse>

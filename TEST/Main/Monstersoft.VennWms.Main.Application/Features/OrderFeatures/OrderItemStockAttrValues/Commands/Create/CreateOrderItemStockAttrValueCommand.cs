@@ -28,7 +28,7 @@ public class CreateOrderItemStockAttrValueCommand : IRequest<CreatedOrderItemSto
     public string? CacheGroupKey => "GetOrderItemStockAttrValues";
 
     public CreateOrderItemStockAttrValueDto OrderItemStockAttrValue { get; set; }
-    public OrderItemStockAttrValueDetailLevel DetailLevel { get; set; }
+    public OrderItemStockAttrValuesDetailLevel DetailLevel { get; set; }
 
 
     public class CreateOrderItemStockAttrValueCommandHandler : IRequestHandler<CreateOrderItemStockAttrValueCommand, CreatedOrderItemStockAttrValueResponse>

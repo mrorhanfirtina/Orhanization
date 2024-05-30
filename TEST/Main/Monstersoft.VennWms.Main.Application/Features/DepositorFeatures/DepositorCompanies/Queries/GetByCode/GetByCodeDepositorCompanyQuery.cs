@@ -23,7 +23,7 @@ public class GetByCodeDepositorCompanyQuery : IRequest<GetByCodeDepositorCompany
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public DepositorCompanyDetailLevel DetailLevel { get; set; }
+    public DepositorCompaniesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeDepositorCompanyQueryHandler : IRequestHandler<GetByCodeDepositorCompanyQuery, GetByCodeDepositorCompanyResponse>

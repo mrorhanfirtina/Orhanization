@@ -29,7 +29,7 @@ public class UpdateBarcodeCommand : IRequest<UpdatedBarcodeResponse>, ITransacti
 
 
     public UpdateBarcodeDto Barcode { get; set; }
-    public BarcodeDetailLevel DetailLevel { get; set; }
+    public BarcodesDetailLevel DetailLevel { get; set; }
 }
 
 

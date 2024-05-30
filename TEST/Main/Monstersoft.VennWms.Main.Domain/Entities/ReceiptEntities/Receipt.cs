@@ -15,14 +15,18 @@ public class Receipt : Entity<Guid>
     public DateTime? ReceiveDate { get; set; }
     public Guid? PurchaseOrderId { get; set; }
     public Guid ReceiptTypeId { get; set; }
+    public Guid SupplierId { get; set; }
     public int StatusId { get; set; }
+    public virtual ReceiptType? ReceiptType { get; set; }
     public virtual PurchaseOrder? PurchaseOrder { get; set; }
+    public virtual DepositorCompany DepositorCompany { get; set; }
+    public virtual Status Status { get; set; }
+    public virtual Supplier? Supplier { get; set; }
     public virtual ICollection<ReceiptAttributeValue>? ReceiptAttributeValues { get; set; }
     public virtual ICollection<ReceiptItem> ReceiptItems { get; set; }
     public virtual ICollection<ReceiptMemo>? ReceiptMemos { get; set; }
     public virtual Depositor Depositor { get; set; }
-    public virtual DepositorCompany DepositorCompany { get; set; }
-    public virtual Status Status { get; set; }
+
 
     public Receipt()
     {
@@ -31,7 +35,7 @@ public class Receipt : Entity<Guid>
         ReceiptMemos = new HashSet<ReceiptMemo>();
     }
 
-    public Receipt(Guid id, string code, Guid depositorId, Guid depositorCompanyId, DateTime inputDate, Guid purchaseOrderId, Guid receiptTypeId, int statusId) : this()
+    public Receipt(Guid id, string code, Guid depositorId, Guid depositorCompanyId, DateTime inputDate, Guid purchaseOrderId, Guid receiptTypeId, Guid supplierId, int statusId) : this()
     {
         Id = id;
         Code = code;
@@ -41,5 +45,6 @@ public class Receipt : Entity<Guid>
         ReceiptTypeId = receiptTypeId;
         StatusId = statusId;
         DepositorCompanyId = depositorCompanyId;
+        SupplierId = supplierId;
     }
 }

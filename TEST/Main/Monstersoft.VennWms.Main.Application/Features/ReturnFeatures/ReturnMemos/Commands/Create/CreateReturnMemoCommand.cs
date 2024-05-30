@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnMemos.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReturnRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,7 +28,7 @@ public class CreateReturnMemoCommand : IRequest<CreatedReturnMemoResponse>, ITra
     public string? CacheGroupKey => "GetReturnMemos";
 
     public CreateReturnMemoDto ReturnMemo { get; set; }
-
+    public ReturnMemosDetailLevel? DetailLevel { get; set; }
 
     public class CreateReturnMemoCommandHandler : IRequestHandler<CreateReturnMemoCommand, CreatedReturnMemoResponse>
     {
@@ -49,7 +53,36 @@ public class CreateReturnMemoCommand : IRequest<CreatedReturnMemoResponse>, ITra
             returnMemo.Id = Guid.NewGuid();
             returnMemo.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedReturnMemoResponse>(await _returnMemoRepository.AddAsync(returnMemo));
+            await _returnMemoRepository.AddAsync(returnMemo);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _returnMemoRepository.GetAsync(predicate: x => x.Id == returnMemo.Id,
+                include: x =>
+                {
+                    IQueryable<ReturnMemo> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReturn)
+                    {
+                        query = query.Include(y => y.Return);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReturnMemo, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReturnMemoResponse>(response);
+            }
+            else
+            {
+                var response = await _returnMemoRepository.GetAsync(predicate: x => x.Id == returnMemo.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReturnMemoResponse>(response);
+            }
         }
     }
 }

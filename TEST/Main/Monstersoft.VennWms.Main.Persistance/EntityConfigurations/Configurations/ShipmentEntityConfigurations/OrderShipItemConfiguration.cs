@@ -29,7 +29,7 @@ public class OrderShipItemConfiguration : IEntityTypeConfiguration<OrderShipItem
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.OrderShipItemTasks).WithOne().HasForeignKey(p => p.OrderShipItemId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(p => p.OrderShipItemTasks).WithOne(p => p.OrderShipItem).HasForeignKey(p => p.OrderShipItemId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(p => p.ProgressStatus).WithMany().HasForeignKey(p => p.ProgressStatusId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 

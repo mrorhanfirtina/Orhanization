@@ -28,7 +28,7 @@ public class UpdateOrderMemoCommand : IRequest<UpdatedOrderMemoResponse>, ITrans
     public string? CacheGroupKey => "GetOrderMemos";
 
     public UpdateOrderMemoDto OrderMemo { get; set; }
-    public OrderMemoDetailLevel DetailLevel { get; set; }
+    public OrderMemosDetailLevel DetailLevel { get; set; }
 
     public class UpdateOrderMemoCommandHandler : IRequestHandler<UpdateOrderMemoCommand, UpdatedOrderMemoResponse>
     {

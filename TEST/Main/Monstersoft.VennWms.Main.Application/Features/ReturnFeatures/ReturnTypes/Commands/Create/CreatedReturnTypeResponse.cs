@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnTypes.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnTypes.Commands.Create;
 
@@ -12,6 +12,6 @@ public class CreatedReturnTypeResponse
     public int Counter { get; set; }
     public string Format { get; set; }
     public DateTime CreatedDate { get; set; }
-    public ICollection<Return> Returns { get; set; }
-
+    public ICollection<ReturnTypesReturnResponseDto>? Returns { get; set; }
+    public ReturnTypesDepositorCompanyResponseDto? DepositorCompany { get; set; }
 }

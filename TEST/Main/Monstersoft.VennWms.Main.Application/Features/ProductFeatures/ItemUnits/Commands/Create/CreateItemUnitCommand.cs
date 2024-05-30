@@ -30,7 +30,7 @@ public class CreateItemUnitCommand : IRequest<CreatedItemUnitResponse>, ITransac
     public string? CacheGroupKey => "GetItemUnits";
 
     public CreateItemUnitDto ItemUnit { get; set; }
-    public ItemUnitDetailLevel DetailLevel { get; set; }
+    public ItemUnitsDetailLevel DetailLevel { get; set; }
 
 
 

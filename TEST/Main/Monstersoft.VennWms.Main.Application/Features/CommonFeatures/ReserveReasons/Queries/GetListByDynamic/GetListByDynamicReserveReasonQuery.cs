@@ -27,7 +27,7 @@ public class GetListByDynamicReserveReasonQuery : IRequest<GetListResponse<GetLi
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public ReserveReasonDetailLevel DetailLevel { get; set; }
+    public ReserveReasonsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicReserveReasonQueryHandler : IRequestHandler<GetListByDynamicReserveReasonQuery, GetListResponse<GetListByDynamicReserveReasonListItemDto>>

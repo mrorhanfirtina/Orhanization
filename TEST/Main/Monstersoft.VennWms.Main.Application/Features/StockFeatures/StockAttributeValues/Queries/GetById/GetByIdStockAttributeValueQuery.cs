@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributeValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributeValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -18,6 +23,7 @@ public class GetByIdStockAttributeValueQuery : IRequest<GetByIdStockAttributeVal
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public StockAttributeValuesDetailLevel? DetailLevel { get; set; }
 
 
     public class GetByIdStockAttributeValueQueryHandler : IRequestHandler<GetByIdStockAttributeValueQuery, GetByIdStockAttributeValueResponse>
@@ -39,7 +45,40 @@ public class GetByIdStockAttributeValueQuery : IRequest<GetByIdStockAttributeVal
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdStockAttributeValueResponse>(await _stockAttributeValueRepository.GetAsync(x => x.Id == request.Id, withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdStockAttributeValueResponse>(await _stockAttributeValueRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<StockAttributeValue> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeStock)
+                    {
+                        query = query.Include(y => y.Stock);
+                    }
+
+                    if (detailLevel.IncludeStockAttribute)
+                    {
+                        query = query.Include(y => y.StockAttribute);
+
+                        if (detailLevel.TargetDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.StockAttribute).ThenInclude(y => y.AttributeInputType);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<StockAttributeValue, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdStockAttributeValueResponse>(await _stockAttributeValueRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

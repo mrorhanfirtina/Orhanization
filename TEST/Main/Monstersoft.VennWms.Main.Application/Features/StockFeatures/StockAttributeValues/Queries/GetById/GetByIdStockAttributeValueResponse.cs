@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributeValues.Queries.GetById;
+﻿using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributeValues.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributeValues.Queries.GetById;
 
 public class GetByIdStockAttributeValueResponse
 {
@@ -8,6 +10,7 @@ public class GetByIdStockAttributeValueResponse
     public string Value { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public StockAttributeValuesStockAttributeResponseDto? StockAttribute { get; set; }
+    public StockAttributeValuesStockResponseDto? Stock { get; set; }
 }
 

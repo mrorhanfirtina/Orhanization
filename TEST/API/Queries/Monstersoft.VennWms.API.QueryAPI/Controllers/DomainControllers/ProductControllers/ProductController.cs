@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Monstersoft.VennWms.API.QueryAPI.Controllers.Base;
+using Monstersoft.VennWms.API.QueryAPI.Models.DynamicModels.ProductDynamicModels;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Queries.GetByCode;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Queries.GetById;
@@ -7,7 +8,6 @@ using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Que
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Queries.GetListByDynamic;
 using Orhanization.Core.Application.Requests;
 using Orhanization.Core.Application.Response;
-using Orhanization.Core.Persistence.Dynamic;
 
 
 namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.ProductControllers;
@@ -15,9 +15,9 @@ namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.Product
 public class ProductController : BaseController
 {
     [HttpGet("GetByCode/{code}")]
-    public async Task<IActionResult> GetByCodeAsync([FromRoute] string code)
+    public async Task<IActionResult> GetByCodeAsync([FromRoute] string code, [FromBody] ProductsDetailLevel detailLevel)
     {
-        GetByCodeProductQuery query = new() { Code = code };
+        GetByCodeProductQuery query = new() { Code = code, DetailLevel = detailLevel };
 
         GetByCodeProductResponse result = await Mediator.Send(query);
 
@@ -25,9 +25,9 @@ public class ProductController : BaseController
     }
 
     [HttpGet("GetById/{id}")]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
+    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id, [FromBody] ProductsDetailLevel detailLevel)
     {
-        GetByIdProductQuery query = new() { Id = id };
+        GetByIdProductQuery query = new() { Id = id, DetailLevel = detailLevel };
 
         GetByIdProductResponse result = await Mediator.Send(query);
 
@@ -35,24 +35,18 @@ public class ProductController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] ProductsDetailLevel detailLevel)
     {
-        GetListProductQuery query = new() { PageRequest = pageRequest };
+        GetListProductQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
         GetListResponse<GetListProductListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }
 
     [HttpPost("GetListByDynamic")]
-    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] DynamicModel? dynamicModel = null)
+    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] ProductDynamicModel? dynamicModel = null)
     {
         GetListByDynamicProductQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicModel.DynamicQuery, DetailLevel = dynamicModel.DetailLevel };
         GetListResponse<GetListByDynamicProductListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }
-}
-
-public class DynamicModel()
-{
-    public DynamicQuery? DynamicQuery { get; set; }
-    public ProductDetailLevel? DetailLevel { get; set; }
 }

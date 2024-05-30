@@ -29,7 +29,7 @@ public class CreateCustomerCommand : IRequest<CreatedCustomerResponse>, ITransac
     public string? CacheGroupKey => "GetCustomers";
 
     public CreateCustomerDto Customer { get; set; }
-    public CustomerDetailLevel DetailLevel { get; set; }
+    public CustomersDetailLevel DetailLevel { get; set; }
 
 
     public class CreateCustomerCommandHandler : IRequestHandler<CreateCustomerCommand, CreatedCustomerResponse>

@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributeValues.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributeValues.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributeValues.Commands.Update;
 
 public class UpdatedStockAttributeValueResponse
 {
@@ -8,6 +10,7 @@ public class UpdatedStockAttributeValueResponse
     public string Value { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public StockAttributeValuesStockAttributeResponseDto? StockAttribute { get; set; }
+    public StockAttributeValuesStockResponseDto? Stock { get; set; }
 }
 

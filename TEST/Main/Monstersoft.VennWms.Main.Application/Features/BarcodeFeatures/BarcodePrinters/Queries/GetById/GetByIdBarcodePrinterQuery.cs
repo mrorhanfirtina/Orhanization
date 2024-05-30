@@ -22,7 +22,7 @@ public class GetByIdBarcodePrinterQuery : IRequest<GetByIdBarcodePrinterResponse
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public BarcodePrinterDetailLevel DetailLevel { get; set; }
+    public BarcodePrintersDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdBarcodePrinterQueryHandler : IRequestHandler<GetByIdBarcodePrinterQuery, GetByIdBarcodePrinterResponse>

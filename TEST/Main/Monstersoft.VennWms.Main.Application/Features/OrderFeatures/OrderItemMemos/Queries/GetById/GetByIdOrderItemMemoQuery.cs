@@ -23,7 +23,7 @@ public class GetByIdOrderItemMemoQuery : IRequest<GetByIdOrderItemMemoResponse>,
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public OrderItemMemoDetailLevel DetailLevel { get; set; }
+    public OrderItemMemosDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdOrderItemMemoQueryHandler : IRequestHandler<GetByIdOrderItemMemoQuery, GetByIdOrderItemMemoResponse>

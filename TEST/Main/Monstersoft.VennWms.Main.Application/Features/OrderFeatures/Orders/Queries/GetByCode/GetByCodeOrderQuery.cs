@@ -24,7 +24,7 @@ public class GetByCodeOrderQuery : IRequest<GetByCodeOrderResponse>, ITransactio
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public OrderDetailLevel DetailLevel { get; set; }
+    public OrdersDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeOrderQueryHandler : IRequestHandler<GetByCodeOrderQuery, GetByCodeOrderResponse>

@@ -29,7 +29,7 @@ public class UpdateOrderItemStockAttrValueCommand : IRequest<UpdatedOrderItemSto
     public string? CacheGroupKey => "GetOrderItemStockAttrValues";
 
     public UpdateOrderItemStockAttrValueDto OrderItemStockAttrValue { get; set; }
-    public OrderItemStockAttrValueDetailLevel DetailLevel { get; set; }
+    public OrderItemStockAttrValuesDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateOrderItemStockAttrValueCommandHandler : IRequestHandler<UpdateOrderItemStockAttrValueCommand, UpdatedOrderItemStockAttrValueResponse>

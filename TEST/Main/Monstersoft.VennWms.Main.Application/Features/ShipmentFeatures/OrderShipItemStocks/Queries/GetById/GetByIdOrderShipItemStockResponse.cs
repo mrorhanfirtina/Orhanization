@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemStocks.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemStocks.Queries.GetById;
 
@@ -12,7 +12,9 @@ public class GetByIdOrderShipItemStockResponse
     public decimal Quantity { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public OrderShipItemTask OrderShipItemTask { get; set; }
-
+    public OrderShipItemStocksOrderShipItemResponseDto? OrderShipItem { get; set; }
+    public OrderShipItemStocksOrderShipItemTaskResponseDto? OrderShipItemTask { get; set; }
+    public OrderShipItemStocksStockResponseDto? Stock { get; set; }
+    public OrderShipItemStocksStockPackTypeResponseDto? StockPackType { get; set; }
 }
 

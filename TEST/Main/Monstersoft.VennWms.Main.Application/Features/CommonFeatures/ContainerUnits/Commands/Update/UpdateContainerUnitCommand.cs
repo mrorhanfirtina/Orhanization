@@ -29,7 +29,7 @@ public class UpdateContainerUnitCommand : IRequest<UpdatedContainerUnitResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public UpdateContainerUnitDto ContainerUnit { get; set; }
-    public ContainerUnitDetaillevel DetailLevel { get; set; }
+    public ContainerUnitsDetaillevel DetailLevel { get; set; }
 
 
     public class UpdateContainerUnitCommandHandler : IRequestHandler<UpdateContainerUnitCommand, UpdatedContainerUnitResponse>

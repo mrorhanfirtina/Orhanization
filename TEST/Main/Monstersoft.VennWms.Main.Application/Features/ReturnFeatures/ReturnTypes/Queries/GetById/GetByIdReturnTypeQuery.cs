@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnTypes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReturnRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -19,6 +23,7 @@ public class GetByIdReturnTypeQuery : IRequest<GetByIdReturnTypeResponse>, ITran
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
+    public ReturnTypesDetailLevel? DetailLevel { get; set; }
 
 
     public class GetByIdReturnTypeQueryHandler : IRequestHandler<GetByIdReturnTypeQuery, GetByIdReturnTypeResponse>
@@ -40,9 +45,35 @@ public class GetByIdReturnTypeQuery : IRequest<GetByIdReturnTypeResponse>, ITran
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdReturnTypeResponse>(await _returnTypeRepository.GetAsync(x => x.Id == request.Id,
-                include: m => m.Include(x => x.Returns),
-                withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByIdReturnTypeResponse>(await _returnTypeRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
+                {
+                    IQueryable<ReturnType> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReturn)
+                    {
+                        query = query.Include(y => y.Returns);
+                    }
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReturnType, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdReturnTypeResponse>(await _returnTypeRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

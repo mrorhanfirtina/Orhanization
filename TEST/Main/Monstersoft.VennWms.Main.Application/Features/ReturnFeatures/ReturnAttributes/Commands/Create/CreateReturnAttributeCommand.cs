@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReturnRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -23,6 +27,7 @@ public class CreateReturnAttributeCommand : IRequest<CreatedReturnAttributeRespo
     public string? CacheGroupKey => "GetReturnAttributes";
 
     public CreateReturnAttributeDto ReturnAttribute { get; set; }
+    public ReturnAttributesDetailLevel? DetailLevel { get; set; }
 
 
     public class CreateReturnAttributeCommandHandler : IRequestHandler<CreateReturnAttributeCommand, CreatedReturnAttributeResponse>
@@ -50,7 +55,41 @@ public class CreateReturnAttributeCommand : IRequest<CreatedReturnAttributeRespo
             returnAttribute.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
             returnAttribute.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedReturnAttributeResponse>(await _returnAttributeRepository.AddAsync(returnAttribute));
+            await _returnAttributeRepository.AddAsync(returnAttribute);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _returnAttributeRepository.GetAsync(predicate: x => x.Id == returnAttribute.Id,
+                include: x =>
+                {
+                    IQueryable<ReturnAttribute> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAttributeInputType)
+                    {
+                        query = query.Include(y => y.AttributeInputType);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReturnAttribute, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReturnAttributeResponse>(response);
+            }
+            else
+            {
+                var response = await _returnAttributeRepository.GetAsync(predicate: x => x.Id == returnAttribute.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReturnAttributeResponse>(response);
+            }
         }
     }
 }

@@ -25,7 +25,7 @@ public class GetByIdLocationStockAttributeQuery : IRequest<GetByIdLocationStockA
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public LocationStockAttributeDetailLevel DetailLevel { get; set; }
+    public LocationStockAttributesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdLocationStockAttributeQueryHandler : IRequestHandler<GetByIdLocationStockAttributeQuery, GetByIdLocationStockAttributeResponse>

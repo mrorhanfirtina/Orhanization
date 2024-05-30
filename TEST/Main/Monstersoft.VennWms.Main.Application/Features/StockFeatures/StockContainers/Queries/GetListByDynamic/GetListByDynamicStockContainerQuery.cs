@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockContainers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockContainers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicStockContainerQuery : IRequest<GetListResponse<GetL
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public StockContainersDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListByDynamicStockContainerQueryHandler : IRequestHandler<GetListByDynamicStockContainerQuery, GetListResponse<GetListByDynamicStockContainerListItemDto>>
@@ -44,12 +49,130 @@ public class GetListByDynamicStockContainerQuery : IRequest<GetListResponse<GetL
             _stockContainerBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<StockContainer> stockContainerList = await _stockContainerRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<StockContainer> stockContainerList = await _stockContainerRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<StockContainer> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicStockContainerListItemDto>>(stockContainerList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeContainerUnit)
+                    {
+                        query = query.Include(y => y.ContainerUnit);
+                    }
+
+                    if (detailLevel.IncludeStock)
+                    {
+                        query = query.Include(y => y.Stocks);
+
+                        var stockDetailLevel = detailLevel.StockDetailLevel;
+
+                        if (stockDetailLevel.IncludeStockAttributeValue)
+                        {
+                            query = query.Include(y => y.Stocks).ThenInclude(m => m.StockAttributeValues);
+
+                            var stockAttributeValueDetailLevel = stockDetailLevel.StockAttributeValueDetailLevel;
+
+                            if (stockAttributeValueDetailLevel.IncludeStockAttribute)
+                            {
+                                query = query.Include(y => y.Stocks).ThenInclude(m => m.StockAttributeValues).ThenInclude(y => y.StockAttribute);
+
+                                var stockAttributeDetailLevel = stockAttributeValueDetailLevel.StockAttributeDetailLevel;
+
+                                if (stockAttributeDetailLevel.IncludeAttributeInputType)
+                                {
+                                    query = query.Include(y => y.Stocks).ThenInclude(m => m.StockAttributeValues).ThenInclude(y => y.StockAttribute).ThenInclude(y => y.AttributeInputType);
+                                }
+                            }
+                        }
+
+                        if (stockDetailLevel.IncludeStockMemo)
+                        {
+                            query = query.Include(y => y.Stocks).ThenInclude(m => m.StockMemos);
+                        }
+
+                        if (stockDetailLevel.IncludeStockReserveReason)
+                        {
+                            query = query.Include(y => y.Stocks).ThenInclude(m => m.StockReserveReasons);
+
+                            var stockReserveReasonDetailLevel = stockDetailLevel.StockReserveReasonDetailLevel;
+
+                            if (stockReserveReasonDetailLevel.IncludeReserveReason)
+                            {
+                                query = query.Include(y => y.Stocks).ThenInclude(m => m.StockReserveReasons).ThenInclude(y => y.ReserveReason);
+                            }
+                        }
+
+                        if (stockDetailLevel.IncludeStockUnsuitReason)
+                        {
+                            query = query.Include(y => y.Stocks).ThenInclude(m => m.StockUnsuitReasons);
+
+                            var stockUnsuitReasonDetailLevel = stockDetailLevel.StockUnsuitReasonDetailLevel;
+
+                            if (stockUnsuitReasonDetailLevel.IncludeUnsuitReason)
+                            {
+                                query = query.Include(y => y.Stocks).ThenInclude(m => m.StockUnsuitReasons).ThenInclude(y => y.UnsuitReason);
+                            }
+                        }
+
+                        if (stockDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.Stocks).ThenInclude(m => m.Product);
+                        }
+
+                        if (stockDetailLevel.IncludeDepositor)
+                        {
+                            query = query.Include(y => y.Stocks).ThenInclude(m => m.Depositor);
+
+                            if (stockDetailLevel.DepositorDetailLevel.IncludeCompany)
+                            {
+                                query = query.Include(y => y.Stocks).ThenInclude(m => m.Depositor).ThenInclude(y => y.Company);
+                            }
+                        }
+
+                        if (stockDetailLevel.IncludeDepositorCompany)
+                        {
+                            query = query.Include(y => y.Stocks).ThenInclude(m => m.DepositorCompany);
+                        }
+
+                        if (stockDetailLevel.IncludeLocation)
+                        {
+                            query = query.Include(y => y.Stocks).ThenInclude(m => m.Location);
+                        }
+
+                        if (stockDetailLevel.IncludeCuItemUnit)
+                        {
+                            query = query.Include(y => y.Stocks).ThenInclude(m => m.CuItemUnit);
+
+                            var cuItemUnitDetailLevel = stockDetailLevel.CuItemUnitDetailLevel;
+
+                            if (cuItemUnitDetailLevel.IncludeUnit)
+                            {
+                                query = query.Include(y => y.Stocks).ThenInclude(m => m.CuItemUnit).ThenInclude(y => y.Unit);
+                            }
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<StockContainer, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicStockContainerListItemDto>>(stockContainerList);
+            }
+            else
+            {
+                Paginate<StockContainer> stockContainerList = await _stockContainerRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicStockContainerListItemDto>>(stockContainerList);
+            }
         }
     }
 }

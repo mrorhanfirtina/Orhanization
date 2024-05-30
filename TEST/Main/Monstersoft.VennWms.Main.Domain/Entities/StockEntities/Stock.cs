@@ -26,7 +26,7 @@ public class Stock : Entity<Guid>
     public virtual Depositor? Depositor { get; set; }
     public virtual DepositorCompany? DepositorCompany { get; set; }
     public virtual Location? Location { get; set; }
-    public virtual ItemUnit? ItemUnit { get; set; }
+    public virtual ItemUnit? CuItemUnit { get; set; }
 
     public Stock()
     {

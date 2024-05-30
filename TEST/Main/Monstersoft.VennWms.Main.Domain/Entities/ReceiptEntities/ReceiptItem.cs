@@ -17,6 +17,7 @@ public class ReceiptItem : Entity<Guid>
     public virtual Product? Product { get; set; }
     public virtual ItemUnit? ItemUnit { get; set; }
     public virtual Status? Status { get; set; }
+    public virtual Receipt? Receipt { get; set; }
 
     public ReceiptItem()
     {

@@ -28,7 +28,7 @@ public class GetListByDynamicOrderItemStockAttrValueQuery : IRequest<GetListResp
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public OrderItemStockAttrValueDetailLevel DetailLevel { get; set; }
+    public OrderItemStockAttrValuesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicOrderItemStockAttrValueQueryHandler : IRequestHandler<GetListByDynamicOrderItemStockAttrValueQuery, GetListResponse<GetListByDynamicOrderItemStockAttrValueListItemDto>>

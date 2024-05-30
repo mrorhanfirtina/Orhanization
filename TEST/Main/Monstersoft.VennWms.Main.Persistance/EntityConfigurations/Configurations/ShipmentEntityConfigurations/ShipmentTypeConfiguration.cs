@@ -30,7 +30,7 @@ public class ShipmentTypeConfiguration : IEntityTypeConfiguration<ShipmentType>
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.Shipments).WithOne().HasForeignKey(p => p.ShipmentTypeId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(p => p.Shipments).WithOne(p => p.ShipmentType).HasForeignKey(p => p.ShipmentTypeId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         #endregion
 

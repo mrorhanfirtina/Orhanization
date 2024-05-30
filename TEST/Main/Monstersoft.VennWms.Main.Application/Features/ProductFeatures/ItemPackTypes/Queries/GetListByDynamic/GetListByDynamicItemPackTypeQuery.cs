@@ -28,7 +28,7 @@ public class GetListByDynamicItemPackTypeQuery : IRequest<GetListResponse<GetLis
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public ItemPackTypeDetailLevel DetailLevel { get; set; }
+    public ItemPackTypesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicItemPackTypeQueryHandler : IRequestHandler<GetListByDynamicItemPackTypeQuery, GetListResponse<GetListByDynamicItemPackTypeListItemDto>>

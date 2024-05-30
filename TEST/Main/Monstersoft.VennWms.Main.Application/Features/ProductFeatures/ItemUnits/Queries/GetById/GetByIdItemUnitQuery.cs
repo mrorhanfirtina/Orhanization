@@ -23,7 +23,7 @@ public class GetByIdItemUnitQuery : IRequest<GetByIdItemUnitResponse>, ITransact
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public ItemUnitDetailLevel DetailLevel { get; set; }
+    public ItemUnitsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdItemUnitQueryHandler : IRequestHandler<GetByIdItemUnitQuery, GetByIdItemUnitResponse>

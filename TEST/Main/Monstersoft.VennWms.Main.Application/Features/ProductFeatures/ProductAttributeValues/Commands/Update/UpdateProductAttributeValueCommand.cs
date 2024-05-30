@@ -28,7 +28,7 @@ public class UpdateProductAttributeValueCommand : IRequest<UpdatedProductAttribu
     public string? CacheGroupKey => "GetProductAttributeValues";
 
     public UpdateProductAttributeValueDto ProductAttributeValue { get; set; }
-    public ProductAttributeValueDetailLevel DetailLevel { get; set; }
+    public ProductAttributeValuesDetailLevel DetailLevel { get; set; }
 
 
 

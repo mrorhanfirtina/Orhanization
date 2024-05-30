@@ -31,7 +31,7 @@ public class GetListDepositorQuery : IRequest<GetListResponse<GetListDepositorLi
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public DepositorDetailLevel DetailLevel { get; set; }
+    public DepositorsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListDepositorQueryHandler : IRequestHandler<GetListDepositorQuery, GetListResponse<GetListDepositorListItemDto>>

@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptMemos.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptMemos.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,7 @@ public class UpdateReceiptMemoCommand : IRequest<UpdatedReceiptMemoResponse>, IT
     public string? CacheGroupKey => "GetReceiptMemos";
 
     public UpdateReceiptMemoDto ReceiptMemo { get; set; }
+    public ReceiptMemosDetailLevel? DetailLevel { get; set; }
 
 
     public class UpdateReceiptMemoCommandHandler : IRequestHandler<UpdateReceiptMemoCommand, UpdatedReceiptMemoResponse>
@@ -53,8 +58,36 @@ public class UpdateReceiptMemoCommand : IRequest<UpdatedReceiptMemoResponse>, IT
             ReceiptMemo? receiptMemo = _mapper.Map(request.ReceiptMemo, currentReceiptMemo);
             receiptMemo.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedReceiptMemoResponse>(await _receiptMemoRepository.UpdateAsync(receiptMemo));
+            await _receiptMemoRepository.UpdateAsync(receiptMemo);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _receiptMemoRepository.GetAsync(predicate: x => x.Id == receiptMemo.Id,
+                include: x =>
+                {
+                    IQueryable<ReceiptMemo> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReceipt)
+                    {
+                        query = query.Include(y => y.Receipt);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReceiptMemo, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedReceiptMemoResponse>(response);
+            }
+            else
+            {
+                var response = await _receiptMemoRepository.GetAsync(predicate: x => x.Id == receiptMemo.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedReceiptMemoResponse>(response);
+            }
         }
     }
 }

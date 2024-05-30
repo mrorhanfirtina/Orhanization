@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Monstersoft.VennWms.API.QueryAPI.Controllers.Base;
+using Monstersoft.VennWms.API.QueryAPI.Models.DynamicModels.OrderDynamicModels;
+using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Constants;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Queries.GetByCode;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Queries.GetById;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Queries.GetList;
@@ -14,9 +16,9 @@ namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.OrderCo
 public class OrderController : BaseController
 {
     [HttpGet("GetByCode/{code}")]
-    public async Task<IActionResult> GetByCodeAsync([FromRoute] string code)
+    public async Task<IActionResult> GetByCodeAsync([FromRoute] string code, [FromBody] OrdersDetailLevel detailLevel)
     {
-        GetByCodeOrderQuery query = new() { Code = code };
+        GetByCodeOrderQuery query = new() { Code = code, DetailLevel = detailLevel };
 
         GetByCodeOrderResponse result = await Mediator.Send(query);
 
@@ -24,9 +26,9 @@ public class OrderController : BaseController
     }
 
     [HttpGet("GetById/{id}")]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
+    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id, [FromBody] OrdersDetailLevel detailLevel)
     {
-        GetByIdOrderQuery query = new() { Id = id };
+        GetByIdOrderQuery query = new() { Id = id, DetailLevel = detailLevel };
 
         GetByIdOrderResponse result = await Mediator.Send(query);
 
@@ -34,17 +36,17 @@ public class OrderController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] OrdersDetailLevel detailLevel)
     {
-        GetListOrderQuery query = new() { PageRequest = pageRequest };
+        GetListOrderQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
         GetListResponse<GetListOrderListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }
 
     [HttpPost("GetListByDynamic")]
-    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] DynamicQuery? dynamicQuery = null)
+    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] OrderDynamicModel? dynamicModel = null)
     {
-        GetListByDynamicOrderQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicQuery };
+        GetListByDynamicOrderQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicModel.DynamicQuery, DetailLevel = dynamicModel.DetailLevel };
         GetListResponse<GetListByDynamicOrderListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

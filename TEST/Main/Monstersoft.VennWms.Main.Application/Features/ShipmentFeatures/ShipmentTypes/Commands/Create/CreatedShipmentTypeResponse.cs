@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentTypes.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentTypes.Commands.Create;
 
@@ -12,7 +12,7 @@ public class CreatedShipmentTypeResponse
     public int Counter { get; set; }
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
-    public ICollection<Shipment> Shipments { get; set; }
-
+    public ICollection<ShipmentTypesShipmentResponseDto>? Shipments { get; set; }
+    public ShipmentTypesDepositorCompanyResponseDto DepositorCompany { get; set; }
 }
 

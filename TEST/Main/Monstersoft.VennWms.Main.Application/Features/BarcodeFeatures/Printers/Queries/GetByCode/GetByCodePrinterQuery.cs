@@ -23,7 +23,7 @@ public class GetByCodePrinterQuery : IRequest<GetByCodePrinterResponse>, ITransa
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public PrinterDetailLevel DetailLevel { get; set; }
+    public PrintersDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodePrinterQueryHandler : IRequestHandler<GetByCodePrinterQuery, GetByCodePrinterResponse>

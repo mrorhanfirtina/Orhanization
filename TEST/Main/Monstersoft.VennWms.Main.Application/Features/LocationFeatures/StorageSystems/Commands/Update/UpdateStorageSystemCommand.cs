@@ -29,7 +29,7 @@ public class UpdateStorageSystemCommand : IRequest<UpdatedStorageSystemResponse>
     public string? CacheGroupKey => "GetStorageSystems";
 
     public UpdateStorageSystemDto StorageSystem { get; set; }
-    public StorageSystemDetailLevel DetailLevel { get; set; }
+    public StorageSystemsDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateStorageSystemCommandHandler : IRequestHandler<UpdateStorageSystemCommand, UpdatedStorageSystemResponse>

@@ -28,7 +28,7 @@ public class GetListByDynamicProductBarcodeQuery : IRequest<GetListResponse<GetL
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public ProductBarcodeDetailLevel DetailLevel { get; set; }
+    public ProductBarcodesDetailLevel DetailLevel { get; set; }
 
 
 

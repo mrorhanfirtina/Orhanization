@@ -31,7 +31,7 @@ public class GetListOrderTypeQuery : IRequest<GetListResponse<GetListOrderTypeLi
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public OrderTypeDetailLevel DetailLevel { get; set; }
+    public OrderTypesDetailLevel DetailLevel { get; set; }
 
 
 

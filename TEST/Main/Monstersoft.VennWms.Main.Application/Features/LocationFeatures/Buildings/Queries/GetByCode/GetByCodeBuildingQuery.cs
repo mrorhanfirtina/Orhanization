@@ -23,7 +23,7 @@ public class GetByCodeBuildingQuery : IRequest<GetByCodeBuildingResponse>, ITran
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public BuildingDetailLevel DetailLevel { get; set; }
+    public BuildingsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeBuildingQueryHandler : IRequestHandler<GetByCodeBuildingQuery, GetByCodeBuildingResponse>

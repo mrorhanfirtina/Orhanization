@@ -29,7 +29,7 @@ public class CreateLocationProductAbcCategoryCommand : IRequest<CreatedLocationP
     public string? CacheGroupKey => "GetLocationProductAbcCategorys";
 
     public CreateLocationProductAbcCategoryDto LocationProductAbcCategory { get; set; }
-    public LocationProductAbcCategoryDetailLevel DetailLevel { get; set; }
+    public LocationProductAbcCategoriesDetailLevel DetailLevel { get; set; }
 
 
     public class CreateLocationProductAbcCategoryCommandHandler : IRequestHandler<CreateLocationProductAbcCategoryCommand, CreatedLocationProductAbcCategoryResponse>

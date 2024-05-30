@@ -23,7 +23,7 @@ public class GetByCodePoAttributeQuery : IRequest<GetByCodePoAttributeResponse>,
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public PoAttributeDetailLevel DetailLevel { get; set; }
+    public PoAttributesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodePoAttributeQueryHandler : IRequestHandler<GetByCodePoAttributeQuery, GetByCodePoAttributeResponse>

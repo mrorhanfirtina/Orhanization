@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class UpdateReceiptAttributeCommand : IRequest<UpdatedReceiptAttributeRes
     public string? CacheGroupKey => "GetReceiptAttributes";
 
     public UpdateReceiptAttributeDto ReceiptAttribute { get; set; }
+    public ReceiptAttributesDetailLevel? DetailLevel { get; set; }
 
 
     public class UpdateReceiptAttributeCommandHandler : IRequestHandler<UpdateReceiptAttributeCommand, UpdatedReceiptAttributeResponse>
@@ -53,8 +58,42 @@ public class UpdateReceiptAttributeCommand : IRequest<UpdatedReceiptAttributeRes
             ReceiptAttribute? receiptAttribute = _mapper.Map(request.ReceiptAttribute, currentReceiptAttribute);
             receiptAttribute.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedReceiptAttributeResponse>(await _receiptAttributeRepository.UpdateAsync(receiptAttribute));
+            await _receiptAttributeRepository.UpdateAsync(receiptAttribute);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _receiptAttributeRepository.GetAsync(predicate: x => x.Id == receiptAttribute.Id,
+                include: x =>
+                {
+                    IQueryable<ReceiptAttribute> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAttributeInputType)
+                    {
+                        query = query.Include(y => y.AttributeInputType);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<ReceiptAttribute, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedReceiptAttributeResponse>(response);
+            }
+            else
+            {
+                var response = await _receiptAttributeRepository.GetAsync(predicate: x => x.Id == receiptAttribute.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedReceiptAttributeResponse>(response);
+            }
         }
     }
 }

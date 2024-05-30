@@ -23,7 +23,7 @@ public class GetByIdCompanyQuery : IRequest<GetByIdCompanyResponse>, ITransactio
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public CompanyDetailLevel DetailLevel { get; set; }
+    public CompaniesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdCompanyQueryHandler : IRequestHandler<GetByIdCompanyQuery, GetByIdCompanyResponse>

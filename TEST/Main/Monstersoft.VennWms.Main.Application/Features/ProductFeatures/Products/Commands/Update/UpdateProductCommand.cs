@@ -29,7 +29,7 @@ public class UpdateProductCommand : IRequest<UpdatedProductResponse>, ITransacti
     public string? CacheGroupKey => "GetProducts";
 
     public UpdateProductDto Product { get; set; }
-    public ProductDetailLevel DetailLevel { get; set; }
+    public ProductsDetailLevel DetailLevel { get; set; }
 
 
 

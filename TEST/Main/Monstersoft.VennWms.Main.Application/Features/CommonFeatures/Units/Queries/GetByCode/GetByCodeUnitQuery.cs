@@ -22,7 +22,7 @@ public class GetByCodeUnitQuery : IRequest<GetByCodeUnitResponse>, ITransactiona
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public string Code { get; set; }
-    public UnitDetailLevel DetailLevel { get; set; }
+    public UnitsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeUnitQueryHandler : IRequestHandler<GetByCodeUnitQuery, GetByCodeUnitResponse>

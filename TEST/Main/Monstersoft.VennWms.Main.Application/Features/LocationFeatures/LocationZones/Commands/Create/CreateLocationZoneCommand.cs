@@ -30,7 +30,7 @@ public class CreateLocationZoneCommand : IRequest<CreatedLocationZoneResponse>, 
     public string? CacheGroupKey => "GetLocationZones";
 
     public CreateLocationZoneDto LocationZone { get; set; }
-    public LocationZoneDetailLevel DetailLevel { get; set; }
+    public LocationZonesDetailLevel DetailLevel { get; set; }
 
 
     public class CreateLocationZoneCommandHandler : IRequestHandler<CreateLocationZoneCommand, CreatedLocationZoneResponse>

@@ -29,7 +29,7 @@ public class UpdateLogStockCommand : IRequest<UpdatedLogStockResponse>, ITransac
     public string? CacheGroupKey => "GetTransactionLogs";
 
     public UpdateLogStockDto LogStock { get; set; }
-    public LogStockDetailLevel DetailLevel { get; set; }
+    public LogStocksDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateLogStockCommandHandler : IRequestHandler<UpdateLogStockCommand, UpdatedLogStockResponse>

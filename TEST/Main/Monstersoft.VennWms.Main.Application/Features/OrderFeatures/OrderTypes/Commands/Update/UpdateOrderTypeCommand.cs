@@ -28,7 +28,7 @@ public class UpdateOrderTypeCommand : IRequest<UpdatedOrderTypeResponse>, ITrans
     public string? CacheGroupKey => "GetOrderTypes";
 
     public UpdateOrderTypeDto OrderType { get; set; }
-    public OrderTypeDetailLevel DetailLevel { get; set; }
+    public OrderTypesDetailLevel DetailLevel { get; set; }
 
     public class UpdateOrderTypeCommandHandler : IRequestHandler<UpdateOrderTypeCommand, UpdatedOrderTypeResponse>
     {

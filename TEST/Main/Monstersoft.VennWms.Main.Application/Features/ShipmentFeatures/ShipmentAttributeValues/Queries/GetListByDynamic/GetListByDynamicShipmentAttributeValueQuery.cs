@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributeValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributeValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicShipmentAttributeValueQuery : IRequest<GetListRespo
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public ShipmentAttributesValueDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListByDynamicShipmentAttributeValueQueryHandler : IRequestHandler<GetListByDynamicShipmentAttributeValueQuery, GetListResponse<GetListByDynamicShipmentAttributeValueListItemDto>>
@@ -44,12 +49,48 @@ public class GetListByDynamicShipmentAttributeValueQuery : IRequest<GetListRespo
             _shipmentAttributeValueBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ShipmentAttributeValue> shipmentAttributeValueList = await _shipmentAttributeValueRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ShipmentAttributeValue> shipmentAttributeValueList = await _shipmentAttributeValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<ShipmentAttributeValue> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicShipmentAttributeValueListItemDto>>(shipmentAttributeValueList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeShipment)
+                    {
+                        query = query.Include(y => y.Shipment);
+                    }
+
+                    if (detailLevel.IncludeShipmentAttribute)
+                    {
+                        query = query.Include(y => y.ShipmentAttribute);
+
+                        if (detailLevel.ShipmentAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.ShipmentAttribute).ThenInclude(y => y.AttributeInputType);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ShipmentAttributeValue, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicShipmentAttributeValueListItemDto>>(shipmentAttributeValueList);
+            }
+            else
+            {
+                Paginate<ShipmentAttributeValue> shipmentAttributeValueList = await _shipmentAttributeValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicShipmentAttributeValueListItemDto>>(shipmentAttributeValueList);
+            }
         }
     }
 

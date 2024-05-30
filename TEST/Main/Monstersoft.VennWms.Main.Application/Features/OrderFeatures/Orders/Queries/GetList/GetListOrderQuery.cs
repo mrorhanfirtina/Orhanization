@@ -32,7 +32,7 @@ public class GetListOrderQuery : IRequest<GetListResponse<GetListOrderListItemDt
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public OrderDetailLevel DetailLevel { get; set; }
+    public OrdersDetailLevel DetailLevel { get; set; }
 
 
     public class GetListOrderQueryHandler : IRequestHandler<GetListOrderQuery, GetListResponse<GetListOrderListItemDto>>
@@ -216,6 +216,8 @@ public class GetListOrderQuery : IRequest<GetListResponse<GetListOrderListItemDt
                 },
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                var orderListDto = _mapper.Map<GetListResponse<GetListOrderListItemDto>>(orderList);
 
                 return _mapper.Map<GetListResponse<GetListOrderListItemDto>>(orderList);
             }

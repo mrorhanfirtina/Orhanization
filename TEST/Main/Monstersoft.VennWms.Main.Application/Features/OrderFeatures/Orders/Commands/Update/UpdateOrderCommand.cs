@@ -30,7 +30,7 @@ public class UpdateOrderCommand : IRequest<UpdatedOrderResponse>, ITransactional
     public string? CacheGroupKey => "GetOrders";
 
     public UpdateOrderDto Order { get; set; }
-    public OrderDetailLevel DetailLevel { get; set; }
+    public OrdersDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, UpdatedOrderResponse>

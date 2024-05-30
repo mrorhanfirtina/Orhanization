@@ -29,7 +29,7 @@ public class UpdateProductDepositorCommand : IRequest<UpdatedProductDepositorRes
     public string? CacheGroupKey => "GetProductDepositors";
 
     public UpdateProductDepositorDto ProductDepositor { get; set; }
-    public ProductDepositorDetailLevel DetailLevel { get; set; }
+    public ProductDepositorsDetailLevel DetailLevel { get; set; }
 
 
 

@@ -29,7 +29,7 @@ public class UpdateLockReasonCommand : IRequest<UpdatedLockReasonResponse>, ITra
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public UpdateLockReasonDto LockReason { get; set; }
-    public LockReasonDetailLevel DetailLevel { get; set; }
+    public LockReasonsDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateLockReasonCommandHandler : IRequestHandler<UpdateLockReasonCommand, UpdatedLockReasonResponse>

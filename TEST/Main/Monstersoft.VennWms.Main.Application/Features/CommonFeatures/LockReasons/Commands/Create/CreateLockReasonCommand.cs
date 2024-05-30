@@ -28,7 +28,7 @@ public class CreateLockReasonCommand : IRequest<CreatedLockReasonResponse>, ITra
     public string[] Roles => [Admin, LockReasonOperationClaims.User, Add, Write];
 
     public CreateLockReasonDto LockReason { get; set; }
-    public LockReasonDetailLevel DetailLevel { get; set; }
+    public LockReasonsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateLockReasonCommandHandler : IRequestHandler<CreateLockReasonCommand, CreatedLockReasonResponse>

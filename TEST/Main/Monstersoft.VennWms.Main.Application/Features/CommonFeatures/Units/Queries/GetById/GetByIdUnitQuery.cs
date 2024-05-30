@@ -23,7 +23,7 @@ public class GetByIdUnitQuery : IRequest<GetByIdUnitResponse>, ITransactionalReq
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public int Id { get; set; }
-    public UnitDetailLevel DetailLevel { get; set; }
+    public UnitsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdUnitQueryHandler : IRequestHandler<GetByIdUnitQuery, GetByIdUnitResponse>

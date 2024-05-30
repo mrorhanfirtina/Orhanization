@@ -14,9 +14,10 @@ public class ReturnItem : Entity<Guid>
     public int StatusId { get; set; }
     public virtual ICollection<ReturnItemMemo>? ReturnItemMemos { get; set; }
     public virtual ICollection<ReturnItmStockAttrValue>? ReturnItmStockAttrValues { get; set; }
-    public virtual Product Product { get; set; }
-    public virtual ItemUnit ItemUnit { get; set; }
-    public virtual Status Status { get; set; }
+    public virtual Product? Product { get; set; }
+    public virtual ItemUnit? ItemUnit { get; set; }
+    public virtual Status? Status { get; set; }
+    public virtual Return? Return { get; set; }
 
     public ReturnItem()
     {

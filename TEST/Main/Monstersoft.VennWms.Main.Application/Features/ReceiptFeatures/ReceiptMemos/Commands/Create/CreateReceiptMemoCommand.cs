@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptMemos.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class CreateReceiptMemoCommand : IRequest<CreatedReceiptMemoResponse>, IT
     public string? CacheGroupKey => "GetReceiptMemos";
 
     public CreateReceiptMemoDto ReceiptMemo { get; set; }
+    public ReceiptMemosDetailLevel? DetailLevel { get; set; }
 
 
     public class CreateReceiptMemoCommandHandler : IRequestHandler<CreateReceiptMemoCommand, CreatedReceiptMemoResponse>
@@ -49,7 +54,36 @@ public class CreateReceiptMemoCommand : IRequest<CreatedReceiptMemoResponse>, IT
             receiptMemo.Id = Guid.NewGuid();
             receiptMemo.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedReceiptMemoResponse>(await _receiptMemoRepository.AddAsync(receiptMemo));
+            await _receiptMemoRepository.AddAsync(receiptMemo);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _receiptMemoRepository.GetAsync(predicate: x => x.Id == receiptMemo.Id,
+                include: x =>
+                {
+                    IQueryable<ReceiptMemo> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReceipt)
+                    {
+                        query = query.Include(y => y.Receipt);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReceiptMemo, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReceiptMemoResponse>(response);
+            }
+            else
+            {
+                var response = await _receiptMemoRepository.GetAsync(predicate: x => x.Id == receiptMemo.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReceiptMemoResponse>(response);
+            }
         }
     }
 }

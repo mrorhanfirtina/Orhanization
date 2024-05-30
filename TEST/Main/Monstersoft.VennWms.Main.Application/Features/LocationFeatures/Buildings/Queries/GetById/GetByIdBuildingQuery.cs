@@ -23,7 +23,7 @@ public class GetByIdBuildingQuery : IRequest<GetByIdBuildingResponse>, ITransact
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public BuildingDetailLevel DetailLevel { get; set; }
+    public BuildingsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdBuildingQueryHandler : IRequestHandler<GetByIdBuildingQuery, GetByIdBuildingResponse>

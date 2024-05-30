@@ -28,7 +28,7 @@ public class CreateTransactionLogCommand : IRequest<CreatedTransactionLogRespons
     public string? CacheGroupKey => "GetTransactionLogs";
 
     public CreateTransactionLogDto TransactionLog { get; set; }
-    public TransactionLogDetailLevel DetailLevel { get; set; }
+    public TransactionLogsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateTransactionLogCommandHandler : IRequestHandler<CreateTransactionLogCommand, CreatedTransactionLogResponse>

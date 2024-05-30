@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockMemos.Dtos.CreateDtos;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockMemos.Dtos.ResponseDtos;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 
 namespace Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockMemos.Dtos.DtoProfiles;
@@ -12,5 +13,7 @@ public class StockMemoDtoMappingProfiles : Profile
         CreateMap<StockMemo, CreateStockMemoSubDto>().ReverseMap();
         CreateMap<StockMemo, UpdateStockMemoDto>().ReverseMap();
         CreateMap<StockMemo, UpdateStockMemoSubDto>().ReverseMap();
+
+        CreateMap<Stock, StockMemosStockResponseDto>().ReverseMap();
     }
 }

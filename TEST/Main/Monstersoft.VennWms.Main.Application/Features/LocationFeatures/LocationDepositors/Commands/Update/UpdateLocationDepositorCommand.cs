@@ -28,7 +28,7 @@ public class UpdateLocationDepositorCommand : IRequest<UpdatedLocationDepositorR
     public string? CacheGroupKey => "GetLocationDepositors";
 
     public UpdateLocationDepositorDto LocationDepositor { get; set; }
-    public LocationDepositorDetailLevel DetailLevel { get; set; }
+    public LocationDepositorsDetailLevel DetailLevel { get; set; }
 
     public class UpdateLocationDepositorCommandHandler : IRequestHandler<UpdateLocationDepositorCommand, UpdatedLocationDepositorResponse>
     {

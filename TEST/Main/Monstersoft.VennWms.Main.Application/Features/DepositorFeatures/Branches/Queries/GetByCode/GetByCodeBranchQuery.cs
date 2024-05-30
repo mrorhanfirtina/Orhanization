@@ -22,7 +22,7 @@ public class GetByCodeBranchQuery : IRequest<GetByCodeBranchResponse>, ITransact
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public string Code { get; set; }
-    public BranchDetailLevel DetailLevel { get; set; }
+    public BranchesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeBranchQueryHandler : IRequestHandler<GetByCodeBranchQuery, GetByCodeBranchResponse>

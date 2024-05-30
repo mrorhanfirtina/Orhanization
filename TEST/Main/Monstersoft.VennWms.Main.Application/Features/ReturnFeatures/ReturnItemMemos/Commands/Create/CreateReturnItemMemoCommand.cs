@@ -1,8 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItemMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItemMemos.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItemMemos.Rules;
+using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItems.Constants;
 using Monstersoft.VennWms.Main.Application.Repositories.ReturnRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +29,7 @@ public class CreateReturnItemMemoCommand : IRequest<CreatedReturnItemMemoRespons
     public string? CacheGroupKey => "GetReturnItemMemos";
 
     public CreateReturnItemMemoDto ReturnItemMemo { get; set; }
+    public ReturnItemMemosDetailLevel? DetailLevel { get; set; }
 
 
     public class CreateReturnItemMemoCommandHandler : IRequestHandler<CreateReturnItemMemoCommand, CreatedReturnItemMemoResponse>
@@ -49,7 +55,48 @@ public class CreateReturnItemMemoCommand : IRequest<CreatedReturnItemMemoRespons
             returnItemMemo.Id = Guid.NewGuid();
             returnItemMemo.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedReturnItemMemoResponse>(await _returnItemMemoRepository.AddAsync(returnItemMemo));
+            await _returnItemMemoRepository.AddAsync(returnItemMemo);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _returnItemMemoRepository.GetAsync(predicate: x => x.Id == returnItemMemo.Id,
+                include: x =>
+                {
+                    IQueryable<ReturnItemMemo> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReturnItem)
+                    {
+                        query = query.Include(y => y.ReturnItem);
+
+                        var returnItemDetailLevel = detailLevel.ReturnItemDetailLevel;
+
+                        if (returnItemDetailLevel.IncludeReturn)
+                        {
+                            query = query.Include(y => y.ReturnItem).ThenInclude(y => y.Return);
+                        }
+
+                        if (returnItemDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.ReturnItem).ThenInclude(y => y.Product);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReturnItemMemo, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReturnItemMemoResponse>(response);
+            }
+            else
+            {
+                var response = await _returnItemMemoRepository.GetAsync(predicate: x => x.Id == returnItemMemo.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReturnItemMemoResponse>(response);
+            }
         }
     }
 }

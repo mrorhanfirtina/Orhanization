@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Commands.Create;
+﻿using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Commands.Create;
 
 public class CreatedReceiptAttributeResponse
 {
@@ -9,6 +11,7 @@ public class CreatedReceiptAttributeResponse
     public Guid DepositorCompanyId { get; set; }
     public bool IsNecessary { get; set; }
     public DateTime CreatedDate { get; set; }
-
+    public ReceiptAttributesAttributeInputTypeResponseDto AttributeInputType { get; set; }
+    public ReceiptAttributesDepositorCompanyResponseDto DepositorCompany { get; set; }
 }
 

@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockReserveReasons.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockReserveReasons.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicStockReserveReasonQuery : IRequest<GetListResponse<
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public StockReserveReasonsDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListByDynamicStockReserveReasonQueryHandler : IRequestHandler<GetListByDynamicStockReserveReasonQuery, GetListResponse<GetListByDynamicStockReserveReasonListItemDto>>
@@ -44,12 +49,43 @@ public class GetListByDynamicStockReserveReasonQuery : IRequest<GetListResponse<
             _stockReserveReasonBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<StockReserveReason> stockReserveReasonList = await _stockReserveReasonRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<StockReserveReason> stockReserveReasonList = await _stockReserveReasonRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-            return _mapper.Map<GetListResponse<GetListByDynamicStockReserveReasonListItemDto>>(stockReserveReasonList);
+                return _mapper.Map<GetListResponse<GetListByDynamicStockReserveReasonListItemDto>>(stockReserveReasonList);
+            }
+            else
+            {
+                Paginate<StockReserveReason> stockReserveReasonList = await _stockReserveReasonRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<StockReserveReason> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeStock)
+                    {
+                        query = query.Include(y => y.Stock);
+                    }
+
+                    if (detailLevel.IncludeReserveReason)
+                    {
+                        query = query.Include(y => y.ReserveReason);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<StockReserveReason, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicStockReserveReasonListItemDto>>(stockReserveReasonList);
+            }
         }
     }
 }

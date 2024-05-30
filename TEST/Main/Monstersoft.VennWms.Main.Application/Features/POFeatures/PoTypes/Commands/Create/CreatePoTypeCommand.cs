@@ -28,7 +28,7 @@ public class CreatePoTypeCommand : IRequest<CreatedPoTypeResponse>, ITransaction
     public string? CacheGroupKey => "GetPoTypes";
 
     public CreatePoTypeDto PoType { get; set; }
-    public PoTypeDetailLevel DetailLevel { get; set; }
+    public PoTypesDetailLevel DetailLevel { get; set; }
 
     public class CreatePoTypeCommandHandler : IRequestHandler<CreatePoTypeCommand, CreatedPoTypeResponse>
     {

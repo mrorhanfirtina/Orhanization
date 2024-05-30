@@ -30,7 +30,7 @@ public class CreateOrderAttributeValueCommand : IRequest<CreatedOrderAttributeVa
     public string? CacheGroupKey => "GetOrderAttributeValues";
 
     public CreateOrderAttributeValueDto OrderAttributeValue { get; set; }
-    public OrderAttributeValueDetailLevel DetailLevel { get; set; }
+    public OrderAttributeValuesDetailLevel DetailLevel { get; set; }
 
 
     public class CreateOrderAttributeValueCommandHandler : IRequestHandler<CreateOrderAttributeValueCommand, CreatedOrderAttributeValueResponse>

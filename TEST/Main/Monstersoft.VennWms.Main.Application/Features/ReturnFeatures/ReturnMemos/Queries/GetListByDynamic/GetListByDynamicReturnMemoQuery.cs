@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReturnRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,7 +28,7 @@ public class GetListByDynamicReturnMemoQuery : IRequest<GetListResponse<GetListB
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-
+    public ReturnMemosDetailLevel? DetailLevel { get; set; }
 
     public class GetListByDynamicReturnMemoQueryHandler : IRequestHandler<GetListByDynamicReturnMemoQuery, GetListResponse<GetListByDynamicReturnMemoListItemDto>>
     {
@@ -44,12 +48,38 @@ public class GetListByDynamicReturnMemoQuery : IRequest<GetListResponse<GetListB
             _returnMemoBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ReturnMemo> returnMemoList = await _returnMemoRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ReturnMemo> returnMemoList = await _returnMemoRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<ReturnMemo> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicReturnMemoListItemDto>>(returnMemoList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReturn)
+                    {
+                        query = query.Include(y => y.Return);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReturnMemo, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReturnMemoListItemDto>>(returnMemoList);
+            }
+            else
+            {
+                Paginate<ReturnMemo> returnMemoList = await _returnMemoRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReturnMemoListItemDto>>(returnMemoList);
+            }
         }
     }
 

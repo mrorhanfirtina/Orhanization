@@ -29,7 +29,7 @@ public class CreateProductCategoryCommand : IRequest<CreatedProductCategoryRespo
     public string? CacheGroupKey => "GetProductCategories";
 
     public CreateProductCategoryDto ProductCategory { get; set; }
-    public ProductCategoryDetailLevel DetailLevel { get; set; }
+    public ProductCategoriesDetailLevel DetailLevel { get; set; }
 
 
 

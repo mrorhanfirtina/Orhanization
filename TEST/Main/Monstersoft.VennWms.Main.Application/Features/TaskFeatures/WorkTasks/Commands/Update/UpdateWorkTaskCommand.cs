@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.WorkTasks.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.WorkTasks.Constants;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.WorkTasks.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.TaskRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.TaskEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class UpdateWorkTaskCommand : IRequest<UpdatedWorkTaskResponse>, ITransac
     public string? CacheGroupKey => "GetWorkTasks";
 
     public UpdateWorkTaskDto WorkTask { get; set; }
+    public WorkTasksDetailLevel? DetailLevel { get; set; }
 
 
     public class UpdateWorkTaskCommandHandler : IRequestHandler<UpdateWorkTaskCommand, UpdatedWorkTaskResponse>
@@ -59,8 +64,85 @@ public class UpdateWorkTaskCommand : IRequest<UpdatedWorkTaskResponse>, ITransac
             WorkTask? workTask = _mapper.Map(request.WorkTask, currentWorkTask);
             workTask.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedWorkTaskResponse>(await _workTaskRepository.UpdateAsync(workTask));
+            await _workTaskRepository.UpdateAsync(workTask);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _workTaskRepository.GetAsync(predicate: x => x.Id == workTask.Id,
+                include: x =>
+                {
+                    IQueryable<WorkTask> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeFromLocation)
+                    {
+                        query = query.Include(y => y.FromLocation);
+                    }
+
+                    if (detailLevel.IncludeToLocation)
+                    {
+                        query = query.Include(y => y.ToLocation);
+                    }
+
+                    if (detailLevel.IncludeStatus)
+                    {
+                        query = query.Include(y => y.Status);
+                    }
+
+                    if (detailLevel.IncludeTransactionType)
+                    {
+                        query = query.Include(y => y.TransactionType);
+                    }
+
+                    if (detailLevel.IncludeDepositor)
+                    {
+                        query = query.Include(y => y.Depositor);
+
+                        var depositorDetailLevel = detailLevel.DepositorDetailLevel;
+
+                        if (depositorDetailLevel.IncludeCompany)
+                        {
+                            query = query.Include(y => y.Depositor).ThenInclude(y => y.Company);
+                        }
+                    }
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeOrderShipItemTask)
+                    {
+                        query = query.Include(y => y.OrderShipItemTasks);
+                    }
+
+                    if (detailLevel.IncludeStock)
+                    {
+                        query = query.Include(y => y.Stock);
+
+                        var stockDetailLevel = detailLevel.StockDetailLevel;
+
+                        if (stockDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.Stock).ThenInclude(y => y.Product);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<WorkTask, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedWorkTaskResponse>(response);
+            }
+            else
+            {
+                var response = await _workTaskRepository.GetAsync(predicate: x => x.Id == workTask.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedWorkTaskResponse>(response);
+            }
         }
     }
 }

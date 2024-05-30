@@ -22,7 +22,7 @@ public class GetByCodePriorityListQuery : IRequest<GetByCodePriorityListResponse
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public string Code { get; set; }
-    public PriorityListDetailLevel DetailLevel { get; set; }
+    public PriorityListsDetailLevel DetailLevel { get; set; }
 
     public class GetByCodePriorityListQueryHandler : IRequestHandler<GetByCodePriorityListQuery, GetByCodePriorityListResponse>
     {

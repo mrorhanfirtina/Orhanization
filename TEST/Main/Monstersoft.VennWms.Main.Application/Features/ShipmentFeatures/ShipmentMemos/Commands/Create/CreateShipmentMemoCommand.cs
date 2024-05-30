@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentMemos.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class CreateShipmentMemoCommand : IRequest<CreatedShipmentMemoResponse>, 
     public string? CacheGroupKey => "GetShipmentMemos";
 
     public CreateShipmentMemoDto ShipmentMemo { get; set; }
+    public ShipmentMemosDetailLevel? DetailLevel { get; set; }
 
 
     public class CreateShipmentMemoCommandHandler : IRequestHandler<CreateShipmentMemoCommand, CreatedShipmentMemoResponse>
@@ -49,7 +54,36 @@ public class CreateShipmentMemoCommand : IRequest<CreatedShipmentMemoResponse>, 
             shipmentMemo.Id = Guid.NewGuid();
             shipmentMemo.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedShipmentMemoResponse>(await _shipmentMemoRepository.AddAsync(shipmentMemo));
+            await _shipmentMemoRepository.AddAsync(shipmentMemo);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _shipmentMemoRepository.GetAsync(predicate: x => x.Id == shipmentMemo.Id,
+                include: x =>
+                {
+                    IQueryable<ShipmentMemo> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeShipment)
+                    {
+                        query = query.Include(y => y.Shipment);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ShipmentMemo, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedShipmentMemoResponse>(response);
+            }
+            else
+            {
+                var response = await _shipmentMemoRepository.GetAsync(predicate: x => x.Id == shipmentMemo.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedShipmentMemoResponse>(response);
+            }
         }
     }
 }

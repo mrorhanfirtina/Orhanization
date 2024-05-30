@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Commands.Update;
 
 public class UpdatedReceiptAttributeResponse
 {
@@ -9,7 +11,7 @@ public class UpdatedReceiptAttributeResponse
     public Guid DepositorCompanyId { get; set; }
     public bool IsNecessary { get; set; }
     public DateTime CreatedDate { get; set; }
-    public DateTime UpdatedDate { get; set; }
-
+    public ReceiptAttributesAttributeInputTypeResponseDto AttributeInputType { get; set; }
+    public ReceiptAttributesDepositorCompanyResponseDto DepositorCompany { get; set; }
 }
 

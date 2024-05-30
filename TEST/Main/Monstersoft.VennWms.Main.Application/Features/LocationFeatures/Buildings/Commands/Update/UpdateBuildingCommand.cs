@@ -29,7 +29,7 @@ public class UpdateBuildingCommand : IRequest<UpdatedBuildingResponse>, ITransac
     public string? CacheGroupKey => "GetBuildings";
 
     public UpdateBuildingDto Building { get; set; }
-    public BuildingDetailLevel DetailLevel { get; set; }
+    public BuildingsDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateBuildingCommandHandler : IRequestHandler<UpdateBuildingCommand, UpdatedBuildingResponse>

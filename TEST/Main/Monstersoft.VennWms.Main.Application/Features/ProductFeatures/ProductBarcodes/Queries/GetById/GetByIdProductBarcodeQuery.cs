@@ -23,7 +23,7 @@ public class GetByIdProductBarcodeQuery : IRequest<GetByIdProductBarcodeResponse
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public ProductBarcodeDetailLevel DetailLevel { get; set; }
+    public ProductBarcodesDetailLevel DetailLevel { get; set; }
 
 
 

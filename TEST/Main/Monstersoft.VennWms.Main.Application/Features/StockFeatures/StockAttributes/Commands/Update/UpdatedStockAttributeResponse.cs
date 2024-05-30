@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributes.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributes.Commands.Update;
 
 public class UpdatedStockAttributeResponse
 {
@@ -10,5 +12,6 @@ public class UpdatedStockAttributeResponse
     public bool IsNecessary { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public StockAttributesAttributeInputTypeResponseDto? AttributeInputType { get; set; }
+    public StockAttributesDepositorCompanyResponseDto? DepositorCompany { get; set; }
 }

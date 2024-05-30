@@ -23,7 +23,7 @@ public class GetByIdReceiverQuery : IRequest<GetByIdReceiverResponse>, ITransact
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public ReceiverDetailLevel DetailLevel { get; set; }
+    public ReceiversDetailLevel DetailLevel { get; set; }
 
     public class GetByIdReceiverQueryHandler : IRequestHandler<GetByIdReceiverQuery, GetByIdReceiverResponse>
     {

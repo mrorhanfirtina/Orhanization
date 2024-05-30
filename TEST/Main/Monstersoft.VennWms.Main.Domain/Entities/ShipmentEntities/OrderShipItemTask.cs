@@ -8,8 +8,9 @@ public class OrderShipItemTask : Entity<Guid>
     public Guid OrderShipItemId { get; set; }
     public Guid WorkTaskId { get; set; }
     public decimal Quantity { get; set; }
-    public virtual ICollection<OrderShipItemStock> OrderShipItemStocks { get; set; }
+    public virtual ICollection<OrderShipItemStock>? OrderShipItemStocks { get; set; }
     public virtual WorkTask? WorkTask { get; set; }
+    public virtual OrderShipItem? OrderShipItem { get; set; }
 
     public OrderShipItemTask()
     {

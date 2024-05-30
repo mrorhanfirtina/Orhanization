@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskLists.Constants;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskLists.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.TaskRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.TaskEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +28,7 @@ public class GetListByDynamicTaskListQuery : IRequest<GetListResponse<GetListByD
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public TaskListsDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListByDynamicTaskListQueryHandler : IRequestHandler<GetListByDynamicTaskListQuery, GetListResponse<GetListByDynamicTaskListListItemDto>>
@@ -47,13 +51,55 @@ public class GetListByDynamicTaskListQuery : IRequest<GetListResponse<GetListByD
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<TaskList> taskListList = await _taskListRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(x => x.WorkTasks),
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<TaskList> taskListList = await _taskListRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<TaskList> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicTaskListListItemDto>>(taskListList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeWorkTask)
+                    {
+                        query = query.Include(y => y.WorkTasks);
+                    }
+
+                    if (detailLevel.IncludeDepositor)
+                    {
+                        query = query.Include(y => y.Depositor);
+
+                        var depositorDetailLevel = detailLevel.DepositorDetailLevel;
+
+                        if (depositorDetailLevel.IncludeCompany)
+                        {
+                            query = query.Include(y => y.Depositor).ThenInclude(y => y.Company);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<TaskList, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicTaskListListItemDto>>(taskListList);
+            }
+            else
+            {
+                Paginate<TaskList> taskListList = await _taskListRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicTaskListListItemDto>>(taskListList);
+            }
         }
     }
 }

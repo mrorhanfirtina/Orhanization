@@ -22,7 +22,7 @@ public class GetByIdLockReasonQuery : IRequest<GetByIdLockReasonResponse>, ITran
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public int Id { get; set; }
-    public LockReasonDetailLevel DetailLevel { get; set; }
+    public LockReasonsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdLockReasonQueryHandler : IRequestHandler<GetByIdLockReasonQuery, GetByIdLockReasonResponse>

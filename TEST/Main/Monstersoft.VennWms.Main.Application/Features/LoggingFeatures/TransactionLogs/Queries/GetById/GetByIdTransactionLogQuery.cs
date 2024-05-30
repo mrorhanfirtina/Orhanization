@@ -23,7 +23,7 @@ public class GetByIdTransactionLogQuery : IRequest<GetByIdTransactionLogResponse
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public TransactionLogDetailLevel DetailLevel { get; set; }
+    public TransactionLogsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdTransactionLogQueryHandler : IRequestHandler<GetByIdTransactionLogQuery, GetByIdTransactionLogResponse>

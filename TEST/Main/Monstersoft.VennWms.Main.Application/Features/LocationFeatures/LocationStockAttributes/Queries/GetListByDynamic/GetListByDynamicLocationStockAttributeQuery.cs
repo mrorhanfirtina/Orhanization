@@ -28,7 +28,7 @@ public class GetListByDynamicLocationStockAttributeQuery : IRequest<GetListRespo
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public LocationStockAttributeDetailLevel DetailLevel { get; set; }
+    public LocationStockAttributesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicLocationStockAttributeQueryHandler : IRequestHandler<GetListByDynamicLocationStockAttributeQuery, GetListResponse<GetListByDynamicLocationStockAttributeListItemDto>>

@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskLists.Constants;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskLists.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskLists.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.TaskRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.TaskEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class CreateTaskListCommand : IRequest<CreatedTaskListResponse>, ITransac
     public string? CacheGroupKey => "GetTaskLists";
 
     public CreateTaskListDto TaskList { get; set; }
+    public TaskListsDetailLevel? DetailLevel { get; set; }
 
 
     public class CreateTaskListCommandHandler : IRequestHandler<CreateTaskListCommand, CreatedTaskListResponse>
@@ -54,7 +59,53 @@ public class CreateTaskListCommand : IRequest<CreatedTaskListResponse>, ITransac
                 x.CreatedDate = DateTime.Now;
             });
 
-            return _mapper.Map<CreatedTaskListResponse>(await _taskListRepository.AddAsync(taskList));
+            await _taskListRepository.AddAsync(taskList);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _taskListRepository.GetAsync(predicate: x => x.Id == taskList.Id,
+                include: x =>
+                {
+                    IQueryable<TaskList> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeWorkTask)
+                    {
+                        query = query.Include(y => y.WorkTasks);
+                    }
+
+                    if (detailLevel.IncludeDepositor)
+                    {
+                        query = query.Include(y => y.Depositor);
+
+                        var depositorDetailLevel = detailLevel.DepositorDetailLevel;
+
+                        if (depositorDetailLevel.IncludeCompany)
+                        {
+                            query = query.Include(y => y.Depositor).ThenInclude(y => y.Company);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<TaskList, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedTaskListResponse>(response);
+            }
+            else
+            {
+                var response = await _taskListRepository.GetAsync(predicate: x => x.Id == taskList.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedTaskListResponse>(response);
+            }
         }
     }
 }

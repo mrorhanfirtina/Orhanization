@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReturnRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicReturnAttributeQuery : IRequest<GetListResponse<Get
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public ReturnAttributesDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListByDynamicReturnAttributeQueryHandler : IRequestHandler<GetListByDynamicReturnAttributeQuery, GetListResponse<GetListByDynamicReturnAttributeListItemDto>>
@@ -46,12 +51,43 @@ public class GetListByDynamicReturnAttributeQuery : IRequest<GetListResponse<Get
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ReturnAttribute> returnAttributeList = await _returnAttributeRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ReturnAttribute> returnAttributeList = await _returnAttributeRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<ReturnAttribute> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicReturnAttributeListItemDto>>(returnAttributeList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAttributeInputType)
+                    {
+                        query = query.Include(y => y.AttributeInputType);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReturnAttribute, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReturnAttributeListItemDto>>(returnAttributeList);
+            }
+            else
+            {
+                Paginate<ReturnAttribute> returnAttributeList = await _returnAttributeRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReturnAttributeListItemDto>>(returnAttributeList);
+            }
         }
     }
 

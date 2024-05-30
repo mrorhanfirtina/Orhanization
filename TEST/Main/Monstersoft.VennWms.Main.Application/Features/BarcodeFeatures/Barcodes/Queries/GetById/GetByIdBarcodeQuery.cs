@@ -23,7 +23,7 @@ public class GetByIdBarcodeQuery : IRequest<GetByIdBarcodeResponse>, ITransactio
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public BarcodeDetailLevel DetailLevel { get; set; }
+    public BarcodesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdBarcodeQueryHandler : IRequestHandler<GetByIdBarcodeQuery, GetByIdBarcodeResponse>

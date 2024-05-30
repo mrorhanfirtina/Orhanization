@@ -30,7 +30,7 @@ public class CreateBuildingCommand : IRequest<CreatedBuildingResponse>, ITransac
     public string? CacheGroupKey => "GetBuildings";
 
     public CreateBuildingDto Building { get; set; }
-    public BuildingDetailLevel DetailLevel { get; set; }
+    public BuildingsDetailLevel DetailLevel { get; set; }
 
     public class CreateBuildingCommandHandler : IRequestHandler<CreateBuildingCommand, CreatedBuildingResponse>
     {

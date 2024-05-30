@@ -1,4 +1,4 @@
-﻿using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
+﻿using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItems.Dtos.ResponseDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItems.Queries.GetListByDynamic;
 
@@ -13,8 +13,10 @@ public class GetListByDynamicReturnItemListItemDto
     public int StatusId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public Return Return { get; set; }
-    public ICollection<ReturnItemMemo> ReturnItemMemos { get; set; }
-    public ICollection<ReturnItmStockAttrValue> ReturnItmStockAttrValues { get; set; }
-
+    public ICollection<ReturnItemsReturnItemMemoResponseDto>? ReturnItemMemos { get; set; }
+    public ICollection<ReturnItemsReturnItmStockAttrValueResponseDto>? ReturnItmStockAttrValues { get; set; }
+    public ReturnItemsProductResponseDto? Product { get; set; }
+    public ReturnItemsItemUnitResponseDto? ItemUnit { get; set; }
+    public ReturnItemsStatusResponseDto? Status { get; set; }
+    public ReturnItemsReturnResponseDto? Return { get; set; }
 }

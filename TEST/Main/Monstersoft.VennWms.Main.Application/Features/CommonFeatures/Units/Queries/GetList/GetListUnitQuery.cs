@@ -31,7 +31,7 @@ public class GetListUnitQuery : IRequest<GetListResponse<GetListUnitListItemDto>
     public string[] Roles => [Admin, User, Read];
 
     public PageRequest PageRequest { get; set; }
-    public UnitDetailLevel DetailLevel { get; set; }
+    public UnitsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListUnitQueryHandler : IRequestHandler<GetListUnitQuery, GetListResponse<GetListUnitListItemDto>>

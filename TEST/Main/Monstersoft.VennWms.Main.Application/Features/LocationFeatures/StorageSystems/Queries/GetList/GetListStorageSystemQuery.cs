@@ -31,7 +31,7 @@ public class GetListStorageSystemQuery : IRequest<GetListResponse<GetListStorage
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public StorageSystemDetailLevel DetailLevel { get; set; }
+    public StorageSystemsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListStorageSystemQueryHandler : IRequestHandler<GetListStorageSystemQuery, GetListResponse<GetListStorageSystemListItemDto>>

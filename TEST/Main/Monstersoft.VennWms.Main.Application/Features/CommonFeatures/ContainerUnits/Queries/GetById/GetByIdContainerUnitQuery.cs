@@ -23,7 +23,7 @@ public class GetByIdContainerUnitQuery : IRequest<GetByIdContainerUnitResponse>,
 
 
     public int Id { get; set; }
-    public ContainerUnitDetaillevel DetailLevel { get; set; }
+    public ContainerUnitsDetaillevel DetailLevel { get; set; }
 
 
     public class GetByIdContainerUnitQueryHandler : IRequestHandler<GetByIdContainerUnitQuery, GetByIdContainerUnitResponse>

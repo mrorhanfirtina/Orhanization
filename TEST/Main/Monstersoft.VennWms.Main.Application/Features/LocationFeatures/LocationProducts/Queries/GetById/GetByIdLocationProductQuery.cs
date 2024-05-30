@@ -23,7 +23,7 @@ public class GetByIdLocationProductQuery : IRequest<GetByIdLocationProductRespon
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public LocationProductDetailLevel DetailLevel { get; set; }
+    public LocationProductsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdLocationProductQueryHandler : IRequestHandler<GetByIdLocationProductQuery, GetByIdLocationProductResponse>

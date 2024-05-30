@@ -7,7 +7,8 @@ public class StockUnsuitReason : Entity<Guid>
 {
     public Guid StockId { get; set; }
     public Guid UnsuitReasonId { get; set; }
-    public virtual UnsuitReason UnsuitReason { get; set; }
+    public virtual UnsuitReason? UnsuitReason { get; set; }
+    public virtual Stock? Stock { get; set; }
 
     public StockUnsuitReason()
     {

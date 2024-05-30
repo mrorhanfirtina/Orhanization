@@ -31,7 +31,7 @@ public class GetListLocationQuery : IRequest<GetListResponse<GetListLocationList
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public LocationDetailLevel DetailLevel { get; set; }
+    public LocationsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListLocationQueryHandler : IRequestHandler<GetListLocationQuery, GetListResponse<GetListLocationListItemDto>>

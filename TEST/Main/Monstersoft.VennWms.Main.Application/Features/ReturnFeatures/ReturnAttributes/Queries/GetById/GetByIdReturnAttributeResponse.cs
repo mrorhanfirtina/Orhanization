@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributes.Queries.GetById;
+﻿using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributes.Queries.GetById;
 
 public class GetByIdReturnAttributeResponse
 {
@@ -10,5 +12,6 @@ public class GetByIdReturnAttributeResponse
     public bool IsNecessary { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public ReturnAttributesDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public ReturnAttributesAttributeInputTypeResponseDto? AttributeInputType { get; set; }
 }

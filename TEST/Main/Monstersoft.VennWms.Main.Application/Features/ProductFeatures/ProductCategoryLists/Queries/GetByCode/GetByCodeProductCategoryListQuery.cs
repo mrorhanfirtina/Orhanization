@@ -22,7 +22,7 @@ public class GetByCodeProductCategoryListQuery : IRequest<GetByCodeProductCatego
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public string Code { get; set; }
-    public ProductCategoryListDetailLevel DetailLevel { get; set; }
+    public ProductCategoryListsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeProductCategoryListQueryHandler : IRequestHandler<GetByCodeProductCategoryListQuery, GetByCodeProductCategoryListResponse>

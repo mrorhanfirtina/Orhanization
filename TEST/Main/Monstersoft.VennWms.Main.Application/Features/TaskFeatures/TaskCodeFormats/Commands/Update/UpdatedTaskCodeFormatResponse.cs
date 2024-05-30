@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskCodeFormats.Commands.Update;
+﻿using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskCodeFormats.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskCodeFormats.Commands.Update;
 
 public class UpdatedTaskCodeFormatResponse
 {
@@ -10,4 +12,8 @@ public class UpdatedTaskCodeFormatResponse
     public int TaskListCounter { get; set; }
     public int TransactionTypeId { get; set; }
     public Guid DepositorCompanyId { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public DateTime UpdatedDate { get; set; }
+    public TaskCodeFormatsTransactionTypeResponseDto? TransactionType { get; set; }
+    public TaskCodeFormatsDepositorCompanyResponseDto DepositorCompany { get; set; }
 }

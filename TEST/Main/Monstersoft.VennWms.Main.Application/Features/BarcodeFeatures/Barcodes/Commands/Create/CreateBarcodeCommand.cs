@@ -29,7 +29,7 @@ public class CreateBarcodeCommand : IRequest<CreatedBarcodeResponse>, ITransacti
 
 
     public CreateBarcodeDto Barcode { get; set; }
-    public BarcodeDetailLevel DetailLevel { get; set; }
+    public BarcodesDetailLevel DetailLevel { get; set; }
 }
 
 public class CreateBarcodeCommandHandler : IRequestHandler<CreateBarcodeCommand, CreatedBarcodeResponse>

@@ -32,7 +32,7 @@ public class GetListBarcodeQuery : IRequest<GetListResponse<GetListBarcodeListIt
 
 
     public PageRequest PageRequest { get; set; }
-    public BarcodeDetailLevel DetailLevel { get; set; }
+    public BarcodesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListBarcodeQueryHandler : IRequestHandler<GetListBarcodeQuery, GetListResponse<GetListBarcodeListItemDto>>

@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.TaskFeatures.WorkTasks.Queries.GetListByDynamic;
+﻿using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.WorkTasks.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.TaskFeatures.WorkTasks.Queries.GetListByDynamic;
 
 public class GetListByDynamicWorkTaskListItemDto
 {
@@ -15,6 +17,13 @@ public class GetListByDynamicWorkTaskListItemDto
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public WorkTasksStockResponseDto? Stock { get; set; }
+    public WorkTasksFromLocationResponseDto? FromLocation { get; set; }
+    public WorkTasksToLocationResponseDto? ToLocation { get; set; }
+    public WorkTasksStatusResponseDto? Status { get; set; }
+    public WorkTasksTransactionTypeResponseDto? TransactionType { get; set; }
+    public WorkTasksDepositorResponseDto? Depositor { get; set; }
+    public WorkTasksDepositorCompanyResponseDto? DepositorCompany { get; set; }
+    public ICollection<WorkTasksOrderShipItemTaskResponseDto>? OrderShipItemTasks { get; set; }
 }
 

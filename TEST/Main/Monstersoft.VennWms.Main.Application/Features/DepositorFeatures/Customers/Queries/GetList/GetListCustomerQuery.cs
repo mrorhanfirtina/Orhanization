@@ -30,7 +30,7 @@ public class GetListCustomerQuery : IRequest<GetListResponse<GetListCustomerList
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public CustomerDetailLevel DetailLevel { get; set; }
+    public CustomersDetailLevel DetailLevel { get; set; }
 
 
     public class GetListCustomerQueryHandler : IRequestHandler<GetListCustomerQuery, GetListResponse<GetListCustomerListItemDto>>

@@ -23,7 +23,7 @@ public class GetByIdOrderItemQuery : IRequest<GetByIdOrderItemResponse>, ITransa
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public OrderItemDetailLevel DetailLevel { get; set; }
+    public OrderItemsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdOrderItemQueryHandler : IRequestHandler<GetByIdOrderItemQuery, GetByIdOrderItemResponse>

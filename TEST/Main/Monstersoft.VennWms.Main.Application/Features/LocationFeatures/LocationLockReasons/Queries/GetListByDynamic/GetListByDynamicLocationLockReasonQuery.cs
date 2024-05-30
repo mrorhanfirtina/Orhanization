@@ -27,7 +27,7 @@ public class GetListByDynamicLocationLockReasonQuery : IRequest<GetListResponse<
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public LocationLockReasonDetailLevel DetailLevel { get; set; }
+    public LocationLockReasonsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicLocationLockReasonQueryHandler : IRequestHandler<GetListByDynamicLocationLockReasonQuery, GetListResponse<GetListByDynamicLocationLockReasonListItemDto>>

@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemTasks.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemTasks.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemTasks.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemTasks.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
-using Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -27,6 +29,7 @@ public class UpdateOrderShipItemTaskCommand : IRequest<UpdatedOrderShipItemTaskR
     public string? CacheGroupKey => "GetOrderShipItemTasks";
 
     public UpdateOrderShipItemTaskDto OrderShipItemTask { get; set; }
+    public OrderShipItemTasksDetailLevel? DetailLevel { get; set; }
 
 
     public class UpdateOrderShipItemTaskCommandHandler : IRequestHandler<UpdateOrderShipItemTaskCommand, UpdatedOrderShipItemTaskResponse>
@@ -64,7 +67,56 @@ public class UpdateOrderShipItemTaskCommand : IRequest<UpdatedOrderShipItemTaskR
                 x.CreatedDate = orderShipItemTask.CreatedDate;
             });
 
-            return _mapper.Map<UpdatedOrderShipItemTaskResponse>(await _orderShipItemTaskRepository.UpdateAsync(orderShipItemTask));
+            await _orderShipItemTaskRepository.UpdateAsync(orderShipItemTask);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _orderShipItemTaskRepository.GetAsync(predicate: x => x.Id == orderShipItemTask.Id,
+                include: x =>
+                {
+                    IQueryable<OrderShipItemTask> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeWorkTask)
+                    {
+                        query = query.Include(y => y.WorkTask);
+                    }
+
+                    if (detailLevel.IncludeOrderShipItem)
+                    {
+                        query = query.Include(y => y.OrderShipItem);
+                    }
+
+                    if (detailLevel.IncludeOrderShipItemStock)
+                    {
+                        query = query.Include(y => y.OrderShipItemStocks);
+
+                        if (detailLevel.OrderShipItemStockDetailLevel.IncludeStock)
+                        {
+                            query = query.Include(y => y.OrderShipItemStocks).ThenInclude(y => y.Stock);
+                        }
+
+                        if (detailLevel.OrderShipItemStockDetailLevel.IncludeStockPackType)
+                        {
+                            query = query.Include(y => y.OrderShipItemStocks).ThenInclude(y => y.StockPackType);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<OrderShipItemTask, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedOrderShipItemTaskResponse>(response);
+            }
+            else
+            {
+                var response = await _orderShipItemTaskRepository.GetAsync(predicate: x => x.Id == orderShipItemTask.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedOrderShipItemTaskResponse>(response);
+            }
         }
     }
 }

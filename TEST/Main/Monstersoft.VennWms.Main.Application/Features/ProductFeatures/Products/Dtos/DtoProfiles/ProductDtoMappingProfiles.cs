@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnits.Dtos.ResponseDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Dtos.ResponseDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Dtos.UpdateDtos;
@@ -40,5 +41,7 @@ public class ProductDtoMappingProfiles : Profile
         CreateMap<Unit, ProductVolumeUnitResponseDto>().ReverseMap();
         CreateMap<Unit, ProductWeightUnitResponseDto>().ReverseMap();
         CreateMap<Unit, ProductLenghtUnitResponseDto>().ReverseMap();
+        CreateMap<ItemUnit, ProductItemUnitResponseDto>().ReverseMap();
+        CreateMap<ItemUnitConversion, ProductItemUnitConversionResponseDto>().ReverseMap();
     }
 }

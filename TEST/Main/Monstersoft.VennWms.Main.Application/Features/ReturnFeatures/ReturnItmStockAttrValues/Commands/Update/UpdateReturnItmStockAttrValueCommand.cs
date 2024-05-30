@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItmStockAttrValues.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItmStockAttrValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItmStockAttrValues.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItmStockAttrValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReturnRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,7 @@ public class UpdateReturnItmStockAttrValueCommand : IRequest<UpdatedReturnItmSto
     public string? CacheGroupKey => "GetReturnItmStockAttrValues";
 
     public UpdateReturnItmStockAttrValueDto ReturnItmStockAttrValue { get; set; }
+    public ReturnItmStockAttrValuesDetailLevel? DetailLevel { get; set; }
 
 
     public class UpdateReturnItmStockAttrValueCommandHandler : IRequestHandler<UpdateReturnItmStockAttrValueCommand, UpdatedReturnItmStockAttrValueResponse>
@@ -54,8 +59,60 @@ public class UpdateReturnItmStockAttrValueCommand : IRequest<UpdatedReturnItmSto
             ReturnItmStockAttrValue? returnItmStockAttrValue = _mapper.Map(request.ReturnItmStockAttrValue, currentReturnItmStockAttrValue);
             returnItmStockAttrValue.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedReturnItmStockAttrValueResponse>(await _returnItmStockAttrValueRepository.UpdateAsync(returnItmStockAttrValue));
+            await _returnItmStockAttrValueRepository.UpdateAsync(returnItmStockAttrValue);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _returnItmStockAttrValueRepository.GetAsync(predicate: x => x.Id == returnItmStockAttrValue.Id,
+                include: x =>
+                {
+                    IQueryable<ReturnItmStockAttrValue> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReturnItem)
+                    {
+                        query = query.Include(y => y.ReturnItem);
+
+                        var returnItemDetailLevel = detailLevel.ReturnItemDetailLevel;
+
+                        if (returnItemDetailLevel.IncludeReturn)
+                        {
+                            query = query.Include(y => y.ReturnItem).ThenInclude(y => y.Return);
+                        }
+
+                        if (returnItemDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.ReturnItem).ThenInclude(y => y.Product);
+                        }
+                    }
+
+                    if (detailLevel.IncludeStockAttribute)
+                    {
+                        query = query.Include(y => y.StockAttribute);
+
+                        var stockAttributeDetailLevel = detailLevel.StockAttributeDetailLevel;
+
+                        if (stockAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.StockAttribute).ThenInclude(y => y.AttributeInputType);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReturnItmStockAttrValue, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedReturnItmStockAttrValueResponse>(response);
+            }
+            else
+            {
+                var response = await _returnItmStockAttrValueRepository.GetAsync(predicate: x => x.Id == returnItmStockAttrValue.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedReturnItmStockAttrValueResponse>(response);
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributes.Queries.GetById;
+﻿using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributes.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributes.Queries.GetById;
 
 public class GetByIdShipmentAttributeResponse
 {
@@ -10,5 +12,6 @@ public class GetByIdShipmentAttributeResponse
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public ShipmentAttributesDepositorCompanyResponseDto DepositorCompany { get; set; }
+    public ShipmentAttributesAttributeInputTypeResponseDto? AttributeInputType { get; set; }
 }

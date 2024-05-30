@@ -45,7 +45,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.HasOne(p => p.Receiver).WithMany().HasForeignKey(p => p.ReceiverId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.Status).WithMany().HasForeignKey(p => p.StatusId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.OrderPriority).WithOne(p => p.Order).HasForeignKey<OrderPriority>(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(p => p.OrderShipment).WithOne().HasForeignKey<OrderShipment>(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.OrderShipment).WithOne(p => p.Order).HasForeignKey<OrderShipment>(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
         #endregion
 
         #region Filtreler

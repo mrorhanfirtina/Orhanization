@@ -29,7 +29,7 @@ public class UpdateItemPackTypeCommand : IRequest<UpdatedItemPackTypeResponse>, 
     public string? CacheGroupKey => "GetItemPackTypes";
 
     public UpdateItemPackTypeDto ItemPackType { get; set; }
-    public ItemPackTypeDetailLevel DetailLevel { get; set; }
+    public ItemPackTypesDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateItemPackTypeCommandHandler : IRequestHandler<UpdateItemPackTypeCommand, UpdatedItemPackTypeResponse>

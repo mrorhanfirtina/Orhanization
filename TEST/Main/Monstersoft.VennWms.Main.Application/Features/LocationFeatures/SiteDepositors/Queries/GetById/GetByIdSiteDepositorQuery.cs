@@ -22,7 +22,7 @@ public class GetByIdSiteDepositorQuery : IRequest<GetByIdSiteDepositorResponse>,
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public SiteDepositorDetailLevel DetailLevel { get; set; }
+    public SiteDepositorsDetailLevel DetailLevel { get; set; }
 
     public class GetByIdSiteDepositorQueryHandler : IRequestHandler<GetByIdSiteDepositorQuery, GetByIdSiteDepositorResponse>
     {

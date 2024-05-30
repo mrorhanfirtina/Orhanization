@@ -27,7 +27,7 @@ public class GetListByDynamicBranchQuery : IRequest<GetListResponse<GetListByDyn
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public BranchDetailLevel DetailLevel { get; set; }
+    public BranchesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicBranchQueryHandler : IRequestHandler<GetListByDynamicBranchQuery, GetListResponse<GetListByDynamicBranchListItemDto>>

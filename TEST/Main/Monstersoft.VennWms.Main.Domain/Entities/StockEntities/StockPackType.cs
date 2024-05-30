@@ -14,6 +14,7 @@ public class StockPackType : Entity<Guid>
     public decimal? CUQuantity { get; set; }
     public decimal? CUQuantityFree { get; set; }
     public virtual ItemUnit? ItemUnit { get; set; }
+    public virtual Stock? Stock { get; set; }
 
     public StockPackType()
     {

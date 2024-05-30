@@ -29,7 +29,7 @@ public class UpdateOrderAttributeValueCommand : IRequest<UpdatedOrderAttributeVa
     public string? CacheGroupKey => "GetOrderAttributeValues";
 
     public UpdateOrderAttributeValueDto OrderAttributeValue { get; set; }
-    public OrderAttributeValueDetailLevel DetailLevel { get; set; }
+    public OrderAttributeValuesDetailLevel DetailLevel { get; set; }
 
 
 

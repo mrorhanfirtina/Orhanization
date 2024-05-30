@@ -1,4 +1,6 @@
-﻿namespace Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributeValues.Queries.GetListByDynamic;
+﻿using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributeValues.Dtos.ResponseDtos;
+
+namespace Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributeValues.Queries.GetListByDynamic;
 
 public class GetListByDynamicShipmentAttributeValueListItemDto
 {
@@ -8,5 +10,6 @@ public class GetListByDynamicShipmentAttributeValueListItemDto
     public string Value { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-
+    public ShipmentAttributeValuesShipmentAttributeResponseDto? ShipmentAttribute { get; set; }
+    public ShipmentAttributeValuesShipmentResponseDto? Shipment { get; set; }
 }

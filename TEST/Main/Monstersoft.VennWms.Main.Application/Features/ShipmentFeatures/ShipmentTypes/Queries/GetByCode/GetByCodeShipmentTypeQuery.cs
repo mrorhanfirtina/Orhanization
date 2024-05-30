@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentTypes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -19,6 +23,7 @@ public class GetByCodeShipmentTypeQuery : IRequest<GetByCodeShipmentTypeResponse
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
+    public ShipmentTypesDetailLevel? DetailLevel { get; set; }
 
 
     public class GetByCodeShipmentTypeQueryHandler : IRequestHandler<GetByCodeShipmentTypeQuery, GetByCodeShipmentTypeResponse>
@@ -41,10 +46,38 @@ public class GetByCodeShipmentTypeQuery : IRequest<GetByCodeShipmentTypeResponse
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            return _mapper.Map<GetByCodeShipmentTypeResponse>(await _shipmentTypeRepository.GetAsync(
-            predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(x => x.Shipments),
-            withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByCodeShipmentTypeResponse>(await _shipmentTypeRepository.GetAsync(
+                predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<ShipmentType> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeShipment)
+                    {
+                        query = query.Include(y => y.Shipments);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<ShipmentType, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByCodeShipmentTypeResponse>(await _shipmentTypeRepository.GetAsync(
+                predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

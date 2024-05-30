@@ -28,7 +28,7 @@ public class GetListByDynamicStorageSystemQuery : IRequest<GetListResponse<GetLi
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public StorageSystemDetailLevel DetailLevel { get; set; }
+    public StorageSystemsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicStorageSystemQueryHandler : IRequestHandler<GetListByDynamicStorageSystemQuery, GetListResponse<GetListByDynamicStorageSystemListItemDto>>

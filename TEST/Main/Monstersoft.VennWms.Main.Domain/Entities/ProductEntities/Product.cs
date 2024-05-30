@@ -4,7 +4,7 @@ using Orhanization.Core.Persistence.Repositories;
 namespace Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 
 public class Product : Entity<Guid>
-{
+{ 
     public string Code { get; set; }
     public string Description { get; set; }
     public string? AlternativeCode { get; set; }

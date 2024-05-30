@@ -22,7 +22,7 @@ public class GetByCodeZoneQuery : IRequest<GetByCodeZoneResponse>, ITransactiona
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public ZoneDetailLevel DetailLevel { get; set; }
+    public ZonesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeZoneQueryHandler : IRequestHandler<GetByCodeZoneQuery, GetByCodeZoneResponse>

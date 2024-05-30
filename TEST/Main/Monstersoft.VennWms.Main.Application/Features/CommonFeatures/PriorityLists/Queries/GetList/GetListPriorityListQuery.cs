@@ -31,7 +31,7 @@ public class GetListPriorityListQuery : IRequest<GetListResponse<GetListPriority
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public PriorityListDetailLevel DetailLevel { get; set; }
+    public PriorityListsDetailLevel DetailLevel { get; set; }
 
     public class GetListPriorityListQueryHandler : IRequestHandler<GetListPriorityListQuery, GetListResponse<GetListPriorityListListItemDto>>
     {

@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.WorkTasks.Constants;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.WorkTasks.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.TaskRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
+using Monstersoft.VennWms.Main.Domain.Entities.TaskEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -18,6 +23,7 @@ public class GetByCodeWorkTaskQuery : IRequest<GetByCodeWorkTaskResponse>, ITran
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
+    public WorkTasksDetailLevel? DetailLevel { get; set; }
 
 
     public class GetByCodeWorkTaskQueryHandler : IRequestHandler<GetByCodeWorkTaskQuery, GetByCodeWorkTaskResponse>
@@ -40,9 +46,81 @@ public class GetByCodeWorkTaskQuery : IRequest<GetByCodeWorkTaskResponse>, ITran
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            return _mapper.Map<GetByCodeWorkTaskResponse>(await _workTaskRepository.GetAsync(
-            predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
-            withDeleted: false, cancellationToken: cancellationToken));
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                return _mapper.Map<GetByCodeWorkTaskResponse>(await _workTaskRepository.GetAsync(
+                predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<WorkTask> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeFromLocation)
+                    {
+                        query = query.Include(y => y.FromLocation);
+                    }
+
+                    if (detailLevel.IncludeToLocation)
+                    {
+                        query = query.Include(y => y.ToLocation);
+                    }
+
+                    if (detailLevel.IncludeStatus)
+                    {
+                        query = query.Include(y => y.Status);
+                    }
+
+                    if (detailLevel.IncludeTransactionType)
+                    {
+                        query = query.Include(y => y.TransactionType);
+                    }
+
+                    if (detailLevel.IncludeDepositor)
+                    {
+                        query = query.Include(y => y.Depositor);
+
+                        var depositorDetailLevel = detailLevel.DepositorDetailLevel;
+
+                        if (depositorDetailLevel.IncludeCompany)
+                        {
+                            query = query.Include(y => y.Depositor).ThenInclude(y => y.Company);
+                        }
+                    }
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeOrderShipItemTask)
+                    {
+                        query = query.Include(y => y.OrderShipItemTasks);
+                    }
+
+                    if (detailLevel.IncludeStock)
+                    {
+                        query = query.Include(y => y.Stock);
+
+                        var stockDetailLevel = detailLevel.StockDetailLevel;
+
+                        if (stockDetailLevel.IncludeProduct)
+                        {
+                            query = query.Include(y => y.Stock).ThenInclude(y => y.Product);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<WorkTask, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByCodeWorkTaskResponse>(await _workTaskRepository.GetAsync(
+                predicate: x => x.Code == request.Code && x.DepositorCompanyId == depositorCompanyId,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

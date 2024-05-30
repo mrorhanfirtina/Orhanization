@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicStockMemoQuery : IRequest<GetListResponse<GetListBy
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public StockMemosDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListByDynamicStockMemoQueryHandler : IRequestHandler<GetListByDynamicStockMemoQuery, GetListResponse<GetListByDynamicStockMemoListItemDto>>
@@ -44,12 +49,38 @@ public class GetListByDynamicStockMemoQuery : IRequest<GetListResponse<GetListBy
             _stockMemoBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<StockMemo> stockMemoList = await _stockMemoRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<StockMemo> stockMemoList = await _stockMemoRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<StockMemo> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicStockMemoListItemDto>>(stockMemoList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeStock)
+                    {
+                        query = query.Include(y => y.Stock);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<StockMemo, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicStockMemoListItemDto>>(stockMemoList);
+            }
+            else
+            {
+                Paginate<StockMemo> stockMemoList = await _stockMemoRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicStockMemoListItemDto>>(stockMemoList);
+            }
         }
     }
 

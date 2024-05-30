@@ -10,6 +10,8 @@ public class OrderShipItemStock : Entity<Guid>
     public Guid StockId { get; set; }
     public Guid StockPackTypeId { get; set; }
     public decimal Quantity { get; set; }
+    public virtual OrderShipItem? OrderShipItem { get; set; }
+    public virtual OrderShipItemTask? OrderShipItemTask { get; set; }
     public virtual Stock? Stock { get; set; }
     public virtual StockPackType? StockPackType { get; set; }
 

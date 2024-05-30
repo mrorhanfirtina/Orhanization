@@ -24,7 +24,7 @@ public class GetByIdOrderQuery : IRequest<GetByIdOrderResponse>, ITransactionalR
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public OrderDetailLevel DetailLevel { get; set; }
+    public OrdersDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdOrderQueryHandler : IRequestHandler<GetByIdOrderQuery, GetByIdOrderResponse>

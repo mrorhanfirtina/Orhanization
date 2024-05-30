@@ -22,7 +22,7 @@ public class GetByIdUnitConversionQuery : IRequest<GetByIdUnitConversionResponse
     public string[] Roles => [Admin, User, Read];
 
     public int Id { get; set; }
-    public UnitConversionDetailLevel DetailLevel { get; set; }
+    public UnitConversionsDetailLevel DetailLevel { get; set; }
 
     public class GetByIdUnitConversionQueryHandler : IRequestHandler<GetByIdUnitConversionQuery, GetByIdUnitConversionResponse>
     {

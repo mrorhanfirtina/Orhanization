@@ -30,7 +30,7 @@ public class CreateOrderItemMemoCommand : IRequest<CreatedOrderItemMemoResponse>
     public string? CacheGroupKey => "GetOrderItemMemos";
 
     public CreateOrderItemMemoDto OrderItemMemo { get; set; }
-    public OrderItemMemoDetailLevel DetailLevel { get; set; }
+    public OrderItemMemosDetailLevel DetailLevel { get; set; }
 
 
     public class CreateOrderItemMemoCommandHandler : IRequestHandler<CreateOrderItemMemoCommand, CreatedOrderItemMemoResponse>

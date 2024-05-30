@@ -32,7 +32,7 @@ public class CreateOrderItemCommand : IRequest<CreatedOrderItemResponse>, ITrans
     public string? CacheGroupKey => "GetOrderItems";
 
     public CreateOrderItemDto OrderItem { get; set; }
-    public OrderItemDetailLevel DetailLevel { get; set; }
+    public OrderItemsDetailLevel DetailLevel { get; set; }
 
 
     public class CreateOrderItemCommandHandler : IRequestHandler<CreateOrderItemCommand, CreatedOrderItemResponse>

@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockReserveReasons.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockReserveReasons.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockReserveReasons.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockReserveReasons.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,7 @@ public class UpdateStockReserveReasonCommand : IRequest<UpdatedStockReserveReaso
     public string? CacheGroupKey => "GetStockReserveReasons";
 
     public UpdateStockReserveReasonDto StockReserveReason { get; set; }
+    public StockReserveReasonsDetailLevel? DetailLevel { get; set; }
 
 
     public class UpdateStockReserveReasonCommandHandler : IRequestHandler<UpdateStockReserveReasonCommand, UpdatedStockReserveReasonResponse>
@@ -54,8 +59,41 @@ public class UpdateStockReserveReasonCommand : IRequest<UpdatedStockReserveReaso
             StockReserveReason? stockReserveReason = _mapper.Map(request.StockReserveReason, currentStockReserveReason);
             stockReserveReason.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedStockReserveReasonResponse>(await _stockReserveReasonRepository.UpdateAsync(stockReserveReason));
+            await _stockReserveReasonRepository.UpdateAsync(stockReserveReason);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _stockReserveReasonRepository.GetAsync(predicate: x => x.Id == stockReserveReason.Id,
+                include: x =>
+                {
+                    IQueryable<StockReserveReason> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeStock)
+                    {
+                        query = query.Include(y => y.Stock);
+                    }
+
+                    if (detailLevel.IncludeReserveReason)
+                    {
+                        query = query.Include(y => y.ReserveReason);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<StockReserveReason, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedStockReserveReasonResponse>(response);
+            }
+            else
+            {
+                var response = await _stockReserveReasonRepository.GetAsync(predicate: x => x.Id == stockReserveReason.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedStockReserveReasonResponse>(response);
+            }
         }
     }
 }

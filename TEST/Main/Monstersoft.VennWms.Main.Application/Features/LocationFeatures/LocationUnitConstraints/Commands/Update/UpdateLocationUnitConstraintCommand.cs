@@ -28,7 +28,7 @@ public class UpdateLocationUnitConstraintCommand : IRequest<UpdatedLocationUnitC
     public string? CacheGroupKey => "GetLocationUnitConstraints";
 
     public UpdateLocationUnitConstraintDto LocationUnitConstraint { get; set; }
-    public LocationUnitConstraintDetailLevel DetailLevel { get; set; }
+    public LocationUnitConstraintsDetailLevel DetailLevel { get; set; }
 
     public class UpdateLocationUnitConstraintCommandHandler : IRequestHandler<UpdateLocationUnitConstraintCommand, UpdatedLocationUnitConstraintResponse>
     {

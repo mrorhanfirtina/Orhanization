@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.TaskStocks.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.TaskStocks.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.TaskStocks.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.TaskStocks.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -25,6 +29,7 @@ public class UpdateTaskStockCommand : IRequest<UpdatedTaskStockResponse>, ITrans
     public string? CacheGroupKey => "GetTaskStocks";
 
     public UpdateTaskStockDto TaskStock { get; set; }
+    public TaskStocksDetailLevel? DetailLevel { get; set; }
 
 
     public class UpdateTaskStockCommandHandler : IRequestHandler<UpdateTaskStockCommand, UpdatedTaskStockResponse>
@@ -54,8 +59,41 @@ public class UpdateTaskStockCommand : IRequest<UpdatedTaskStockResponse>, ITrans
             TaskStock? taskStock = _mapper.Map(request.TaskStock, currentTaskStock);
             taskStock.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedTaskStockResponse>(await _taskStockRepository.UpdateAsync(taskStock));
+            await _taskStockRepository.UpdateAsync(taskStock);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _taskStockRepository.GetAsync(predicate: x => x.Id == taskStock.Id,
+                include: x =>
+                {
+                    IQueryable<TaskStock> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeStock)
+                    {
+                        query = query.Include(y => y.Stock);
+                    }
+
+                    if (detailLevel.IncludeWorkTask)
+                    {
+                        query = query.Include(y => y.WorkTask);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<TaskStock, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedTaskStockResponse>(response);
+            }
+            else
+            {
+                var response = await _taskStockRepository.GetAsync(predicate: x => x.Id == taskStock.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedTaskStockResponse>(response);
+            }
         }
     }
 }

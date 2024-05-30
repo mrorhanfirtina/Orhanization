@@ -28,7 +28,7 @@ public class UpdateItemUnitCommand : IRequest<UpdatedItemUnitResponse>, ITransac
     public string? CacheGroupKey => "GetItemUnits";
 
     public UpdateItemUnitDto ItemUnit { get; set; }
-    public ItemUnitDetailLevel DetailLevel { get; set; }
+    public ItemUnitsDetailLevel DetailLevel { get; set; }
 
 
     public class UpdateItemUnitCommandHandler : IRequestHandler<UpdateItemUnitCommand, UpdatedItemUnitResponse>

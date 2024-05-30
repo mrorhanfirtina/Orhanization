@@ -28,7 +28,7 @@ public class GetListByDynamicTransactionLogQuery : IRequest<GetListResponse<GetL
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public TransactionLogDetailLevel DetailLevel { get; set; }
+    public TransactionLogsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicTransactionLogQueryHandler : IRequestHandler<GetListByDynamicTransactionLogQuery, GetListResponse<GetListByDynamicTransactionLogListItemDto>>

@@ -28,7 +28,7 @@ public class GetListByDynamicBuildingQuery : IRequest<GetListResponse<GetListByD
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public BuildingDetailLevel DetailLevel { get; set; }
+    public BuildingsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicBuildingQueryHandler : IRequestHandler<GetListByDynamicBuildingQuery, GetListResponse<GetListByDynamicBuildingListItemDto>>

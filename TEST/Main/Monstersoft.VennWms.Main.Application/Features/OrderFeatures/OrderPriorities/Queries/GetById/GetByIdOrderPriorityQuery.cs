@@ -22,7 +22,7 @@ public class GetByIdOrderPriorityQuery : IRequest<GetByIdOrderPriorityResponse>,
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public OrderPriorityDetailLevel DetailLevel { get; set; }
+    public OrderPrioritiesDetailLevel DetailLevel { get; set; }
 
     public class GetByIdOrderPriorityQueryHandler : IRequestHandler<GetByIdOrderPriorityQuery, GetByIdOrderPriorityResponse>
     {

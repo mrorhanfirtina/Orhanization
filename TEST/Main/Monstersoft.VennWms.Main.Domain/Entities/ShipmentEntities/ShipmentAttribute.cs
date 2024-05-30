@@ -12,7 +12,7 @@ public class ShipmentAttribute : Entity<Guid>
     public bool IsNecessary { get; set; }
     public Guid DepositorCompanyId { get; set; }
     public virtual DepositorCompany DepositorCompany { get; set; }
-    public virtual AttributeInputType AttributeInputType { get; set; }
+    public virtual AttributeInputType? AttributeInputType { get; set; }
 
     public ShipmentAttribute()
     {

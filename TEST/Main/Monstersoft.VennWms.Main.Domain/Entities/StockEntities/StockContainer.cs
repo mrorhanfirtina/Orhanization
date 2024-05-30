@@ -7,7 +7,8 @@ public class StockContainer : Entity<Guid>
 {
     public string Sscc { get; set; }
     public int ContainerUnitId { get; set; }
-    public virtual ContainerUnit ContainerUnit { get; set; }
+    public virtual ContainerUnit? ContainerUnit { get; set; }
+    public virtual ICollection<Stock>? Stocks { get; set; }
 
     public StockContainer()
     {

@@ -28,7 +28,7 @@ public class UpdateProductStockAttributeCommand : IRequest<UpdatedProductStockAt
     public string? CacheGroupKey => "GetProductStockAttributes";
 
     public UpdateProductStockAttributeDto ProductStockAttribute { get; set; }
-    public ProductStockAttributeDetailLevel DetailLevel { get; set; }
+    public ProductStockAttributesDetailLevel DetailLevel { get; set; }
 
     public class UpdateProductStockAttributeCommandHandler : IRequestHandler<UpdateProductStockAttributeCommand, UpdatedProductStockAttributeResponse>
     {

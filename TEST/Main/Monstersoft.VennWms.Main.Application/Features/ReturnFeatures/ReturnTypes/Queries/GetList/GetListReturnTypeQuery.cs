@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnTypes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReturnRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -28,6 +31,7 @@ public class GetListReturnTypeQuery : IRequest<GetListResponse<GetListReturnType
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
+    public ReturnTypesDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListReturnTypeQueryHandler : IRequestHandler<GetListReturnTypeQuery, GetListResponse<GetListReturnTypeListItemDto>>
@@ -50,13 +54,43 @@ public class GetListReturnTypeQuery : IRequest<GetListResponse<GetListReturnType
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ReturnType> returnTypeList = await _returnTypeRepository.GetListAsync(
-            predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(x => x.Returns),
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ReturnType> returnTypeList = await _returnTypeRepository.GetListAsync(
+                predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<ReturnType> query = x;
 
-            return _mapper.Map<GetListResponse<GetListReturnTypeListItemDto>>(returnTypeList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReturn)
+                    {
+                        query = query.Include(y => y.Returns);
+                    }
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReturnType, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListReturnTypeListItemDto>>(returnTypeList);
+            }
+            else
+            {
+                Paginate<ReturnType> returnTypeList = await _returnTypeRepository.GetListAsync(
+                predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListReturnTypeListItemDto>>(returnTypeList);
+            }
         }
     }
 

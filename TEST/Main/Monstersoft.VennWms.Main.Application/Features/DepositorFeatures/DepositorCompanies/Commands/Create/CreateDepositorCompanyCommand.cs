@@ -27,7 +27,7 @@ public class CreateDepositorCompanyCommand : IRequest<CreatedDepositorCompanyRes
     public string? CacheGroupKey => "GetDepositorCompanies";
 
     public CreateDepositorCompanyDto DepositorCompany { get; set; }
-    public DepositorCompanyDetailLevel DetailLevel { get; set; }
+    public DepositorCompaniesDetailLevel DetailLevel { get; set; }
 
 
     public class CreateDepositorCompanyCommandHandler : IRequestHandler<CreateDepositorCompanyCommand, CreatedDepositorCompanyResponse>

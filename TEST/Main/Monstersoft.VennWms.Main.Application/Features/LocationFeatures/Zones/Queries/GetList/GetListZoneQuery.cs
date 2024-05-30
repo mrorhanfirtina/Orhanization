@@ -30,7 +30,7 @@ public class GetListZoneQuery : IRequest<GetListResponse<GetListZoneListItemDto>
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public ZoneDetailLevel DetailLevel { get; set; }
+    public ZonesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListZoneQueryHandler : IRequestHandler<GetListZoneQuery, GetListResponse<GetListZoneListItemDto>>

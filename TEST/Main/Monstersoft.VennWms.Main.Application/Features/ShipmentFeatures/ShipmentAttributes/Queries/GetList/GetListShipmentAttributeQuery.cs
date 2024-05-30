@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributes.Rules;
+using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.Shipments.Constants;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -27,6 +32,7 @@ public class GetListShipmentAttributeQuery : IRequest<GetListResponse<GetListShi
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
+    public ShipmentAttributesDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListShipmentAttributeQueryHandler : IRequestHandler<GetListShipmentAttributeQuery, GetListResponse<GetListShipmentAttributeListItemDto>>
@@ -49,12 +55,43 @@ public class GetListShipmentAttributeQuery : IRequest<GetListResponse<GetListShi
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ShipmentAttribute> shipmentAttributeList = await _shipmentAttributeRepository.GetListAsync(
-            predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ShipmentAttribute> shipmentAttributeList = await _shipmentAttributeRepository.GetListAsync(
+                predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<ShipmentAttribute> query = x;
 
-            return _mapper.Map<GetListResponse<GetListShipmentAttributeListItemDto>>(shipmentAttributeList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeAttributeInputType)
+                    {
+                        query = query.Include(y => y.AttributeInputType);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ShipmentAttribute, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListShipmentAttributeListItemDto>>(shipmentAttributeList);
+            }
+            else
+            {
+                Paginate<ShipmentAttribute> shipmentAttributeList = await _shipmentAttributeRepository.GetListAsync(
+                predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListShipmentAttributeListItemDto>>(shipmentAttributeList);
+            }
         }
     }
 

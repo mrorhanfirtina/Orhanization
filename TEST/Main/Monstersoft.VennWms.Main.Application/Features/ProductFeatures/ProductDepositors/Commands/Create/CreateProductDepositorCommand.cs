@@ -30,7 +30,7 @@ public class CreateProductDepositorCommand : IRequest<CreatedProductDepositorRes
     public string? CacheGroupKey => "GetProductDepositors";
 
     public CreateProductDepositorDto ProductDepositor { get; set; }
-    public ProductDepositorDetailLevel DetailLevel { get; set; }
+    public ProductDepositorsDetailLevel DetailLevel { get; set; }
 
 
 

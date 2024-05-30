@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Monstersoft.VennWms.API.QueryAPI.Controllers.Base;
+using Monstersoft.VennWms.API.QueryAPI.Models.DynamicModels.PurchaseOrderDynamicModels;
+using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Queries.GetById;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Queries.GetListByDynamic;
 using Orhanization.Core.Application.Requests;
 using Orhanization.Core.Application.Response;
-using Orhanization.Core.Persistence.Dynamic;
 
 
 namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.PurchaseOrderControllers;
@@ -12,9 +13,9 @@ namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.Purchas
 public class PoAttributeValueController : BaseController
 {
     [HttpGet("GetById/{id}")]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
+    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id, [FromBody] PoAttributeValuesDetailLevel detailLevel)
     {
-        GetByIdPoAttributeValueQuery query = new() { Id = id };
+        GetByIdPoAttributeValueQuery query = new() { Id = id, DetailLevel = detailLevel };
 
         GetByIdPoAttributeValueResponse result = await Mediator.Send(query);
 
@@ -22,9 +23,9 @@ public class PoAttributeValueController : BaseController
     }
 
     [HttpPost("GetListByDynamic")]
-    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] DynamicQuery? dynamicQuery = null)
+    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] PoAttributeValueDynamicModel? dynamicModel = null)
     {
-        GetListByDynamicPoAttributeValueQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicQuery };
+        GetListByDynamicPoAttributeValueQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicModel.DynamicQuery, DetailLevel = dynamicModel.DetailLevel };
         GetListResponse<GetListByDynamicPoAttributeValueListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

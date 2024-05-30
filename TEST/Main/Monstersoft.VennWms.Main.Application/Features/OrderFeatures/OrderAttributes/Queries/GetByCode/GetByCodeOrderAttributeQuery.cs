@@ -23,7 +23,7 @@ public class GetByCodeOrderAttributeQuery : IRequest<GetByCodeOrderAttributeResp
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public OrderAttributeDetailLevel DetailLevel { get; set; }
+    public OrderAttributesDetailLevel DetailLevel { get; set; }
 
 
 

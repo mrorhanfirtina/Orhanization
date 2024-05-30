@@ -1,9 +1,14 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskCodeFormats.Commands.Create;
+using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskCodeFormats.Constants;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskCodeFormats.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskCodeFormats.Rules;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TransactionTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Repositories.TaskRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.TaskEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +29,7 @@ public class UpdateTaskCodeFormatCommand : IRequest<UpdatedTaskCodeFormatRespons
     public string? CacheGroupKey => "GetTaskCodeFormats";
 
     public UpdateTaskCodeFormatDto TaskCodeFormat { get; set; }
+    public TaskCodeFormatsDetailLevel? DetailLevel { get; set; }
 
 
     public class UpdateTaskCodeFormatCommandHandler : IRequestHandler<UpdateTaskCodeFormatCommand, UpdatedTaskCodeFormatResponse>
@@ -53,8 +59,41 @@ public class UpdateTaskCodeFormatCommand : IRequest<UpdatedTaskCodeFormatRespons
             TaskCodeFormat? taskCodeFormat = _mapper.Map(request.TaskCodeFormat, currentTaskCodeFormat);
             taskCodeFormat.UpdatedDate = DateTime.Now;
 
-            //Db'ye ekleme yapılıyor.
-            return _mapper.Map<UpdatedTaskCodeFormatResponse>(await _taskCodeFormatRepository.UpdateAsync(taskCodeFormat));
+            await _taskCodeFormatRepository.UpdateAsync(taskCodeFormat);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _taskCodeFormatRepository.GetAsync(predicate: x => x.Id == taskCodeFormat.Id,
+                include: x =>
+                {
+                    IQueryable<TaskCodeFormat> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeTransactionType)
+                    {
+                        query = query.Include(y => y.TransactionType);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<TaskCodeFormat, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedTaskCodeFormatResponse>(response);
+            }
+            else
+            {
+                var response = await _taskCodeFormatRepository.GetAsync(predicate: x => x.Id == taskCodeFormat.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<UpdatedTaskCodeFormatResponse>(response);
+            }
         }
     }
 }

@@ -27,7 +27,7 @@ public class GetListByDynamicCustomerQuery : IRequest<GetListResponse<GetListByD
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public CustomerDetailLevel DetailLevel { get; set; }
+    public CustomersDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicCustomerQueryHandler : IRequestHandler<GetListByDynamicCustomerQuery, GetListResponse<GetListByDynamicCustomerListItemDto>>

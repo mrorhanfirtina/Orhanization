@@ -28,7 +28,7 @@ public class UpdateBarcodeSupplierCommand : IRequest<UpdatedBarcodeSupplierRespo
     public string? CacheGroupKey => "GetBarcodeSuppliers";
 
     public UpdateBarcodeSupplierDto BarcodeSupplier { get; set; }
-    public BarcodeSupplierDetailLevel DetailLevel { get; set; }
+    public BarcodeSuppliersDetailLevel DetailLevel { get; set; }
 
 
 

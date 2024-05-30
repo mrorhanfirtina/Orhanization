@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskCodeFormats.Constants;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskCodeFormats.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskCodeFormats.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.TaskRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.TaskEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -23,6 +27,7 @@ public class CreateTaskCodeFormatCommand : IRequest<CreatedTaskCodeFormatRespons
     public string? CacheGroupKey => "GetTaskCodeFormats";
 
     public CreateTaskCodeFormatDto TaskCodeFormat { get; set; }
+    public TaskCodeFormatsDetailLevel? DetailLevel { get; set; }
 
 
     public class CreateTaskCodeFormatCommandHandler : IRequestHandler<CreateTaskCodeFormatCommand, CreatedTaskCodeFormatResponse>
@@ -50,7 +55,41 @@ public class CreateTaskCodeFormatCommand : IRequest<CreatedTaskCodeFormatRespons
             taskCodeFormat.DepositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
             taskCodeFormat.CreatedDate = DateTime.Now;
 
-            return _mapper.Map<CreatedTaskCodeFormatResponse>(await _taskCodeFormatRepository.AddAsync(taskCodeFormat));
+            await _taskCodeFormatRepository.AddAsync(taskCodeFormat);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _taskCodeFormatRepository.GetAsync(predicate: x => x.Id == taskCodeFormat.Id,
+                include: x =>
+                {
+                    IQueryable<TaskCodeFormat> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeTransactionType)
+                    {
+                        query = query.Include(y => y.TransactionType);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<TaskCodeFormat, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedTaskCodeFormatResponse>(response);
+            }
+            else
+            {
+                var response = await _taskCodeFormatRepository.GetAsync(predicate: x => x.Id == taskCodeFormat.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedTaskCodeFormatResponse>(response);
+            }
         }
     }
 }

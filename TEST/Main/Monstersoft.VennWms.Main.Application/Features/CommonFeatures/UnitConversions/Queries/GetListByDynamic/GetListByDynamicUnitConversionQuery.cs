@@ -27,7 +27,7 @@ public class GetListByDynamicUnitConversionQuery : IRequest<GetListResponse<GetL
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public UnitConversionDetailLevel DetailLevel { get; set; }
+    public UnitConversionsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicUnitConversionQueryHandler : IRequestHandler<GetListByDynamicUnitConversionQuery, GetListResponse<GetListByDynamicUnitConversionListItemDto>>

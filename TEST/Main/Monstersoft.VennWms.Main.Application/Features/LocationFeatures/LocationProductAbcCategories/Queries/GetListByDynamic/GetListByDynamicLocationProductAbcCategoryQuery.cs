@@ -27,7 +27,7 @@ public class GetListByDynamicLocationProductAbcCategoryQuery : IRequest<GetListR
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public LocationProductAbcCategoryDetailLevel DetailLevel { get; set; }
+    public LocationProductAbcCategoriesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicLocationProductAbcCategoryQueryHandler : IRequestHandler<GetListByDynamicLocationProductAbcCategoryQuery, GetListResponse<GetListByDynamicLocationProductAbcCategoryListItemDto>>

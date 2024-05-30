@@ -9,6 +9,7 @@ public class ReceiptMemo : Entity<Guid>
     public string Text { get; set; }
     public DateTime InputDate { get; set; }
     public DateTime? EditDate { get; set; }
+    public virtual Receipt? Receipt { get; set; }
 
     public ReceiptMemo()
     {

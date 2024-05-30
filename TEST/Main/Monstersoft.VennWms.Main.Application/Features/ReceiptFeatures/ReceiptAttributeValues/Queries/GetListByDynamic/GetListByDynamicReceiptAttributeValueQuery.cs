@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicReceiptAttributeValueQuery : IRequest<GetListRespon
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public ReceiptAttributeValuesDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListByDynamicReceiptAttributeValueQueryHandler : IRequestHandler<GetListByDynamicReceiptAttributeValueQuery, GetListResponse<GetListByDynamicReceiptAttributeValueListItemDto>>
@@ -44,12 +49,48 @@ public class GetListByDynamicReceiptAttributeValueQuery : IRequest<GetListRespon
             _receiptAttributeValueBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ReceiptAttributeValue> receiptAttributeValueList = await _receiptAttributeValueRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ReceiptAttributeValue> receiptAttributeValueList = await _receiptAttributeValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<ReceiptAttributeValue> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicReceiptAttributeValueListItemDto>>(receiptAttributeValueList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReceipt)
+                    {
+                        query = query.Include(y => y.Receipt);
+                    }
+
+                    if (detailLevel.IncludeReceiptAttribute)
+                    {
+                        query = query.Include(y => y.ReceiptAttribute);
+
+                        if (detailLevel.ReceiptAttributeDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.ReceiptAttribute).ThenInclude(y => y.AttributeInputType);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReceiptAttributeValue, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReceiptAttributeValueListItemDto>>(receiptAttributeValueList);
+            }
+            else
+            {
+                Paginate<ReceiptAttributeValue> receiptAttributeValueList = await _receiptAttributeValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicReceiptAttributeValueListItemDto>>(receiptAttributeValueList);
+            }
         }
     }
 

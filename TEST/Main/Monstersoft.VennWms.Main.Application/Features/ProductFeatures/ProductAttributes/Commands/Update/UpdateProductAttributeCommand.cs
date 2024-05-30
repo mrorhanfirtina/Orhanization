@@ -29,7 +29,7 @@ public class UpdateProductAttributeCommand : IRequest<UpdatedProductAttributeRes
     public string? CacheGroupKey => "GetProductAttributes";
 
     public UpdateProductAttributeDto ProductAttribute { get; set; }
-    public ProductAttributeDetailLevel DetailLevel { get; set; }
+    public ProductAttributesDetailLevel DetailLevel { get; set; }
 
 
 

@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItems.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItems.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItems.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReturnRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class CreateReturnItemCommand : IRequest<CreatedReturnItemResponse>, ITra
     public string? CacheGroupKey => "GetReturnItems";
 
     public CreateReturnItemDto ReturnItem { get; set; }
+    public ReturnItemsDetailLevel? DetailLevel { get; set; }
 
 
     public class CreateReturnItemCommandHandler : IRequestHandler<CreateReturnItemCommand, CreatedReturnItemResponse>
@@ -47,11 +52,87 @@ public class CreateReturnItemCommand : IRequest<CreatedReturnItemResponse>, ITra
             ReturnItem? returnItem = _mapper.Map<ReturnItem>(request.ReturnItem);
 
             returnItem.CreatedDate = DateTime.Now;
+            returnItem.Id = Guid.NewGuid();
 
             returnItem.ReturnItemMemos?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; });
             returnItem.ReturnItmStockAttrValues?.ToList().ForEach(x => { x.CreatedDate = DateTime.Now; });
 
-            return _mapper.Map<CreatedReturnItemResponse>(await _returnItemRepository.AddAsync(returnItem));
+            await _returnItemRepository.AddAsync(returnItem);
+
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                var response = await _returnItemRepository.GetAsync(predicate: x => x.Id == returnItem.Id,
+                include: x =>
+                {
+                    IQueryable<ReturnItem> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeReturn)
+                    {
+                        query = query.Include(y => y.Return);
+                    }
+
+                    if (detailLevel.IncludeReturnItemMemo)
+                    {
+                        query = query.Include(y => y.ReturnItemMemos);
+                    }
+
+                    if (detailLevel.IncludeReturnItmStockAttrValue)
+                    {
+                        query = query.Include(y => y.ReturnItmStockAttrValues);
+
+                        var returnItmStockAttrValueDetailLevel = detailLevel.ReturnItmStockAttrValueDetailLevel;
+
+                        if (returnItmStockAttrValueDetailLevel.IncludeStockAttribute)
+                        {
+                            query = query.Include(y => y.ReturnItmStockAttrValues).ThenInclude(y => y.StockAttribute);
+
+                            var stockAttributeDetailLevel = returnItmStockAttrValueDetailLevel.StockAttributeDetailLevel;
+
+                            if (stockAttributeDetailLevel.IncludeAttributeInputType)
+                            {
+                                query = query.Include(y => y.ReturnItmStockAttrValues).ThenInclude(y => y.StockAttribute).ThenInclude(y => y.AttributeInputType);
+                            }
+                        }
+                    }
+
+                    if (detailLevel.IncludeProduct)
+                    {
+                        query = query.Include(y => y.Product);
+                    }
+
+                    if (detailLevel.IncludeItemUnit)
+                    {
+                        query = query.Include(y => y.ItemUnit);
+
+                        var itemUnitDetailLevel = detailLevel.ItemUnitDetailLevel;
+
+                        if (itemUnitDetailLevel.IncludeUnit)
+                        {
+                            query = query.Include(y => y.ItemUnit).ThenInclude(y => y.Unit);
+                        }
+                    }
+
+                    if (detailLevel.IncludeStatus)
+                    {
+                        query = query.Include(y => y.Status);
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<ReturnItem, object>;
+                    return includableQuery;
+                }, enableTracking: false, cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReturnItemResponse>(response);
+            }
+            else
+            {
+                var response = await _returnItemRepository.GetAsync(predicate: x => x.Id == returnItem.Id,
+                enableTracking: false,
+                cancellationToken: cancellationToken);
+
+                return _mapper.Map<CreatedReturnItemResponse>(response);
+            }
         }
     }
 }

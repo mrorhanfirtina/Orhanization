@@ -23,7 +23,7 @@ public class GetByCodePurchaseOrderQuery : IRequest<GetByCodePurchaseOrderRespon
     public string[] Roles => [Admin, User, Read];
 
     public string Code { get; set; }
-    public PurchaseOrderDetailLevel DetailLevel { get; set; }
+    public PurchaseOrdersDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodePurchaseOrderQueryHandler : IRequestHandler<GetByCodePurchaseOrderQuery, GetByCodePurchaseOrderResponse>

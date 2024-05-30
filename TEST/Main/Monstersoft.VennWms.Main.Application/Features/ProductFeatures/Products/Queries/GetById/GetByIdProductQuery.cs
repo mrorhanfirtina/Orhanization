@@ -23,7 +23,7 @@ public class GetByIdProductQuery : IRequest<GetByIdProductResponse>, ITransactio
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public ProductDetailLevel DetailLevel { get; set; }
+    public ProductsDetailLevel DetailLevel { get; set; }
 
 
 

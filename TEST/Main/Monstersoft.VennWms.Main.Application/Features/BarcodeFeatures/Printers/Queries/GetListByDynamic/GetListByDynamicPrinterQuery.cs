@@ -28,7 +28,7 @@ public class GetListByDynamicPrinterQuery : IRequest<GetListResponse<GetListByDy
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public PrinterDetailLevel DetailLevel { get; set; }
+    public PrintersDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListByDynamicPrinterQueryHandler : IRequestHandler<GetListByDynamicPrinterQuery, GetListResponse<GetListByDynamicPrinterListItemDto>>

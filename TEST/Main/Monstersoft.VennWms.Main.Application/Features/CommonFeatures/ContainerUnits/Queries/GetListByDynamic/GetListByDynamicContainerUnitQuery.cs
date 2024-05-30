@@ -28,7 +28,7 @@ public class GetListByDynamicContainerUnitQuery : IRequest<GetListResponse<GetLi
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public ContainerUnitDetaillevel DetailLevel { get; set; }
+    public ContainerUnitsDetaillevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicContainerUnitQueryHandler : IRequestHandler<GetListByDynamicContainerUnitQuery, GetListResponse<GetListByDynamicContainerUnitListItemDto>>

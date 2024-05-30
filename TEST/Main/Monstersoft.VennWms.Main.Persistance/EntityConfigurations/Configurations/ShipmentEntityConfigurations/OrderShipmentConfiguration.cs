@@ -31,9 +31,8 @@ public class OrderShipmentConfiguration : IEntityTypeConfiguration<OrderShipment
         #endregion
 
         #region İlişki Tanımları
-        builder.HasMany(p => p.OrderShipItems).WithOne().HasForeignKey(p => p.OrderShipmentId).OnDelete(DeleteBehavior.Cascade);
-        //builder.HasOne(p => p.Order).WithMany().HasForeignKey(p => p.OrderId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(p => p.Shipment).WithMany().HasForeignKey(p => p.ShipmentId).OnDelete(DeleteBehavior.NoAction);
+        builder.HasMany(p => p.OrderShipItems).WithOne(p => p.OrderShipment).HasForeignKey(p => p.OrderShipmentId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(p => p.Shipment).WithMany(p => p.OrderShipments).HasForeignKey(p => p.ShipmentId).OnDelete(DeleteBehavior.NoAction);
         builder.HasOne(p => p.DepositorCompany).WithMany().HasForeignKey(p => p.DepositorCompanyId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne(p => p.ProgressStatus).WithMany().HasForeignKey(p => p.ProgressStatusId).OnDelete(DeleteBehavior.Restrict);
         #endregion

@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore;
+using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributeValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockAttributeValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -24,6 +28,7 @@ public class GetListByDynamicStockAttributeValueQuery : IRequest<GetListResponse
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
+    public StockAttributeValuesDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListByDynamicStockAttributeValueQueryHandler : IRequestHandler<GetListByDynamicStockAttributeValueQuery, GetListResponse<GetListByDynamicStockAttributeValueListItemDto>>
@@ -44,14 +49,49 @@ public class GetListByDynamicStockAttributeValueQuery : IRequest<GetListResponse
             _stockAttributeValueBusinessRules.GetRequest()
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<StockAttributeValue> stockAttributeValueList = await _stockAttributeValueRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery,
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<StockAttributeValue> stockAttributeValueList = await _stockAttributeValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                include: x =>
+                {
+                    IQueryable<StockAttributeValue> query = x;
 
-            return _mapper.Map<GetListResponse<GetListByDynamicStockAttributeValueListItemDto>>(stockAttributeValueList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeStock)
+                    {
+                        query = query.Include(y => y.Stock);
+                    }
+
+                    if (detailLevel.IncludeStockAttribute)
+                    {
+                        query = query.Include(y => y.StockAttribute);
+
+                        if (detailLevel.TargetDetailLevel.IncludeAttributeInputType)
+                        {
+                            query = query.Include(y => y.StockAttribute).ThenInclude(y => y.AttributeInputType);
+                        }
+                    }
+
+                    var includableQuery = query as IIncludableQueryable<StockAttributeValue, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicStockAttributeValueListItemDto>>(stockAttributeValueList);
+            }
+            else
+            {
+                Paginate<StockAttributeValue> stockAttributeValueList = await _stockAttributeValueRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListByDynamicStockAttributeValueListItemDto>>(stockAttributeValueList);
+            }
         }
     }
-
 }
 

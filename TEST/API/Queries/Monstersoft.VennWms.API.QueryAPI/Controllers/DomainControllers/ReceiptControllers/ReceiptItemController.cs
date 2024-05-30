@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Monstersoft.VennWms.API.QueryAPI.Controllers.Base;
+using Monstersoft.VennWms.API.QueryAPI.Models.DynamicModels.ReceiptDynamicModels;
+using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItems.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItems.Queries.GetById;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItems.Queries.GetListByDynamic;
 using Orhanization.Core.Application.Requests;
 using Orhanization.Core.Application.Response;
-using Orhanization.Core.Persistence.Dynamic;
 
 
 namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.ReceiptControllers;
@@ -12,9 +13,9 @@ namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.Receipt
 public class ReceiptItemController : BaseController
 {
     [HttpGet("GetById/{id}")]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id)
+    public async Task<IActionResult> GetByIdAsync([FromRoute] Guid id, [FromBody] ReceiptItemsDetailLevel detailLevel)
     {
-        GetByIdReceiptItemQuery query = new() { Id = id };
+        GetByIdReceiptItemQuery query = new() { Id = id, DetailLevel = detailLevel };
 
         GetByIdReceiptItemResponse result = await Mediator.Send(query);
 
@@ -22,9 +23,9 @@ public class ReceiptItemController : BaseController
     }
 
     [HttpPost("GetListByDynamic")]
-    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] DynamicQuery? dynamicQuery = null)
+    public async Task<IActionResult> GetListByDynamic([FromQuery] PageRequest pageRequest, [FromBody] ReceiptItemDynamicModel? dynamicModel = null)
     {
-        GetListByDynamicReceiptItemQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicQuery };
+        GetListByDynamicReceiptItemQuery query = new() { PageRequest = pageRequest, DynamicQuery = dynamicModel.DynamicQuery, DetailLevel = dynamicModel.DetailLevel };
         GetListResponse<GetListByDynamicReceiptItemListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

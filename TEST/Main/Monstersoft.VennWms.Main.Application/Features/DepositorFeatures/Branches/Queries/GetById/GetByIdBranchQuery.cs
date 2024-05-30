@@ -22,7 +22,7 @@ public class GetByIdBranchQuery : IRequest<GetByIdBranchResponse>, ITransactiona
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public Guid Id { get; set; }
-    public BranchDetailLevel DetailLevel { get; set; }
+    public BranchesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdBranchQueryHandler : IRequestHandler<GetByIdBranchQuery, GetByIdBranchResponse>

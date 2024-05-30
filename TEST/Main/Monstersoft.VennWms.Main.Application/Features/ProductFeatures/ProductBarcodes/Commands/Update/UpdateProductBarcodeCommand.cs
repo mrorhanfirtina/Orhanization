@@ -29,7 +29,7 @@ public class UpdateProductBarcodeCommand : IRequest<UpdatedProductBarcodeRespons
     public string? CacheGroupKey => "GetProductBarcodes";
 
     public UpdateProductBarcodeDto ProductBarcode { get; set; }
-    public ProductBarcodeDetailLevel DetailLevel { get; set; }
+    public ProductBarcodesDetailLevel DetailLevel { get; set; }
 
 
 

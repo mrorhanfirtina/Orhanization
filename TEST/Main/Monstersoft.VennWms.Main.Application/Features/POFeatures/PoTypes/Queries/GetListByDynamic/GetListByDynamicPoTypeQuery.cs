@@ -28,7 +28,7 @@ public class GetListByDynamicPoTypeQuery : IRequest<GetListResponse<GetListByDyn
 
     public PageRequest PageRequest { get; set; }
     public DynamicQuery DynamicQuery { get; set; }
-    public PoTypeDetailLevel DetailLevel { get; set; }
+    public PoTypesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListByDynamicPoTypeQueryHandler : IRequestHandler<GetListByDynamicPoTypeQuery, GetListResponse<GetListByDynamicPoTypeListItemDto>>

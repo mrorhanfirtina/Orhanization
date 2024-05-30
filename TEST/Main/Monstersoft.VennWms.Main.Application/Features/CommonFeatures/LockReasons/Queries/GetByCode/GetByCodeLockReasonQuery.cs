@@ -22,7 +22,7 @@ public class GetByCodeLockReasonQuery : IRequest<GetByCodeLockReasonResponse>, I
     public UserRequestInfo? UserRequestInfo { get; set; }
 
     public string Code { get; set; }
-    public LockReasonDetailLevel DetailLevel { get; set; }
+    public LockReasonsDetailLevel DetailLevel { get; set; }
 
 
     public class GetByCodeLockReasonQueryHandler : IRequestHandler<GetByCodeLockReasonQuery, GetByCodeLockReasonResponse>

@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentTypes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -28,6 +31,7 @@ public class GetListShipmentTypeQuery : IRequest<GetListResponse<GetListShipment
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
+    public ShipmentTypesDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListShipmentTypeQueryHandler : IRequestHandler<GetListShipmentTypeQuery, GetListResponse<GetListShipmentTypeListItemDto>>
@@ -50,13 +54,44 @@ public class GetListShipmentTypeQuery : IRequest<GetListResponse<GetListShipment
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<ShipmentType> shipmentTypeList = await _shipmentTypeRepository.GetListAsync(
-            predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: m => m.Include(x => x.Shipments),
-            index: request.PageRequest.PageIndex,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
+            {
+                Paginate<ShipmentType> shipmentTypeList = await _shipmentTypeRepository.GetListAsync(
+                predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
+                {
+                    IQueryable<ShipmentType> query = x;
 
-            return _mapper.Map<GetListResponse<GetListShipmentTypeListItemDto>>(shipmentTypeList);
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeShipment)
+                    {
+                        query = query.Include(y => y.Shipments);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<ShipmentType, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListShipmentTypeListItemDto>>(shipmentTypeList);
+            }
+            else
+            {
+                Paginate<ShipmentType> shipmentTypeList = await _shipmentTypeRepository.GetListAsync(
+                predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                return _mapper.Map<GetListResponse<GetListShipmentTypeListItemDto>>(shipmentTypeList);
+            }
         }
     }
 

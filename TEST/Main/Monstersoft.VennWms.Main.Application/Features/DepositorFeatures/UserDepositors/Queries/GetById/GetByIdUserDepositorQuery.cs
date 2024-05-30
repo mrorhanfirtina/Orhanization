@@ -22,7 +22,7 @@ public class GetByIdUserDepositorQuery : IRequest<GetByIdUserDepositorResponse>,
     public string[] Roles => [Admin, UserDepositorOperationClaims.User, Read];
 
     public Guid Id { get; set; }
-    public UserDepositorDetailLevel DetailLevel { get; set; }
+    public UserDepositorsDetailLevel DetailLevel { get; set; }
 
     public class GetByIdUserDepositorQueryHandler : IRequestHandler<GetByIdUserDepositorQuery, GetByIdUserDepositorResponse>
     {

@@ -23,7 +23,7 @@ public class GetByIdPoTypeQuery : IRequest<GetByIdPoTypeResponse>, ITransactiona
     public string[] Roles => [Admin, User, Read];
 
     public Guid Id { get; set; }
-    public PoTypeDetailLevel DetailLevel { get; set; }
+    public PoTypesDetailLevel DetailLevel { get; set; }
 
 
     public class GetByIdPoTypeQueryHandler : IRequestHandler<GetByIdPoTypeQuery, GetByIdPoTypeResponse>
