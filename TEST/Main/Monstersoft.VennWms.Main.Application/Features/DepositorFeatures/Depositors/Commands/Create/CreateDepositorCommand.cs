@@ -24,7 +24,7 @@ public class CreateDepositorCommand : IRequest<CreatedDepositorResponse>, ITrans
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetDepositors";
+    public string[]? CacheGroupKey => ["GetDepositors"];
 
     public CreateDepositorDto Depositor { get; set; }
     public DepositorsDetailLevel DetailLevel { get; set; }
