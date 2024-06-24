@@ -24,7 +24,7 @@ public class CreateBarcodeAreaCommand : IRequest<CreatedBarcodeAreaResponse>, IT
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBarcodes";
+    public string[]? CacheGroupKey => ["GetBarcodes"];
 
     public CreateBarcodeAreaDto BarcodeArea { get; set; }
     public BarcodeAreasDetailLevel DetailLevel { get; set; }

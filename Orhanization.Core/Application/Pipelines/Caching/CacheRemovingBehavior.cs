@@ -27,28 +27,31 @@ public class CacheRemovingBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
 
         TResponse response = await next();
 
-        string cacheGroupWithLocality = request.CacheGroupKey + _httpContextAccessor.HttpContext.User.GetUserLocalityId();
-
-        if (cacheGroupWithLocality != null)
+        foreach (var item in request.CacheGroupKey?.ToList())
         {
-            
-            byte[]? cachedGroup = await _cache.GetAsync(cacheGroupWithLocality!, cancellationToken);
-            if (cachedGroup != null)
+            string cacheGroupWithLocality = item + _httpContextAccessor.HttpContext.User.GetUserLocalityId();
+
+            if (cacheGroupWithLocality != null)
             {
-                HashSet<string> keysInGroup = JsonSerializer.Deserialize<HashSet<string>>(Encoding.Default.GetString(cachedGroup))!;
-                foreach (string key in keysInGroup)
+
+                byte[]? cachedGroup = await _cache.GetAsync(cacheGroupWithLocality!, cancellationToken);
+                if (cachedGroup != null)
                 {
-                    await _cache.RemoveAsync(key, cancellationToken);
+                    HashSet<string> keysInGroup = JsonSerializer.Deserialize<HashSet<string>>(Encoding.Default.GetString(cachedGroup))!;
+                    foreach (string key in keysInGroup)
+                    {
+                        await _cache.RemoveAsync(key, cancellationToken);
+                    }
+
+                    await _cache.RemoveAsync(cacheGroupWithLocality, cancellationToken);
+                    await _cache.RemoveAsync(key: $"{cacheGroupWithLocality}SlidingExpiration", cancellationToken);
                 }
-
-                await _cache.RemoveAsync(cacheGroupWithLocality, cancellationToken);
-                await _cache.RemoveAsync(key: $"{cacheGroupWithLocality}SlidingExpiration", cancellationToken);
             }
-        }
 
-        if (request.CacheKey != null)
-        {
-            await _cache.RemoveAsync(request.CacheKey, cancellationToken);
+            if (request.CacheKey != null)
+            {
+                await _cache.RemoveAsync(request.CacheKey, cancellationToken);
+            }
         }
 
         return response;

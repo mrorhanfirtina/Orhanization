@@ -24,7 +24,7 @@ public class UpdateBarcodeAreaCommand : IRequest<UpdatedBarcodeAreaResponse>, IT
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBarcodes";
+    public string[]? CacheGroupKey => ["GetBarcodes"];
 
     public UpdateBarcodeAreaDto BarcodeArea { get; set; }
     public BarcodeAreasDetailLevel? DetailLevel { get; set; }
