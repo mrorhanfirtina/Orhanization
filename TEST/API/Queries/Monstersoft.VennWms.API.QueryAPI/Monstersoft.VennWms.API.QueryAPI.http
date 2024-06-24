@@ -1,0 +1,6 @@
+@Monstersoft.VennWms.API.QueryAPI_HostAddress = http://localhost:5094
+
+GET {{Monstersoft.VennWms.API.QueryAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

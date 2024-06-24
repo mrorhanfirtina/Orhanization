@@ -1,12 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using Orhanization.Core.Persistence.Dynamic;
 using Orhanization.Core.Persistence.Paging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Orhanization.Core.Persistence.Repositories;
 
@@ -17,6 +12,7 @@ public interface IAsyncRepository<TEntity, TEntityId> : IQuery<TEntity> where TE
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
         bool withDeleted = false,
         bool enableTracking = true,
+        bool autoinclude = false,
         CancellationToken cancellationToken = default);
 
     Task<Paginate<TEntity>> GetListAsync(
@@ -27,6 +23,7 @@ public interface IAsyncRepository<TEntity, TEntityId> : IQuery<TEntity> where TE
         int size = 10,
         bool withDeleted = false,
         bool enableTracking = true,
+        bool autoinclude = false,
         CancellationToken cancellationToken = default);
 
     Task<IQueryable<TEntity>> GetListNoPaginateAsync(
@@ -35,6 +32,7 @@ public interface IAsyncRepository<TEntity, TEntityId> : IQuery<TEntity> where TE
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
         bool withDeleted = false,
         bool enableTracking = true,
+        bool autoinclude = false,
         CancellationToken cancellationToken = default);
 
     Task<Paginate<TEntity>> GetListByDynamicAsync(
@@ -46,6 +44,7 @@ public interface IAsyncRepository<TEntity, TEntityId> : IQuery<TEntity> where TE
         int size = 10,
         bool withDeleted = false,
         bool enableTracking = true,
+        bool autoinclude = false,
         CancellationToken cancellationToken = default);
 
     Task<bool> AnyAsync(

@@ -1,12 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Query;
 using Orhanization.Core.Persistence.Dynamic;
 using Orhanization.Core.Persistence.Paging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Orhanization.Core.Persistence.Repositories;
 
@@ -17,6 +12,7 @@ public interface IRepository<TEntity, TEntityId> : IQuery<TEntity> where TEntity
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
         bool withDeleted = false,
         bool enableTracking = true,
+        bool autoinclude = false,
         CancellationToken cancellationToken = default);
 
     Paginate<TEntity> GetList(
@@ -27,6 +23,7 @@ public interface IRepository<TEntity, TEntityId> : IQuery<TEntity> where TEntity
         int size = 10,
         bool withDeleted = false,
         bool enableTracking = true,
+        bool autoinclude = false,
         CancellationToken cancellationToken = default);
 
     Paginate<TEntity> GetListByDynamic(
@@ -38,6 +35,7 @@ public interface IRepository<TEntity, TEntityId> : IQuery<TEntity> where TEntity
         int size = 10,
         bool withDeleted = false,
         bool enableTracking = true,
+        bool autoinclude = false,
         CancellationToken cancellationToken = default);
 
     bool Any(

@@ -1,0 +1,189 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Features\CommonFeatures\Priorities\**" />
+    <EmbeddedResource Remove="Features\CommonFeatures\Priorities\**" />
+    <None Remove="Features\CommonFeatures\Priorities\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\AuthenticationFeatures\Example\Commands\Create\" />
+    <Folder Include="Features\AuthenticationFeatures\Example\Commands\Delete\" />
+    <Folder Include="Features\AuthenticationFeatures\Example\Commands\Update\" />
+    <Folder Include="Features\AuthenticationFeatures\Example\Constants\" />
+    <Folder Include="Features\AuthenticationFeatures\Example\Dtos\CreateDtos\" />
+    <Folder Include="Features\AuthenticationFeatures\Example\Dtos\DtoValidators\" />
+    <Folder Include="Features\AuthenticationFeatures\Example\Dtos\DtoProfiles\" />
+    <Folder Include="Features\AuthenticationFeatures\Example\Dtos\ResponseDtos\" />
+    <Folder Include="Features\AuthenticationFeatures\Example\Dtos\UpdateDtos\" />
+    <Folder Include="Features\AuthenticationFeatures\Example\Profiles\" />
+    <Folder Include="Features\AuthenticationFeatures\Example\Queries\GetByCode\" />
+    <Folder Include="Features\AuthenticationFeatures\Example\Queries\GetById\" />
+    <Folder Include="Features\AuthenticationFeatures\Example\Queries\GetListByDynamic\" />
+    <Folder Include="Features\AuthenticationFeatures\Example\Queries\GetList\" />
+    <Folder Include="Features\AuthenticationFeatures\Example\Rules\" />
+    <Folder Include="Features\AuthenticationFeatures\Example\Validators\" />
+    <Folder Include="Features\AuthenticationFeatures\Users\Dtos\CreateDtos\" />
+    <Folder Include="Features\AuthenticationFeatures\Users\Dtos\DtoValidators\" />
+    <Folder Include="Features\AuthenticationFeatures\Users\Dtos\UpdateDtos\" />
+    <Folder Include="Features\CommonFeatures\AttributeInputTypes\Commands\" />
+    <Folder Include="Features\CommonFeatures\AttributeInputTypes\Dtos\ResponseDtos\" />
+    <Folder Include="Features\CommonFeatures\AttributeInputTypes\Queries\" />
+    <Folder Include="Features\CommonFeatures\AttributeInputTypes\Validators\" />
+    <Folder Include="Features\CommonFeatures\AbcCategoryLists\Commands\Create\" />
+    <Folder Include="Features\CommonFeatures\AbcCategoryLists\Commands\Delete\" />
+    <Folder Include="Features\CommonFeatures\AbcCategoryLists\Commands\Update\" />
+    <Folder Include="Features\CommonFeatures\AbcCategoryLists\Constants\" />
+    <Folder Include="Features\CommonFeatures\AbcCategoryLists\Profiles\" />
+    <Folder Include="Features\CommonFeatures\AbcCategoryLists\Queries\GetByCode\" />
+    <Folder Include="Features\CommonFeatures\AbcCategoryLists\Queries\GetById\" />
+    <Folder Include="Features\CommonFeatures\AbcCategoryLists\Queries\GetListByDynamic\" />
+    <Folder Include="Features\CommonFeatures\AbcCategoryLists\Queries\GetList\" />
+    <Folder Include="Features\CommonFeatures\AbcCategoryLists\Rules\" />
+    <Folder Include="Features\CommonFeatures\AbcCategoryLists\Validators\" />
+    <Folder Include="Features\CommonFeatures\LocationCodeComponents\Commands\Create\" />
+    <Folder Include="Features\CommonFeatures\LocationCodeComponents\Commands\Delete\" />
+    <Folder Include="Features\CommonFeatures\LocationCodeComponents\Commands\Update\" />
+    <Folder Include="Features\CommonFeatures\LocationCodeComponents\Dtos\ResponseDtos\" />
+    <Folder Include="Features\CommonFeatures\LocationCodeComponents\Profiles\" />
+    <Folder Include="Features\CommonFeatures\LocationCodeComponents\Queries\GetById\" />
+    <Folder Include="Features\CommonFeatures\LocationCodeComponents\Queries\GetListByDynamic\" />
+    <Folder Include="Features\CommonFeatures\LocationCodeComponents\Rules\" />
+    <Folder Include="Features\CommonFeatures\LocationCodeComponents\Validators\" />
+    <Folder Include="Features\CommonFeatures\PickingTypes\Commands\Create\" />
+    <Folder Include="Features\CommonFeatures\PickingTypes\Commands\Delete\" />
+    <Folder Include="Features\CommonFeatures\PickingTypes\Commands\Update\" />
+    <Folder Include="Features\CommonFeatures\PickingTypes\Dtos\ResponseDtos\" />
+    <Folder Include="Features\CommonFeatures\PickingTypes\Profiles\" />
+    <Folder Include="Features\CommonFeatures\PickingTypes\Queries\GetById\" />
+    <Folder Include="Features\CommonFeatures\PickingTypes\Queries\GetListByDynamic\" />
+    <Folder Include="Features\CommonFeatures\PickingTypes\Rules\" />
+    <Folder Include="Features\CommonFeatures\PickingTypes\Validators\" />
+    <Folder Include="Features\CommonFeatures\ProgressStatuses\Commands\" />
+    <Folder Include="Features\CommonFeatures\ProgressStatuses\Dtos\ResponseDtos\" />
+    <Folder Include="Features\CommonFeatures\ProgressStatuses\Profiles\" />
+    <Folder Include="Features\CommonFeatures\ProgressStatuses\Queries\" />
+    <Folder Include="Features\CommonFeatures\ProgressStatuses\Validators\" />
+    <Folder Include="Features\CommonFeatures\Statuses\Commands\" />
+    <Folder Include="Features\CommonFeatures\Statuses\Dtos\ResponseDtos\" />
+    <Folder Include="Features\CommonFeatures\Statuses\Profiles\" />
+    <Folder Include="Features\CommonFeatures\Statuses\Queries\" />
+    <Folder Include="Features\CommonFeatures\Statuses\Validators\" />
+    <Folder Include="Features\CommonFeatures\AttributeInputTypes\Profiles\" />
+    <Folder Include="Features\DepositorFeatures\Addresses\Dtos\ResponseDtos\" />
+    <Folder Include="Features\DepositorFeatures\DepositorFeatures\Commands\Create\" />
+    <Folder Include="Features\DepositorFeatures\DepositorFeatures\Commands\Delete\" />
+    <Folder Include="Features\DepositorFeatures\DepositorFeatures\Commands\Update\" />
+    <Folder Include="Features\DepositorFeatures\DepositorFeatures\Dtos\ResponseDtos\" />
+    <Folder Include="Features\DepositorFeatures\DepositorFeatures\Profiles\" />
+    <Folder Include="Features\DepositorFeatures\DepositorFeatures\Queries\GetById\" />
+    <Folder Include="Features\DepositorFeatures\DepositorFeatures\Queries\GetListByDynamic\" />
+    <Folder Include="Features\DepositorFeatures\DepositorFeatures\Rules\" />
+    <Folder Include="Features\DepositorFeatures\DepositorFeatures\Validators\" />
+    <Folder Include="Features\LocationFeatures\LocationDimensions\Commands\Create\" />
+    <Folder Include="Features\LocationFeatures\LocationDimensions\Commands\Delete\" />
+    <Folder Include="Features\LocationFeatures\LocationDimensions\Commands\Update\" />
+    <Folder Include="Features\LocationFeatures\LocationDimensions\Profiles\" />
+    <Folder Include="Features\LocationFeatures\LocationDimensions\Queries\GetById\" />
+    <Folder Include="Features\LocationFeatures\LocationDimensions\Queries\GetListByDynamic\" />
+    <Folder Include="Features\LocationFeatures\LocationDimensions\Rules\" />
+    <Folder Include="Features\LocationFeatures\LocationDimensions\Validators\" />
+    <Folder Include="Features\LocationFeatures\LocationFeatures\Commands\Create\" />
+    <Folder Include="Features\LocationFeatures\LocationFeatures\Commands\Delete\" />
+    <Folder Include="Features\LocationFeatures\LocationFeatures\Commands\Update\" />
+    <Folder Include="Features\LocationFeatures\LocationFeatures\Profiles\" />
+    <Folder Include="Features\LocationFeatures\LocationFeatures\Queries\GetById\" />
+    <Folder Include="Features\LocationFeatures\LocationFeatures\Queries\GetListByDynamic\" />
+    <Folder Include="Features\LocationFeatures\LocationFeatures\Rules\" />
+    <Folder Include="Features\LocationFeatures\LocationFeatures\Validators\" />
+    <Folder Include="Features\LocationFeatures\LocationPriorities\Commands\Create\" />
+    <Folder Include="Features\LocationFeatures\LocationPriorities\Commands\Delete\" />
+    <Folder Include="Features\LocationFeatures\LocationPriorities\Commands\Update\" />
+    <Folder Include="Features\LocationFeatures\LocationPriorities\Profiles\" />
+    <Folder Include="Features\LocationFeatures\LocationPriorities\Queries\GetById\" />
+    <Folder Include="Features\LocationFeatures\LocationPriorities\Queries\GetListByDynamic\" />
+    <Folder Include="Features\LocationFeatures\LocationPriorities\Rules\" />
+    <Folder Include="Features\LocationFeatures\LocationPriorities\Validators\" />
+    <Folder Include="Features\LocationFeatures\LocationCodeFormats\Commands\Create\" />
+    <Folder Include="Features\LocationFeatures\LocationCodeFormats\Commands\Delete\" />
+    <Folder Include="Features\LocationFeatures\LocationCodeFormats\Commands\Update\" />
+    <Folder Include="Features\LocationFeatures\LocationCodeFormats\Profiles\" />
+    <Folder Include="Features\LocationFeatures\LocationCodeFormats\Queries\GetById\" />
+    <Folder Include="Features\LocationFeatures\LocationCodeFormats\Queries\GetListByDynamic\" />
+    <Folder Include="Features\LocationFeatures\LocationCodeFormats\Rules\" />
+    <Folder Include="Features\LocationFeatures\LocationCodeFormats\Validators\" />
+    <Folder Include="Features\LocationFeatures\BuildingDimensions\Commands\Create\" />
+    <Folder Include="Features\LocationFeatures\BuildingDimensions\Commands\Delete\" />
+    <Folder Include="Features\LocationFeatures\BuildingDimensions\Commands\Update\" />
+    <Folder Include="Features\LocationFeatures\BuildingDimensions\Profiles\" />
+    <Folder Include="Features\LocationFeatures\BuildingDimensions\Queries\GetById\" />
+    <Folder Include="Features\LocationFeatures\BuildingDimensions\Queries\GetListByDynamic\" />
+    <Folder Include="Features\LocationFeatures\BuildingDimensions\Rules\" />
+    <Folder Include="Features\LocationFeatures\BuildingDimensions\Validators\" />
+    <Folder Include="Features\LocationFeatures\LocationCoordinates\Commands\Create\" />
+    <Folder Include="Features\LocationFeatures\LocationCoordinates\Commands\Delete\" />
+    <Folder Include="Features\LocationFeatures\LocationCoordinates\Commands\Update\" />
+    <Folder Include="Features\LocationFeatures\LocationCoordinates\Profiles\" />
+    <Folder Include="Features\LocationFeatures\LocationCoordinates\Queries\GetById\" />
+    <Folder Include="Features\LocationFeatures\LocationCoordinates\Queries\GetListByDynamic\" />
+    <Folder Include="Features\LocationFeatures\LocationCoordinates\Rules\" />
+    <Folder Include="Features\LocationFeatures\LocationCoordinates\Validators\" />
+    <Folder Include="Features\LocationFeatures\LocationPickingTypes\Commands\Create\" />
+    <Folder Include="Features\LocationFeatures\LocationPickingTypes\Commands\Delete\" />
+    <Folder Include="Features\LocationFeatures\LocationPickingTypes\Commands\Update\" />
+    <Folder Include="Features\LocationFeatures\LocationPickingTypes\Profiles\" />
+    <Folder Include="Features\LocationFeatures\LocationPickingTypes\Queries\GetById\" />
+    <Folder Include="Features\LocationFeatures\LocationPickingTypes\Queries\GetListByDynamic\" />
+    <Folder Include="Features\LocationFeatures\LocationPickingTypes\Rules\" />
+    <Folder Include="Features\LocationFeatures\LocationPickingTypes\Validators\" />
+    <Folder Include="Features\LoggingFeatures\LogStockAttributeValues\Commands\" />
+    <Folder Include="Features\LoggingFeatures\LogStockAttributeValues\Dtos\ResponseDtos\" />
+    <Folder Include="Features\LoggingFeatures\LogStockAttributeValues\Profiles\" />
+    <Folder Include="Features\LoggingFeatures\LogStockAttributeValues\Queries\" />
+    <Folder Include="Features\LoggingFeatures\LogStockAttributeValues\Validators\" />
+    <Folder Include="Features\LoggingFeatures\LogStockContainers\Commands\" />
+    <Folder Include="Features\LoggingFeatures\LogStockContainers\Dtos\ResponseDtos\" />
+    <Folder Include="Features\LoggingFeatures\LogStockContainers\Profiles\" />
+    <Folder Include="Features\LoggingFeatures\LogStockContainers\Queries\" />
+    <Folder Include="Features\LoggingFeatures\LogStockContainers\Validators\" />
+    <Folder Include="Features\LoggingFeatures\LogStockReserveReasons\Commands\" />
+    <Folder Include="Features\LoggingFeatures\LogStockReserveReasons\Dtos\ResponseDtos\" />
+    <Folder Include="Features\LoggingFeatures\LogStockReserveReasons\Profiles\" />
+    <Folder Include="Features\LoggingFeatures\LogStockReserveReasons\Queries\" />
+    <Folder Include="Features\LoggingFeatures\LogStockReserveReasons\Validators\" />
+    <Folder Include="Features\LoggingFeatures\LogStockUnsuitReasons\Commands\" />
+    <Folder Include="Features\LoggingFeatures\LogStockUnsuitReasons\Dtos\ResponseDtos\" />
+    <Folder Include="Features\LoggingFeatures\LogStockUnsuitReasons\Profiles\" />
+    <Folder Include="Features\LoggingFeatures\LogStockUnsuitReasons\Queries\" />
+    <Folder Include="Features\LoggingFeatures\LogStockUnsuitReasons\Validators\" />
+    <Folder Include="Features\TaskFeatures\TransactionTypes\Commands\Create\" />
+    <Folder Include="Features\TaskFeatures\TransactionTypes\Commands\Delete\" />
+    <Folder Include="Features\TaskFeatures\TransactionTypes\Commands\Update\" />
+    <Folder Include="Features\TaskFeatures\TransactionTypes\Dtos\ResponseDtos\" />
+    <Folder Include="Features\TaskFeatures\TransactionTypes\Profiles\" />
+    <Folder Include="Features\TaskFeatures\TransactionTypes\Queries\GetByCode\" />
+    <Folder Include="Features\TaskFeatures\TransactionTypes\Queries\GetById\" />
+    <Folder Include="Features\TaskFeatures\TransactionTypes\Queries\GetListByDynamic\" />
+    <Folder Include="Features\TaskFeatures\TransactionTypes\Queries\GetList\" />
+    <Folder Include="Features\TaskFeatures\TransactionTypes\Validators\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.14" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Orhanization.Core\Orhanization.Core.csproj" />
+    <ProjectReference Include="..\Monstersoft.VennWms.Main.Domain\Monstersoft.VennWms.Main.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

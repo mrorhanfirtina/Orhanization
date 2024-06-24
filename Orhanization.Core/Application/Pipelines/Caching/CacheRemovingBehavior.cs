@@ -1,21 +1,21 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Orhanization.Core.Security.Extensions;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Orhanization.Core.Application.Pipelines.Caching;
 
 public class CacheRemovingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>, ICacheRemoveRequest
 {
     private readonly IDistributedCache _cache;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public CacheRemovingBehavior(IDistributedCache cache)
+    public CacheRemovingBehavior(IDistributedCache cache, IHttpContextAccessor httpContextAccessor)
     {
         _cache = cache;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
@@ -27,25 +27,31 @@ public class CacheRemovingBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
 
         TResponse response = await next();
 
-        if (request.CacheGroupKey != null)
+        foreach (var item in request.CacheGroupKey?.ToList())
         {
-            byte[]? cachedGroup = await _cache.GetAsync(request.CacheGroupKey, cancellationToken);
-            if (cachedGroup != null)
+            string cacheGroupWithLocality = item + _httpContextAccessor.HttpContext.User.GetUserLocalityId();
+
+            if (cacheGroupWithLocality != null)
             {
-                HashSet<string> keysInGroup = JsonSerializer.Deserialize<HashSet<string>>(Encoding.Default.GetString(cachedGroup))!;
-                foreach (string key in keysInGroup)
+
+                byte[]? cachedGroup = await _cache.GetAsync(cacheGroupWithLocality!, cancellationToken);
+                if (cachedGroup != null)
                 {
-                    await _cache.RemoveAsync(key, cancellationToken);
+                    HashSet<string> keysInGroup = JsonSerializer.Deserialize<HashSet<string>>(Encoding.Default.GetString(cachedGroup))!;
+                    foreach (string key in keysInGroup)
+                    {
+                        await _cache.RemoveAsync(key, cancellationToken);
+                    }
+
+                    await _cache.RemoveAsync(cacheGroupWithLocality, cancellationToken);
+                    await _cache.RemoveAsync(key: $"{cacheGroupWithLocality}SlidingExpiration", cancellationToken);
                 }
-
-                await _cache.RemoveAsync(request.CacheGroupKey, cancellationToken);
-                await _cache.RemoveAsync(key: $"{request.CacheGroupKey}SlidingExpiration", cancellationToken);
             }
-        }
 
-        if (request.CacheKey != null)
-        {
-            await _cache.RemoveAsync(request.CacheKey, cancellationToken);
+            if (request.CacheKey != null)
+            {
+                await _cache.RemoveAsync(request.CacheKey, cancellationToken);
+            }
         }
 
         return response;
