@@ -19,7 +19,7 @@ public class DeleteLocationProductConstraintCommand : IRequest<DeletedLocationPr
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationProductConstraints";
+    public string[]? CacheGroupKey => ["GetLocationProductConstraints"];
 
     public Guid Id { get; set; }
 

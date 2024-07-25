@@ -25,7 +25,8 @@ public class CreateReceiptItmStockAttrValueCommand : IRequest<CreatedReceiptItmS
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceiptItmStockAttrValues";
+    public string[]? CacheGroupKey => ["GetReceiptItmStockAttrValues"];
+
 
     public CreateReceiptItmStockAttrValueDto ReceiptItmStockAttrValue { get; set; }
     public ReceiptItmStockAttrValuesDetailLevel? DetailLevel { get; set; }

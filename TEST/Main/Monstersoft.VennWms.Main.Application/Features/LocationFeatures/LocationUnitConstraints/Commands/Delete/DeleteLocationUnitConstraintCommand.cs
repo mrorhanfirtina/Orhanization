@@ -19,7 +19,7 @@ public class DeleteLocationUnitConstraintCommand : IRequest<DeletedLocationUnitC
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationUnitConstraints";
+    public string[]? CacheGroupKey => ["GetLocationUnitConstraints"];
 
     public Guid Id { get; set; }
 

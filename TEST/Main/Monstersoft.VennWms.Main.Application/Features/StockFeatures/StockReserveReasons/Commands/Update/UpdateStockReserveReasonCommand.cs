@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockReserveReasons.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockReserveReasons.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockReserveReasons.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockReserveReasons.Rules;
@@ -26,7 +25,7 @@ public class UpdateStockReserveReasonCommand : IRequest<UpdatedStockReserveReaso
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockReserveReasons";
+    public string[]? CacheGroupKey => ["GetStockReserveReasons"];
 
     public UpdateStockReserveReasonDto StockReserveReason { get; set; }
     public StockReserveReasonsDetailLevel? DetailLevel { get; set; }

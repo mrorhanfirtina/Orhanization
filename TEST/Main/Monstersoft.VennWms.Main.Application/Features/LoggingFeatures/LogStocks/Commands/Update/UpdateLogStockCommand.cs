@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.LoggingFeatures.LogStocks.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.LoggingFeatures.LogStocks.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LoggingFeatures.LogStocks.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LoggingFeatures.LogStocks.Rules;
@@ -26,7 +25,7 @@ public class UpdateLogStockCommand : IRequest<UpdatedLogStockResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetTransactionLogs";
+    public string[]? CacheGroupKey => ["GetTransactionLogs"];
 
     public UpdateLogStockDto LogStock { get; set; }
     public LogStocksDetailLevel DetailLevel { get; set; }

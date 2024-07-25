@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Rules;
@@ -26,7 +25,7 @@ public class CreateReceiptAttributeValueCommand : IRequest<CreatedReceiptAttribu
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceiptAttributeValues";
+    public string[]? CacheGroupKey => ["GetReceiptAttributeValues"];
 
     public CreateReceiptAttributeValueDto ReceiptAttributeValue { get; set; }
     public ReceiptAttributeValuesDetailLevel? DetailLevel { get; set; }

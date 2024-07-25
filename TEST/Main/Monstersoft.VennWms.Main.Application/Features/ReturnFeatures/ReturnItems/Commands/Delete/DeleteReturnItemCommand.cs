@@ -21,7 +21,7 @@ public class DeleteReturnItemCommand : IRequest<DeletedReturnItemResponse>, ITra
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturnItems";
+    public string[]? CacheGroupKey => ["GetReturnItems"];
 
     public Guid Id { get; set; }
 

@@ -20,7 +20,7 @@ public class DeleteTaskCodeFormatCommand : IRequest<DeletedTaskCodeFormatRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetTaskCodeFormats";
+    public string[]? CacheGroupKey => ["GetTaskCodeFormats"];
 
     public Guid Id { get; set; }
 

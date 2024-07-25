@@ -12,6 +12,7 @@ using Monstersoft.VennWms.Main.Application.Repositories.PORepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.ReturnRepositories;
+using Monstersoft.VennWms.Main.Application.Repositories.SerialRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.TaskRepositories;
@@ -27,6 +28,7 @@ using Monstersoft.VennWms.Main.Persistance.Repositories.PORepositories;
 using Monstersoft.VennWms.Main.Persistance.Repositories.ProductRepositories;
 using Monstersoft.VennWms.Main.Persistance.Repositories.ReceiptRepositories;
 using Monstersoft.VennWms.Main.Persistance.Repositories.ReturnRepositories;
+using Monstersoft.VennWms.Main.Persistance.Repositories.SerialRepositories;
 using Monstersoft.VennWms.Main.Persistance.Repositories.ShipmentRepositories;
 using Monstersoft.VennWms.Main.Persistance.Repositories.StockRepositories;
 using Monstersoft.VennWms.Main.Persistance.Repositories.TaskRepositories;
@@ -164,6 +166,19 @@ public static class PersistenceServiceRegistration
         services.AddScoped<IOrderPriorityRepository, OrderPriorityRepository>();
         services.AddScoped<IUnitConversionRepository, UnitConversionRepository>();
         services.AddScoped<IStockInboundRepository, StockInboundRepository>();
+        services.AddScoped<IActionParameterCategoryRepository, ActionParameterCategoryRepository>();
+        services.AddScoped<IActionParameterRepository, ActionParameterRepository>();
+        services.AddScoped<IActionParameterUserRepository, ActionParameterUserRepository>();
+        services.AddScoped<IActionParameterDepositorRepository, ActionParameterDepositorRepository>();
+        services.AddScoped<IExpectedSerialRepository, ExpectedSerialRepository>();
+        services.AddScoped<IExpectedSerialHierarchyRepository, ExpectedSerialHierarchyRepository>();
+        services.AddScoped<ISerialRepository, SerialRepository>();
+        services.AddScoped<ISerialHierarchyRepository, SerialHierarchyRepository>();
+        services.AddScoped<ISerialLogRepository, SerialLogRepository>();
+        services.AddScoped<IStockContainerHierarchyRepository, StockContainerHierarchyRepository>();
+        services.AddScoped<IBufferLocationRepository, BufferLocationRepository>();
+        services.AddScoped<IActionParameterDefaultRepository, ActionParameterDefaultRepository>();
+       
 
         services.AddScoped<IEmailAuthenticatorRepository, EmailAuthenticatorRepository>();
         services.AddScoped<IOperationClaimRepository, OperationClaimRepository>();

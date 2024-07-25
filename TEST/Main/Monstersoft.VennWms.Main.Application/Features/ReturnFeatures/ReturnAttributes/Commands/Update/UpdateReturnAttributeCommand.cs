@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributes.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributes.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributes.Rules;
@@ -26,7 +25,7 @@ public class UpdateReturnAttributeCommand : IRequest<UpdatedReturnAttributeRespo
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturnAttributes";
+    public string[]? CacheGroupKey => ["GetReturnAttributes"];
 
     public UpdateReturnAttributeDto ReturnAttribute { get; set; }
     public ReturnAttributesDetailLevel? DetailLevel { get; set; }

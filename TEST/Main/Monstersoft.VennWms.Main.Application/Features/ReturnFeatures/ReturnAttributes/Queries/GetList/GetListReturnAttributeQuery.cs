@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnAttributes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReturnRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -31,7 +28,6 @@ public class GetListReturnAttributeQuery : IRequest<GetListResponse<GetListRetur
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public ReturnAttributesDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListReturnAttributeQueryHandler : IRequestHandler<GetListReturnAttributeQuery, GetListResponse<GetListReturnAttributeListItemDto>>
@@ -54,43 +50,14 @@ public class GetListReturnAttributeQuery : IRequest<GetListResponse<GetListRetur
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<ReturnAttribute> returnAttributeList = await _returnAttributeRepository.GetListAsync(
+            Paginate<ReturnAttribute> returnAttributeList = await _returnAttributeRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<ReturnAttribute> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeAttributeInputType)
-                    {
-                        query = query.Include(y => y.AttributeInputType);
-                    }
-
-                    var includableQuery = query as IIncludableQueryable<ReturnAttribute, object>;
-                    return includableQuery;
-                },
+                include: m => m.Include(m => m.DepositorCompany).Include(m => m.AttributeInputType),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListReturnAttributeListItemDto>>(returnAttributeList);
-            }
-            else
-            {
-                Paginate<ReturnAttribute> returnAttributeList = await _returnAttributeRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListReturnAttributeListItemDto>>(returnAttributeList);
-            }
+            return _mapper.Map<GetListResponse<GetListReturnAttributeListItemDto>>(returnAttributeList);
         }
     }
 

@@ -2,11 +2,6 @@
 using Orhanization.Core.CrossCuttingConcerns.Exceptions.Extensions;
 using Orhanization.Core.CrossCuttingConcerns.Exceptions.HttpProblemDetails;
 using Orhanization.Core.CrossCuttingConcerns.Exceptions.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Orhanization.Core.CrossCuttingConcerns.Exceptions.Handlers;
 
@@ -21,7 +16,7 @@ public class HttpExceptionHandler : ExceptionHandler
     protected override Task HandleException(BusinessException businessException)
     {
         Response.StatusCode = StatusCodes.Status400BadRequest;
-        string details = new BusinessProblemDetails(businessException.Message).AsJson();
+        string details = new BusinessProblemDetails(businessException.Message, businessException.HelpLink).AsJson();
         return Response.WriteAsync(details);
     }
 

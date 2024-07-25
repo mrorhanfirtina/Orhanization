@@ -25,7 +25,7 @@ public class UpdatePrinterCommand : IRequest<UpdatedPrinterResponse>, ITransacti
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBarcodes";
+    public string[]? CacheGroupKey => ["GetBarcodes", "GetPrinters"];
 
     public UpdatePrinterDto Printer { get; set; }
     public PrintersDetailLevel DetailLevel { get; set; }

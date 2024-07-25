@@ -20,7 +20,7 @@ public class DeleteStorageSystemCommand : IRequest<DeletedStorageSystemResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStorageSystems";
+    public string[]? CacheGroupKey => ["GetStorageSystems"];
 
     public Guid Id { get; set; }
 

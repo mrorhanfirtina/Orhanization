@@ -25,7 +25,8 @@ public class CreateReturnMemoCommand : IRequest<CreatedReturnMemoResponse>, ITra
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturnMemos";
+    public string[]? CacheGroupKey => ["GetReturnMemos"];
+
 
     public CreateReturnMemoDto ReturnMemo { get; set; }
     public ReturnMemosDetailLevel? DetailLevel { get; set; }

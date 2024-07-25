@@ -22,7 +22,7 @@ public class CreateBranchCommand : IRequest<CreatedBranchResponse>, ITransaction
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBranches";
+    public string[]? CacheGroupKey => ["GetBranches"];
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string[] Roles => [Admin, User, Add, Write];
 

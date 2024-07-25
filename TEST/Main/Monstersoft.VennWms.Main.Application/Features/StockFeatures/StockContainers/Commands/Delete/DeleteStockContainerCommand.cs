@@ -20,7 +20,7 @@ public class DeleteStockContainerCommand : IRequest<DeletedStockContainerRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockContainers";
+    public string[]? CacheGroupKey => ["GetStockContainers"];
 
     public Guid Id { get; set; }
 

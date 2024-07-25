@@ -19,7 +19,7 @@ public class DeleteProductCategoryCommand : IRequest<DeletedProductCategoryRespo
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetProductCategories";
+    public string[]? CacheGroupKey => ["GetProductCategories"];
 
     public Guid Id { get; set; }
 

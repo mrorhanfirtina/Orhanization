@@ -2,11 +2,9 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Rules;
-using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
 using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
@@ -27,7 +25,8 @@ public class CreateBarcodeSupplierCommand : IRequest<CreatedBarcodeSupplierRespo
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBarcodeSuppliers";
+    public string[]? CacheGroupKey => ["GetBarcodeSuppliers"];
+
 
     public CreateBarcodeSupplierDto BarcodeSupplier { get; set; }
     public BarcodeSuppliersDetailLevel DetailLevel { get; set; }

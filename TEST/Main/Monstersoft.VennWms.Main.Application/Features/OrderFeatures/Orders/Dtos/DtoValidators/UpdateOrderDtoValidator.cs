@@ -23,7 +23,7 @@ public class UpdateOrderDtoValidator : AbstractValidator<UpdateOrderDto>
         RuleFor(p => p.StatusId).NotEmpty().NotNull().InclusiveBetween(0, int.MaxValue);
         RuleFor(x => x.Customer).SetValidator(new UpdateCustomerSubDtoValidator());
         RuleFor(x => x.OrderPriority).SetValidator(new UpdateOrderPrioritySubDtoValidator());
-        RuleFor(x => x.OrderShipment).SetValidator(new UpdateOrderShipmentSubDtoValidator());
+        //RuleFor(x => x.OrderShipment).SetValidator(new UpdateOrderShipmentSubDtoValidator());
         RuleForEach(x => x.OrderAttributeValues).SetValidator(new UpdateOrderAttributeValueSubDtoValidator());
         RuleForEach(x => x.OrderItems).SetValidator(new UpdateOrderItemSubDtoValidator());
         RuleForEach(x => x.OrderMemos).SetValidator(new UpdateOrderMemoSubDtoValidator());

@@ -25,7 +25,8 @@ public class CreateReturnItmStockAttrValueCommand : IRequest<CreatedReturnItmSto
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturnItmStockAttrValues";
+    public string[]? CacheGroupKey => ["GetReturnItmStockAttrValues"];
+
 
     public CreateReturnItmStockAttrValueDto ReturnItmStockAttrValue { get; set; }
     public ReturnItmStockAttrValuesDetailLevel? DetailLevel { get; set; }

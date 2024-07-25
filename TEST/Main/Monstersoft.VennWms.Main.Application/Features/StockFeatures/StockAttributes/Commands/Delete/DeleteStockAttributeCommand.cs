@@ -20,7 +20,7 @@ public class DeleteStockAttributeCommand : IRequest<DeletedStockAttributeRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockAttributes";
+    public string[]? CacheGroupKey => ["GetStockAttributes"];
 
     public Guid Id { get; set; }
 

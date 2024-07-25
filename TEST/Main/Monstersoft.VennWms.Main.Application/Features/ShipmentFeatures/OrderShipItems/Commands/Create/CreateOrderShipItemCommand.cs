@@ -25,7 +25,7 @@ public class CreateOrderShipItemCommand : IRequest<CreatedOrderShipItemResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderShipItems";
+    public string[]? CacheGroupKey => ["GetOrderShipItems"];
 
     public CreateOrderShipItemDto OrderShipItem { get; set; }
     public OrderShipItemsDetailLevel? DetailLevel { get; set; }

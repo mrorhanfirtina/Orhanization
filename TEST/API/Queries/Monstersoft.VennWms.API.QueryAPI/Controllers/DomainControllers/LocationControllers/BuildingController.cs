@@ -36,9 +36,9 @@ public class BuildingController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] BuildingsDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListBuildingQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListBuildingQuery query = new() { PageRequest = pageRequest};
         GetListResponse<GetListBuildingListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

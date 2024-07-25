@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockContainers.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockContainers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockContainers.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockContainers.Rules;
@@ -26,7 +25,7 @@ public class UpdateStockContainerCommand : IRequest<UpdatedStockContainerRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockContainers";
+    public string[]? CacheGroupKey => ["GetStockContainers"];
 
     public UpdateStockContainerDto StockContainer { get; set; }
     public StockContainersDetailLevel? DetailLevel { get; set; }

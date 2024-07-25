@@ -24,7 +24,7 @@ public class CreateReceiptTypeCommand : IRequest<CreatedReceiptTypeResponse>, IT
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceiptTypes";
+    public string[]? CacheGroupKey => ["GetReceiptTypes"];
 
     public CreateReceiptTypeDto ReceiptType { get; set; }
     public ReceiptTypesDetailLevel? DetailLevel { get; set; }

@@ -20,7 +20,7 @@ public class DeleteDepositorCompanyCommand : IRequest<DeletedDepositorCompanyRes
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetDepositorCompanies";
+    public string[]? CacheGroupKey => ["GetDepositorCompanies"];
 
     public Guid Id { get; set; }
 

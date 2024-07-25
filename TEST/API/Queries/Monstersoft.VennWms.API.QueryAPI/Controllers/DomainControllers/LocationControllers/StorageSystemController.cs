@@ -36,9 +36,9 @@ public class StorageSystemController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] StorageSystemsDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListStorageSystemQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListStorageSystemQuery query = new() { PageRequest = pageRequest};
         GetListResponse<GetListStorageSystemListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

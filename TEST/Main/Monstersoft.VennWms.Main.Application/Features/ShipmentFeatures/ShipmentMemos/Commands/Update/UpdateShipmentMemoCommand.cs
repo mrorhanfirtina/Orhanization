@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentMemos.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentMemos.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentMemos.Rules;
@@ -26,7 +25,7 @@ public class UpdateShipmentMemoCommand : IRequest<UpdatedShipmentMemoResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetShipmentMemos";
+    public string[]? CacheGroupKey => ["GetShipmentMemos"];
 
     public UpdateShipmentMemoDto ShipmentMemo { get; set; }
     public ShipmentMemosDetailLevel? DetailLevel { get; set; }

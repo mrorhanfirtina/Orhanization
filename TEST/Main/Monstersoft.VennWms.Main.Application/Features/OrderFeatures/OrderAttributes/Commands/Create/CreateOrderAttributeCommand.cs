@@ -25,7 +25,7 @@ public class CreateOrderAttributeCommand : IRequest<CreatedOrderAttributeRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderAttributes";
+    public string[]? CacheGroupKey => ["GetOrderAttributes"];
 
     public CreateOrderAttributeDto OrderAttribute { get; set; }
     public OrderAttributesDetailLevel DetailLevel { get; set; }

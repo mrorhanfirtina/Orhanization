@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Constants;
+﻿namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Constants;
 
 public static class OrderAttributeValueOperationClaims
 {

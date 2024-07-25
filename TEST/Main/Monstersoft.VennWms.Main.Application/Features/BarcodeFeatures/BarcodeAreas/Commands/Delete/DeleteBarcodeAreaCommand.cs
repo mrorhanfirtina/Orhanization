@@ -14,7 +14,7 @@ using static Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Barco
 namespace Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.BarcodeAreas.Commands.Delete;
 
 public class DeleteBarcodeAreaCommand : IRequest<DeletedBarcodeAreaResponse>, ITransactionalRequest, ICacheRemoveRequest, ILoggableRequest, ILocalityRequest, ISecuredRequest
-{
+{ 
     public string[] Roles => [Admin, User, BarcodeAreaOperationClaims.Delete, Write];
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";

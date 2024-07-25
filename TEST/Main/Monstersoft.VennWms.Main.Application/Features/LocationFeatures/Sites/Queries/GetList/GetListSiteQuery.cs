@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -31,7 +28,6 @@ public class GetListSiteQuery : IRequest<GetListResponse<GetListSiteListItemDto>
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public SitesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListSiteQueryHandler : IRequestHandler<GetListSiteQuery, GetListResponse<GetListSiteListItemDto>>
@@ -54,54 +50,16 @@ public class GetListSiteQuery : IRequest<GetListResponse<GetListSiteListItemDto>
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<Site> siteList = await _siteRepository.GetListAsync(
+            Paginate<Site> siteList = await _siteRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<Site> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeBuilding)
-                    {
-                        query = query.Include(y => y.Buildings);
-                    }
-
-                    if (detailLevel.IncludeSiteDepositor)
-                    {
-                        query = query.Include(y => y.SiteDepositors);
-
-                        if (detailLevel.SiteDepositorDetailLevel.IncludeDepositor)
-                        {
-                            query = query.Include(y => y.SiteDepositors).ThenInclude(y => y.Depositor);
-                        }
-                    }
-
-
-                    var includableQuery = query as IIncludableQueryable<Site, object>;
-                    return includableQuery;
-                },
+                include: x => x.Include(m => m.DepositorCompany)
+                               .Include(m => m.SiteDepositors)
+                               .Include(m => m.SiteDepositors).ThenInclude(m => m.Depositor),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListSiteListItemDto>>(siteList);
-            }
-            else
-            {
-                Paginate<Site> siteList = await _siteRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListSiteListItemDto>>(siteList);
-            }
+            return _mapper.Map<GetListResponse<GetListSiteListItemDto>>(siteList);
         }
     }
 

@@ -26,7 +26,7 @@ public class UpdateProductBarcodeCommand : IRequest<UpdatedProductBarcodeRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetProductBarcodes";
+    public string[]? CacheGroupKey => ["GetProductBarcodes"];
 
     public UpdateProductBarcodeDto ProductBarcode { get; set; }
     public ProductBarcodesDetailLevel DetailLevel { get; set; }

@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskLists.Constants;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskLists.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.TaskRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.TaskEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -54,55 +52,16 @@ public class GetListTaskListQuery : IRequest<GetListResponse<GetListTaskListList
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<TaskList> taskListList = await _taskListRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<TaskList> query = x;
+            Paginate<TaskList> taskListList = await _taskListRepository.GetListAsync(
+                            predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                            include: x => x.Include(m => m.Depositor)
+                                           .Include(m => m.Depositor).ThenInclude(m => m.Company)
+                                           .Include(m => m.DepositorCompany),
+                            orderBy: x => x.OrderByDescending(m => m.CreatedDate),
+                            index: request.PageRequest.PageIndex, enableTracking: false,
+                            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeWorkTask)
-                    {
-                        query = query.Include(y => y.WorkTasks);
-                    }
-
-                    if (detailLevel.IncludeDepositor)
-                    {
-                        query = query.Include(y => y.Depositor);
-
-                        var depositorDetailLevel = detailLevel.DepositorDetailLevel;
-
-                        if (depositorDetailLevel.IncludeCompany)
-                        {
-                            query = query.Include(y => y.Depositor).ThenInclude(y => y.Company);
-                        }
-                    }
-
-                    var includableQuery = query as IIncludableQueryable<TaskList, object>;
-                    return includableQuery;
-                },
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListTaskListListItemDto>>(taskListList);
-            }
-            else
-            {
-                Paginate<TaskList> taskListList = await _taskListRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListTaskListListItemDto>>(taskListList);
-            }
+            return _mapper.Map<GetListResponse<GetListTaskListListItemDto>>(taskListList);
         }
     }
 

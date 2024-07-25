@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributeValues.Rules;
@@ -26,7 +25,7 @@ public class UpdatePoAttributeValueCommand : IRequest<UpdatedPoAttributeValueRes
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetPoAttributeValues";
+    public string[]? CacheGroupKey => ["GetPoAttributeValues"];
 
     public UpdatePoAttributeValueDto PoAttributeValue { get; set; }
     public PoAttributeValuesDetailLevel DetailLevel { get; set; }

@@ -20,7 +20,7 @@ public class DeleteItemPackTypeCommand : IRequest<DeletedItemPackTypeResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetItemPackTypes";
+    public string[]? CacheGroupKey => ["GetItemPackTypes"];
 
     public Guid Id { get; set; }
 

@@ -24,7 +24,7 @@ public class UpdateProductCategoryListCommand : IRequest<UpdatedProductCategoryL
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetProductCategoryLists";
+    public string[]? CacheGroupKey => ["GetProductCategoryLists"];
 
     public UpdateProductCategoryListDto ProductCategoryList { get; set; }
     public ProductCategoryListsDetailLevel DetailLevel { get; set; }

@@ -35,9 +35,9 @@ public class UnsuitReasonController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] UnsuitReasonsDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListUnsuitReasonQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListUnsuitReasonQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListUnsuitReasonListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

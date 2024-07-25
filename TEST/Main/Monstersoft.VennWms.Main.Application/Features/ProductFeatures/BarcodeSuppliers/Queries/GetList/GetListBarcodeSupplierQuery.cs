@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -31,7 +28,6 @@ public class GetListBarcodeSupplierQuery : IRequest<GetListResponse<GetListBarco
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public BarcodeSuppliersDetailLevel DetailLevel { get; set; }
 
 
 
@@ -55,54 +51,14 @@ public class GetListBarcodeSupplierQuery : IRequest<GetListResponse<GetListBarco
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<BarcodeSupplier> barcodeSupplierList = await _barcodeSupplierRepository.GetListAsync(
+            Paginate<BarcodeSupplier> barcodeSupplierList = await _barcodeSupplierRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<BarcodeSupplier> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeProductBarcode)
-                    {
-                        query = query.Include(y => y.ProductBarcode);
-                    }
-
-                    if (detailLevel.IncludeSupplier)
-                    {
-                        query = query.Include(y => y.Supplier);
-
-                        if (detailLevel.SupplierDetailLevel.IncludeCompany)
-                        {
-                            query = query.Include(y => y.Supplier).ThenInclude(m => m.Company);
-                        }
-                    }
-
-
-                    var includableQuery = query as IIncludableQueryable<BarcodeSupplier, object>;
-                    return includableQuery;
-                },
+                include: m => m.Include(m => m.DepositorCompany).Include(m => m.ProductBarcode).Include(m => m.Supplier),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListBarcodeSupplierListItemDto>>(barcodeSupplierList);
-            }
-            else
-            {
-                Paginate<BarcodeSupplier> barcodeSupplierList = await _barcodeSupplierRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListBarcodeSupplierListItemDto>>(barcodeSupplierList);
-            }
+            return _mapper.Map<GetListResponse<GetListBarcodeSupplierListItemDto>>(barcodeSupplierList);
         }
     }
 

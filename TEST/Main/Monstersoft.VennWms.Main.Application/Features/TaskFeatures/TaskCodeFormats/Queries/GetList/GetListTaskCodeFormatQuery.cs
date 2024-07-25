@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskCodeFormats.Constants;
 using Monstersoft.VennWms.Main.Application.Features.TaskFeatures.TaskCodeFormats.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.TaskRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.TaskEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -30,7 +27,6 @@ public class GetListTaskCodeFormatQuery : IRequest<GetListResponse<GetListTaskCo
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public TaskCodeFormatsDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListTaskCodeFormatQueryHandler : IRequestHandler<GetListTaskCodeFormatQuery, GetListResponse<GetListTaskCodeFormatListItemDto>>
@@ -53,43 +49,14 @@ public class GetListTaskCodeFormatQuery : IRequest<GetListResponse<GetListTaskCo
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<TaskCodeFormat> taskCodeFormatList = await _taskCodeFormatRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<TaskCodeFormat> query = x;
+            Paginate<TaskCodeFormat> taskCodeFormatList = await _taskCodeFormatRepository.GetListAsync(
+            predicate: m => m.DepositorCompanyId == depositorCompanyId,
+            include: x => x.Include(x => x.DepositorCompany).Include(x => x.TransactionType),
+            orderBy: x => x.OrderByDescending(m => m.CreatedDate),
+            index: request.PageRequest.PageIndex, enableTracking: false,
+            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeTransactionType)
-                    {
-                        query = query.Include(y => y.TransactionType);
-                    }
-
-                    var includableQuery = query as IIncludableQueryable<TaskCodeFormat, object>;
-                    return includableQuery;
-                },
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListTaskCodeFormatListItemDto>>(taskCodeFormatList);
-            }
-            else
-            {
-                Paginate<TaskCodeFormat> taskCodeFormatList = await _taskCodeFormatRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListTaskCodeFormatListItemDto>>(taskCodeFormatList);
-            }
+            return _mapper.Map<GetListResponse<GetListTaskCodeFormatListItemDto>>(taskCodeFormatList);
         }
     }
 

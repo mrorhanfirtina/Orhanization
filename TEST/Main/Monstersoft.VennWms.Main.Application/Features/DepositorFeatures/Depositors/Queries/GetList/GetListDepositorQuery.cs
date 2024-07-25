@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -31,7 +28,6 @@ public class GetListDepositorQuery : IRequest<GetListResponse<GetListDepositorLi
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public DepositorsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListDepositorQueryHandler : IRequestHandler<GetListDepositorQuery, GetListResponse<GetListDepositorListItemDto>>
@@ -54,53 +50,14 @@ public class GetListDepositorQuery : IRequest<GetListResponse<GetListDepositorLi
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<Depositor> depositorList = await _depositorRepository.GetListAsync(
+            Paginate<Depositor> depositorList = await _depositorRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<Depositor> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeDepositorFeature)
-                    {
-                        query = query.Include(y => y.DepositorFeature);
-                    }
-
-                    if (detailLevel.IncludeCompany)
-                    {
-                        query = query.Include(y => y.Company);
-
-                        if (detailLevel.CompanyDetailLevel.IncludeAddress)
-                        {
-                            query = query.Include(y => y.Company).ThenInclude(m => m.Address);
-                        }
-                    }
-
-                    var includableQuery = query as IIncludableQueryable<Depositor, object>;
-                    return includableQuery;
-                },
+                include: m => m.Include(m => m.Company).Include(m => m.DepositorCompany).Include(m => m.DepositorFeature),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListDepositorListItemDto>>(depositorList);
-            }
-            else
-            {
-                Paginate<Depositor> depositorList = await _depositorRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListDepositorListItemDto>>(depositorList);
-            }
+            return _mapper.Map<GetListResponse<GetListDepositorListItemDto>>(depositorList);
         }
     }
 

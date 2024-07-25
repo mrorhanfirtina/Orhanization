@@ -36,9 +36,9 @@ public class ReceiverController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] ReceiversDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListReceiverQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListReceiverQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListReceiverListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

@@ -7,6 +7,7 @@ public class CreateItemUnitSubDto
 {
     public int UnitId { get; set; }
     public bool IsConsumerUnit { get; set; }
+    public bool HasSerial { get; set; }
     public ICollection<CreateItemPackTypeSubDto> ItemPackTypes { get; set; }
     public ICollection<CreateItemUnitConversionSubDto> ItemUnitConversions { get; set; }
 }

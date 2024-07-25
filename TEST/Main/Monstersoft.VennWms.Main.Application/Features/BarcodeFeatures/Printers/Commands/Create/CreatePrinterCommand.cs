@@ -6,8 +6,10 @@ using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Con
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.BarcodeFeatures.Printers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.BarcodeRepositories;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.BarcodeEntities;
+using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Caching;
@@ -25,7 +27,7 @@ public class CreatePrinterCommand : IRequest<CreatedPrinterResponse>, ITransacti
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBarcodes";
+    public string[]? CacheGroupKey => ["GetBarcodes", "GetPrinters"];
 
     public CreatePrinterDto Printer { get; set; }
     public PrintersDetailLevel DetailLevel { get; set; }

@@ -36,9 +36,9 @@ public class SiteController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] SitesDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListSiteQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListSiteQuery query = new() { PageRequest = pageRequest};
         GetListResponse<GetListSiteListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

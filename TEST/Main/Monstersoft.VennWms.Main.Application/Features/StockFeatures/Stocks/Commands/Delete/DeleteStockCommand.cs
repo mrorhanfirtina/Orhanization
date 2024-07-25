@@ -21,7 +21,7 @@ public class DeleteStockCommand : IRequest<DeletedStockResponse>, ITransactional
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStocks";
+    public string[]? CacheGroupKey => ["GetStocks"];
 
     public Guid Id { get; set; }
 

@@ -21,7 +21,7 @@ public class DeleteSupplierCommand : IRequest<DeletedSupplierResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetSuppliers";
+    public string[]? CacheGroupKey => ["GetSuppliers"];
 
     public Guid Id { get; set; }
 

@@ -18,7 +18,7 @@ public class DeleteLockReasonCommand : IRequest<DeletedLockReasonResponse>, ITra
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLockReasons";
+    public string[]? CacheGroupKey => ["GetLockReasons"];
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string[] Roles => [Admin, User, Write, LockReasonOperationClaims.Delete];
 

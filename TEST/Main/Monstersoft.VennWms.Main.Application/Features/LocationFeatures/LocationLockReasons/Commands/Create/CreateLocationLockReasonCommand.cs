@@ -26,7 +26,7 @@ public class CreateLocationLockReasonCommand : IRequest<CreatedLocationLockReaso
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationLockReasons";
+    public string[]? CacheGroupKey => ["GetLocationLockReasons"];
 
     public CreateLocationLockReasonDto LocationLockReason { get; set; }
     public LocationLockReasonsDetailLevel DetailLevel { get; set; }

@@ -36,9 +36,9 @@ public class PrinterController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] PrintersDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListPrinterQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListPrinterQuery query = new() { PageRequest = pageRequest};
         GetListResponse<GetListPrinterListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

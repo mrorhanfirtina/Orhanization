@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItems.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItems.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItems.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItems.Rules;
@@ -26,7 +25,7 @@ public class UpdateReceiptItemCommand : IRequest<UpdatedReceiptItemResponse>, IT
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceiptItems";
+    public string[]? CacheGroupKey => ["GetReceiptItems"];
 
     public UpdateReceiptItemDto ReceiptItem { get; set; }
     public ReceiptItemsDetailLevel? DetailLevel { get; set; }

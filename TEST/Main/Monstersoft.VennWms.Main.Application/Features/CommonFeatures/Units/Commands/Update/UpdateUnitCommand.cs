@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Constants;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Rules;
@@ -23,7 +22,7 @@ public class UpdateUnitCommand : IRequest<UpdatedUnitResponse>, ITransactionalRe
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetUnits";
+    public string[]? CacheGroupKey => ["GetUnits"];
     public string[] Roles => [Admin, User, Write, UnitOperationClaims.Update];
     public UserRequestInfo? UserRequestInfo { get; set; }
 

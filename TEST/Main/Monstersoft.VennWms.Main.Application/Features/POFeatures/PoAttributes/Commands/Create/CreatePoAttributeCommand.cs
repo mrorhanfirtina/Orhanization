@@ -2,11 +2,9 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Rules;
-using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.PORepositories;
 using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.POEntities;
@@ -27,7 +25,7 @@ public class CreatePoAttributeCommand : IRequest<CreatedPoAttributeResponse>, IT
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetPoAttributes";
+    public string[]? CacheGroupKey => ["GetPoAttributes"];
 
     public CreatePoAttributeDto PoAttribute { get; set; }
     public PoAttributesDetailLevel DetailLevel { get; set; }

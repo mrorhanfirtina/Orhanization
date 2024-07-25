@@ -20,7 +20,7 @@ public class DeleteShipmentTypeCommand : IRequest<DeletedShipmentTypeResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetShipmentTypes";
+    public string[]? CacheGroupKey => ["GetShipmentTypes"];
 
     public Guid Id { get; set; }
 

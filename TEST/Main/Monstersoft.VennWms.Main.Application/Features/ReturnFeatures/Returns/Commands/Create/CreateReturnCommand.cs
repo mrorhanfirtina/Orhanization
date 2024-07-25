@@ -25,7 +25,8 @@ public class CreateReturnCommand : IRequest<CreatedReturnResponse>, ITransaction
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturns";
+    public string[]? CacheGroupKey => ["GetReturns"];
+
 
     public CreateReturnDto Return { get; set; }
     public ReturnsDetailLevel? DetailLevel { get; set; }

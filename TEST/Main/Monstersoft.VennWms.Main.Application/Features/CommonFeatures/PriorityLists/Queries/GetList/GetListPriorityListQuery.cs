@@ -31,7 +31,6 @@ public class GetListPriorityListQuery : IRequest<GetListResponse<GetListPriority
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public PriorityListsDetailLevel DetailLevel { get; set; }
 
     public class GetListPriorityListQueryHandler : IRequestHandler<GetListPriorityListQuery, GetListResponse<GetListPriorityListListItemDto>>
     {
@@ -53,38 +52,14 @@ public class GetListPriorityListQuery : IRequest<GetListResponse<GetListPriority
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<PriorityList> priorityListList = await _priorityListRepository.GetListAsync(
+            Paginate<PriorityList> priorityListList = await _priorityListRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<PriorityList> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    var includableQuery = query as IIncludableQueryable<PriorityList, object>;
-                    return includableQuery;
-                },
+                include: x => x.Include(x => x.DepositorCompany),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListPriorityListListItemDto>>(priorityListList);
-            }
-            else
-            {
-                Paginate<PriorityList> priorityListList = await _priorityListRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListPriorityListListItemDto>>(priorityListList);
-            }
+            return _mapper.Map<GetListResponse<GetListPriorityListListItemDto>>(priorityListList);
         }
     }
 }

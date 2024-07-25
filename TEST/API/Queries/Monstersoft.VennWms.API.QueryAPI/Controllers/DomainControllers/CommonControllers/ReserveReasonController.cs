@@ -35,9 +35,9 @@ public class ReserveReasonController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] ReserveReasonsDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListReserveReasonQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListReserveReasonQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListReserveReasonListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

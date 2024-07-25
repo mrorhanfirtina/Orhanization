@@ -20,7 +20,7 @@ public class DeleteReturnItemMemoCommand : IRequest<DeletedReturnItemMemoRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturnItemMemos";
+    public string[]? CacheGroupKey => ["GetReturnItemMemos"];
 
     public Guid Id { get; set; }
 

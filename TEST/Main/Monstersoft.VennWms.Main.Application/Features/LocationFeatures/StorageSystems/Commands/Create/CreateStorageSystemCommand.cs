@@ -27,7 +27,7 @@ public class CreateStorageSystemCommand : IRequest<CreatedStorageSystemResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStorageSystems";
+    public string[]? CacheGroupKey => ["GetStorageSystems"];
 
     public CreateStorageSystemDto StorageSystem { get; set; }
     public StorageSystemsDetailLevel DetailLevel { get; set; }

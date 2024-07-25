@@ -25,7 +25,8 @@ public class CreateStockUnsuitReasonCommand : IRequest<CreatedStockUnsuitReasonR
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockUnsuitReasons";
+    public string[]? CacheGroupKey => ["GetStockUnsuitReasons"];
+
 
     public CreateStockUnsuitReasonDto StockUnsuitReason { get; set; }
     public StockUnsuitReasonsDetailLevel? DetailLevel { get; set; }

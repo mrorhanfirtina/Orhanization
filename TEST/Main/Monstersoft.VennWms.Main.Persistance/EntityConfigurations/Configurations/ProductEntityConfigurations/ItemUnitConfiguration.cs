@@ -17,6 +17,7 @@ public class ItemUnitConfiguration : IEntityTypeConfiguration<ItemUnit>
         builder.Property(p => p.ProductId).HasColumnName("ProductId").IsRequired();
         builder.Property(p => p.UnitId).HasColumnName("UnitId").IsRequired();
         builder.Property(p => p.IsConsumerUnit).HasColumnName("IsConsumerUnit");
+        builder.Property(p => p.HasSerial).HasColumnName("HasSerial");
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
         builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
@@ -24,7 +25,7 @@ public class ItemUnitConfiguration : IEntityTypeConfiguration<ItemUnit>
 
         #region Indexler
         builder.HasIndex(p => p.Id).IsUnique();
-        builder.HasIndex(p => new { p.ProductId, p.UnitId, p.IsConsumerUnit, p.CreatedDate }, name: "IX_ItemUnits_Areas");
+        builder.HasIndex(p => new { p.ProductId, p.UnitId, p.IsConsumerUnit, p.HasSerial, p.CreatedDate }, name: "IX_ItemUnits_Areas");
         #endregion
 
         #region İlişki Tanımları

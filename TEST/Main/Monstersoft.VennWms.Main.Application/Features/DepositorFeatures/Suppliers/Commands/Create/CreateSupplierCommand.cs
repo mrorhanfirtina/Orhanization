@@ -27,7 +27,7 @@ public class CreateSupplierCommand : IRequest<CreatedSupplierResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetSuppliers";
+    public string[]? CacheGroupKey => ["GetSuppliers"];
 
     public CreateSupplierDto Supplier { get; set; }
     public SuppliersDetailLevel DetailLevel { get; set; }

@@ -2,14 +2,13 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Constants;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Rules;
-using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
 using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
+using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Caching;
@@ -28,7 +27,7 @@ public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ITransactional
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrders";
+    public string[]? CacheGroupKey => ["GetOrders"];
 
     public CreateOrderDto Order { get; set; }
     public OrdersDetailLevel DetailLevel { get; set; }
@@ -55,26 +54,20 @@ public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ITransactional
             Order? order = _mapper.Map<Order>(request.Order);
 
             order.CreatedDate = DateTime.Now;
+            order.InputDate = DateTime.Now;
             order.Id = Guid.NewGuid();
             order.DepositorCompanyId = Guid.Parse(request.UserRequestInfo!.RequestUserLocalityId);
+            order.StatusId = 1;
 
-            if(order.OrderShipment != null)
+            order.OrderShipments.Add(new OrderShipment
             {
-                order.OrderShipment.CreatedDate = DateTime.Now;
-                order.OrderShipment.DepositorCompanyId = Guid.Parse(request.UserRequestInfo!.RequestUserLocalityId);
-                order.OrderShipment.OrderId = order.Id;
-                order.OrderShipment.ProgressStatusId = 1;
-                order.OrderShipment.Id = Guid.NewGuid();
-            }
-            else
-            {
-                order.OrderShipment.CreatedDate = DateTime.Now;
-                order.OrderShipment.DepositorCompanyId = Guid.Parse(request.UserRequestInfo!.RequestUserLocalityId);
-                order.OrderShipment.OrderId = order.Id;
-                order.OrderShipment.Code = order.Code;
-                order.OrderShipment.ProgressStatusId = 1;
-                order.OrderShipment.Id = Guid.NewGuid();
-            }
+                CreatedDate = DateTime.Now,
+                DepositorCompanyId = Guid.Parse(request.UserRequestInfo!.RequestUserLocalityId),
+                OrderId = order.Id,
+                Code = order.Code,
+                ProgressStatusId = 1,
+                Id = Guid.NewGuid()
+            });
 
             order.OrderItems.ToList().ForEach(x =>
             {
@@ -83,12 +76,13 @@ public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ITransactional
                 x.OrderItemMemos?.ToList().ForEach(y => { y.CreatedDate = DateTime.Now; });
                 x.OrderItemStockAttrValues?.ToList().ForEach(y => { y.CreatedDate = DateTime.Now; });
 
-                x.OrderShipItems?.ToList().ForEach(y =>
+                x.OrderShipItems.Add(new OrderShipItem
                 {
-                    y.CreatedDate = DateTime.Now;
-                    y.OrderShipmentId = order.OrderShipment.Id;
-                    y.ProgressStatusId = 1;
-                    y.Quantity = x.Quantity;
+                    CreatedDate = DateTime.Now,
+                    ProgressStatusId = 1,
+                    OrderShipmentId = order.OrderShipments.FirstOrDefault().Id,
+                    Quantity = x.Quantity,
+                    Id = Guid.NewGuid()
                 });
             });
 
@@ -193,16 +187,16 @@ public class CreateOrderCommand : IRequest<CreatedOrderResponse>, ITransactional
 
                     if (detailLevel.IncludeOrderShipment)
                     {
-                        query = query.Include(y => y.OrderShipment);
+                        query = query.Include(y => y.OrderShipments);
 
                         if (detailLevel.OrderShipmentDetailLevel.IncludeShipment)
                         {
-                            query = query.Include(y => y.OrderShipment).ThenInclude(m => m.Shipment);
+                            query = query.Include(y => y.OrderShipments).ThenInclude(m => m.Shipment);
                         }
 
                         if (detailLevel.OrderShipmentDetailLevel.IncludeProgressStatus)
                         {
-                            query = query.Include(y => y.OrderShipment).ThenInclude(m => m.ProgressStatus);
+                            query = query.Include(y => y.OrderShipments).ThenInclude(m => m.ProgressStatus);
                         }
                     }
 

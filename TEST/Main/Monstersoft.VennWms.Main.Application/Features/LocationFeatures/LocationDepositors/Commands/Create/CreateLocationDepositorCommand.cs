@@ -2,11 +2,9 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationDepositors.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationDepositors.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationDepositors.Rules;
-using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
 using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
@@ -26,7 +24,7 @@ public class CreateLocationDepositorCommand : IRequest<CreatedLocationDepositorR
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationDepositors";
+    public string[]? CacheGroupKey => ["GetLocationDepositors"];
 
     public CreateLocationDepositorDto LocationDepositor { get; set; }
     public LocationDepositorsDetailLevel DetailLevel { get; set; }

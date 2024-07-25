@@ -11,6 +11,7 @@ public class CreateItemUnitSubDtoValidator : AbstractValidator<CreateItemUnitSub
     {
         RuleFor(p => p.UnitId).NotEmpty().NotNull().InclusiveBetween(0, int.MaxValue);
         RuleFor(p => p.IsConsumerUnit).NotNull().WithMessage("{PropertyName} alanı sadece true veya false değeri alabilir.");
+        RuleFor(p => p.HasSerial).NotNull().WithMessage("{PropertyName} alanı sadece true veya false değeri alabilir.");
         RuleForEach(x => x.ItemPackTypes).SetValidator(new CreateItemPackTypeSubDtoValidator());
         RuleForEach(x => x.ItemUnitConversions).SetValidator(new CreateItemUnitConversionSubDtoValidator());
     }

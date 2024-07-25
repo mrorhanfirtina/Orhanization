@@ -19,7 +19,7 @@ public class DeleteStockInboundCommand : IRequest<DeletedStockInboundResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockInbounds";
+    public string[]? CacheGroupKey => ["GetStockInbounds"];
 
     public Guid Id { get; set; }
 

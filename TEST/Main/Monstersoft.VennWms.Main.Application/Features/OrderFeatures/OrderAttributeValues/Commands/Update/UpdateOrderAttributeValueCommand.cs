@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Rules;
@@ -26,7 +25,7 @@ public class UpdateOrderAttributeValueCommand : IRequest<UpdatedOrderAttributeVa
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderAttributeValues";
+    public string[]? CacheGroupKey => ["GetOrderAttributeValues"];
 
     public UpdateOrderAttributeValueDto OrderAttributeValue { get; set; }
     public OrderAttributeValuesDetailLevel DetailLevel { get; set; }

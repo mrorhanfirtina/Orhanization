@@ -21,7 +21,7 @@ public class DeleteSiteCommand : IRequest<DeletedSiteResponse>, ITransactionalRe
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetSites";
+    public string[]? CacheGroupKey => ["GetSites"];
 
     public Guid Id { get; set; }
 

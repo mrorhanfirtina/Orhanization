@@ -26,7 +26,7 @@ public class CreateSiteDepositorCommand : IRequest<CreatedSiteDepositorResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetSiteDepositors";
+    public string[]? CacheGroupKey => ["GetSiteDepositors"];
 
     public CreateSiteDepositorDto SiteDepositor { get; set; }
     public SiteDepositorsDetailLevel DetailLevel { get; set; }

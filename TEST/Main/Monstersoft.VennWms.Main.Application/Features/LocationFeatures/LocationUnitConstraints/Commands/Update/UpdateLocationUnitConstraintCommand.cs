@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationUnitConstraints.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationUnitConstraints.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationUnitConstraints.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationUnitConstraints.Rules;
@@ -25,7 +24,7 @@ public class UpdateLocationUnitConstraintCommand : IRequest<UpdatedLocationUnitC
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationUnitConstraints";
+    public string[]? CacheGroupKey => ["GetLocationUnitConstraints"];
 
     public UpdateLocationUnitConstraintDto LocationUnitConstraint { get; set; }
     public LocationUnitConstraintsDetailLevel DetailLevel { get; set; }

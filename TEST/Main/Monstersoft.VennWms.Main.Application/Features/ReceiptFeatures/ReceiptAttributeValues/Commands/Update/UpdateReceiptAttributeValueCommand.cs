@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributeValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
@@ -25,7 +24,7 @@ public class UpdateReceiptAttributeValueCommand : IRequest<UpdatedReceiptAttribu
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceiptAttributeValues";
+    public string[]? CacheGroupKey => ["GetReceiptAttributeValues"];
 
     public UpdateReceiptAttributeValueDto ReceiptAttributeValue { get; set; }
     public ReceiptAttributeValuesDetailLevel? DetailLevel { get; set; }

@@ -21,7 +21,7 @@ public class CreateAddressCommand : IRequest<CreatedAddressResponse>, ITransacti
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetAddresses";
+    public string[]? CacheGroupKey => ["GetAddresses"];
 
     public CreateAddressDto Address { get; set; }
 

@@ -25,7 +25,8 @@ public class CreateReceiptItemMemoCommand : IRequest<CreatedReceiptItemMemoRespo
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceiptItemMemos";
+    public string[]? CacheGroupKey => ["GetReceiptItemMemos"];
+
 
     public CreateReceiptItemMemoDto ReceiptItemMemo { get; set; }
     public ReceiptItemMemosDetailLevel? DetailLevel { get; set; }

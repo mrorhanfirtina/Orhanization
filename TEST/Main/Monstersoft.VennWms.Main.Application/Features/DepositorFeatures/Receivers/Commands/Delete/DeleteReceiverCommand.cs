@@ -21,7 +21,7 @@ public class DeleteReceiverCommand : IRequest<DeletedReceiverResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceivers";
+    public string[]? CacheGroupKey => ["GetReceivers"];
 
     public Guid Id { get; set; }
 

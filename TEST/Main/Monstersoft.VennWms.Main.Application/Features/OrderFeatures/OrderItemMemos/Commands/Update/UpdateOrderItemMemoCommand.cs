@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemMemos.Rules;
@@ -26,7 +25,7 @@ public class UpdateOrderItemMemoCommand : IRequest<UpdatedOrderItemMemoResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderItemMemos";
+    public string[]? CacheGroupKey => ["GetOrderItemMemos"];
 
     public UpdateOrderItemMemoDto OrderItemMemo { get; set; }
     public OrderItemMemosDetailLevel DetailLevel { get; set; }

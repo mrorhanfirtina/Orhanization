@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemStocks.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemStocks.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemStocks.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemStocks.Rules;
@@ -26,7 +25,7 @@ public class UpdateOrderShipItemStockCommand : IRequest<UpdatedOrderShipItemStoc
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderShipItemStocks";
+    public string[]? CacheGroupKey => ["GetOrderShipItemStocks"];
 
     public UpdateOrderShipItemStockDto OrderShipItemStock { get; set; }
     public OrderShipItemStocksDetailLevel? DetailLevel { get; set; }

@@ -16,7 +16,7 @@ public class OrderShipmentConfiguration : IEntityTypeConfiguration<OrderShipment
         builder.Property(p => p.Id).HasColumnName("Id").IsRequired();
         builder.Property(p => p.Code).HasColumnName("Code").HasMaxLength(30).IsRequired();
         builder.Property(p => p.OrderId).HasColumnName("OrderId").IsRequired();
-        builder.Property(p => p.ShipmentId).HasColumnName("ShipmentId").IsRequired();
+        builder.Property(p => p.ShipmentId).HasColumnName("ShipmentId");
         builder.Property(p => p.DepositorCompanyId).HasColumnName("DepositorCompanyId").IsRequired();
         builder.Property(p => p.ProgressStatusId).HasColumnName("ProgressStatusId").IsRequired();
         builder.Property(p => p.LastMoveDate).HasColumnName("LastMoveDate");

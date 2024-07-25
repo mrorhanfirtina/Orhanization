@@ -6,7 +6,6 @@ using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Constan
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Statics;
-using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Locality;

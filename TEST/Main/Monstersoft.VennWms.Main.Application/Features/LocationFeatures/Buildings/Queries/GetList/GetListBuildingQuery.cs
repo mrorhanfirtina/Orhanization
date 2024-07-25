@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Buildings.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Buildings.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -31,7 +28,6 @@ public class GetListBuildingQuery : IRequest<GetListResponse<GetListBuildingList
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public BuildingsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListBuildingQueryHandler : IRequestHandler<GetListBuildingQuery, GetListResponse<GetListBuildingListItemDto>>
@@ -54,85 +50,14 @@ public class GetListBuildingQuery : IRequest<GetListResponse<GetListBuildingList
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
+            Paginate<Building> buildingList = await _buildingRepository.GetListAsync(
+            predicate: m => m.DepositorCompanyId == depositorCompanyId,
+            include: x => x.Include(m => m.Site).Include(m => m.DepositorCompany).Include(m => m.BuildingDimension),
+            orderBy: x => x.OrderByDescending(m => m.CreatedDate),
+            index: request.PageRequest.PageIndex, enableTracking: false,
+            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<Building> buildingList = await _buildingRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<Building> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeSite)
-                    {
-                        query = query.Include(y => y.Site);
-
-                        if (detailLevel.SiteDetailLevel.IncludeSiteDepositor)
-                        {
-                            query = query.Include(y => y.Site).ThenInclude(m => m.SiteDepositors);
-
-                            if (detailLevel.SiteDetailLevel.DepositorDetailLevel.IncludeDepositor)
-                            {
-                                query = query.Include(y => y.Site).ThenInclude(m => m.SiteDepositors).ThenInclude(m => m.Depositor);
-                            }
-                        }
-                    }
-
-                    if (detailLevel.IncludeBuildingDimension)
-                    {
-                        query = query.Include(y => y.BuildingDimension);
-
-                        if (detailLevel.BuildingDimensionDetailLevel.IncludeLenghtUnit)
-                        {
-                            query = query.Include(y => y.BuildingDimension).ThenInclude(m => m.LenghtUnitId);
-                        }
-
-                        if (detailLevel.BuildingDimensionDetailLevel.IncludeVolumeUnit)
-                        {
-                            query = query.Include(y => y.BuildingDimension).ThenInclude(m => m.VolumeUnit);
-                        }
-                    }
-
-                    if (detailLevel.IncludeStorageSystem)
-                    {
-                        query = query.Include(y => y.StorageSystems);
-                    }
-
-                    if (detailLevel.IncludeZone)
-                    {
-                        query = query.Include(y => y.Zones);
-                    }
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-
-                    var includableQuery = query as IIncludableQueryable<Building, object>;
-                    return includableQuery;
-                },
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListBuildingListItemDto>>(buildingList);
-            }
-            else
-            {
-                Paginate<Building> buildingList = await _buildingRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListBuildingListItemDto>>(buildingList);
-            }
+            return _mapper.Map<GetListResponse<GetListBuildingListItemDto>>(buildingList);
         }
     }
 

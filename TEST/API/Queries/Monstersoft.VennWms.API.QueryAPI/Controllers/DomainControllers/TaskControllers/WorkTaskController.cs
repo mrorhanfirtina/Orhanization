@@ -35,9 +35,9 @@ public class WorkTaskController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] WorkTasksDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListWorkTaskQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListWorkTaskQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListWorkTaskListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

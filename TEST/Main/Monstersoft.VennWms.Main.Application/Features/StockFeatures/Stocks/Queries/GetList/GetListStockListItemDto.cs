@@ -21,7 +21,6 @@ public class GetListStockListItemDto
     public ICollection<StocksStockReserveReasonResponseDto>? StockReserveReasons { get; set; }
     public ICollection<StocksStockUnsuitReasonResponseDto>? StockUnsuitReasons { get; set; }
     public ICollection<StocksStockInboundResponseDto>? StockInbounds { get; set; }
-    public ICollection<StocksStockPackTypeResponseDto>? StockPackTypes { get; set; }
     public StocksProductResponseDto? Product { get; set; }
     public StocksDepositorResponseDto? Depositor { get; set; }
     public StocksDepositorCompanyResponseDto? DepositorCompany { get; set; }

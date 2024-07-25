@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Receivers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Receivers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -31,7 +28,6 @@ public class GetListReceiverQuery : IRequest<GetListResponse<GetListReceiverList
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public ReceiversDetailLevel DetailLevel { get; set; }
 
 
     public class GetListReceiverQueryHandler : IRequestHandler<GetListReceiverQuery, GetListResponse<GetListReceiverListItemDto>>
@@ -54,53 +50,16 @@ public class GetListReceiverQuery : IRequest<GetListResponse<GetListReceiverList
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<Receiver> receiverList = await _receiverRepository.GetListAsync(
+            Paginate<Receiver> receiverList = await _receiverRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<Receiver> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeAddress)
-                    {
-                        query = query.Include(y => y.Address);
-                    }
-
-                    if (detailLevel.IncludeCustomer)
-                    {
-                        query = query.Include(y => y.Customer);
-
-                        if (detailLevel.CustomerDetailLevel.IncludeCompany)
-                        {
-                            query = query.Include(y => y.Customer).ThenInclude(m => m.Company);
-                        }
-                    }
-
-                    var includableQuery = query as IIncludableQueryable<Receiver, object>;
-                    return includableQuery;
-                },
+                include: x => x.Include(x => x.DepositorCompany).Include(m => m.Address)
+                               .Include(m => m.Customer)
+                               .Include(m => m.Customer).ThenInclude(y => y.Company),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListReceiverListItemDto>>(receiverList);
-            }
-            else
-            {
-                Paginate<Receiver> receiverList = await _receiverRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListReceiverListItemDto>>(receiverList);
-            }
+            return _mapper.Map<GetListResponse<GetListReceiverListItemDto>>(receiverList);
         }
     }
 }

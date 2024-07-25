@@ -36,9 +36,9 @@ public class CustomerController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] CustomersDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListCustomerQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListCustomerQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListCustomerListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

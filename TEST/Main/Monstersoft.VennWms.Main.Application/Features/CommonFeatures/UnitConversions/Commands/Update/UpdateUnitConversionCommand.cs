@@ -24,7 +24,7 @@ public class UpdateUnitConversionCommand : IRequest<UpdatedUnitConversionRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetUnitConversions";
+    public string[]? CacheGroupKey => ["GetUnitConversions"];
 
     public UpdateUnitConversionDto UnitConversion { get; set; }
     public UnitConversionsDetailLevel DetailLevel { get; set; }

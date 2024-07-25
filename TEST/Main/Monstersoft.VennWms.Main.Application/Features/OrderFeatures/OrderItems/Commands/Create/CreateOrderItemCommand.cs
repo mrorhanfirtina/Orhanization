@@ -2,11 +2,9 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItems.Constants;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItems.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItems.Rules;
-using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
 using Monstersoft.VennWms.Main.Application.Statics;
@@ -29,7 +27,7 @@ public class CreateOrderItemCommand : IRequest<CreatedOrderItemResponse>, ITrans
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderItems";
+    public string[]? CacheGroupKey => ["GetOrderItems"];
 
     public CreateOrderItemDto OrderItem { get; set; }
     public OrderItemsDetailLevel DetailLevel { get; set; }

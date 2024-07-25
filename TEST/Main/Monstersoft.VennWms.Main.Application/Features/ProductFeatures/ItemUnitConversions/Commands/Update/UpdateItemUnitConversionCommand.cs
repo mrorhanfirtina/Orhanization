@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnitConversions.Rules;
@@ -26,7 +25,7 @@ public class UpdateItemUnitConversionCommand : IRequest<UpdatedItemUnitConversio
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetItemUnitConversions";
+    public string[]? CacheGroupKey => ["GetItemUnitConversions"];
 
     public UpdateItemUnitConversionDto ItemUnitConversion { get; set; }
     public ItemUnitConversionsDetailLevel DetailLevel { get; set; }

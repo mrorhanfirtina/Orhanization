@@ -31,7 +31,6 @@ public class GetListSupplierQuery : IRequest<GetListResponse<GetListSupplierList
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public SuppliersDetailLevel DetailLevel { get; set; }
 
 
     public class GetListSupplierQueryHandler : IRequestHandler<GetListSupplierQuery, GetListResponse<GetListSupplierListItemDto>>
@@ -54,48 +53,14 @@ public class GetListSupplierQuery : IRequest<GetListResponse<GetListSupplierList
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<Supplier> supplierList = await _supplierRepository.GetListAsync(
+            Paginate<Supplier> supplierList = await _supplierRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<Supplier> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeAddress)
-                    {
-                        query = query.Include(y => y.Address);
-                    }
-
-                    if (detailLevel.IncludeCompany)
-                    {
-                        query = query.Include(y => y.Company);
-                    }
-
-                    var includableQuery = query as IIncludableQueryable<Supplier, object>;
-                    return includableQuery;
-                },
+                include: x => x.Include(s => s.Company).Include(s => s.Address).Include(s => s.DepositorCompany),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListSupplierListItemDto>>(supplierList);
-            }
-            else
-            {
-                Paginate<Supplier> supplierList = await _supplierRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListSupplierListItemDto>>(supplierList);
-            }
+            return _mapper.Map<GetListResponse<GetListSupplierListItemDto>>(supplierList);
         }
     }
 

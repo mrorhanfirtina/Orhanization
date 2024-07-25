@@ -36,9 +36,9 @@ public class SupplierController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] SuppliersDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListSupplierQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListSupplierQuery query = new() { PageRequest = pageRequest};
         GetListResponse<GetListSupplierListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

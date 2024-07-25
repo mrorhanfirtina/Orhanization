@@ -34,9 +34,9 @@ public class PriorityListController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] PriorityListsDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListPriorityListQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListPriorityListQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListPriorityListListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

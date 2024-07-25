@@ -24,7 +24,7 @@ public class CreateDepositorCompanyCommand : IRequest<CreatedDepositorCompanyRes
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetDepositorCompanies";
+    public string[]? CacheGroupKey => ["GetDepositorCompanies"];
 
     public CreateDepositorCompanyDto DepositorCompany { get; set; }
     public DepositorCompaniesDetailLevel DetailLevel { get; set; }

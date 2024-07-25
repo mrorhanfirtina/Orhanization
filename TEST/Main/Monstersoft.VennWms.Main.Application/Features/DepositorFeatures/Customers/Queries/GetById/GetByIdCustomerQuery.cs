@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Customers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Customers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -44,38 +45,46 @@ public class GetByIdCustomerQuery : IRequest<GetByIdCustomerResponse>, ITransact
             .CheckDepositorCompany(request.UserRequestInfo.RequestUserLocalityId)
             .CheckIdExistence(request.Id);
 
-            return _mapper.Map<GetByIdCustomerResponse>(await _customerRepository.GetAsync(x => x.Id == request.Id,
-            include: x =>
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
             {
-                IQueryable<Customer> query = x;
-
-                var detailLevel = request.DetailLevel;
-
-                if (detailLevel.IncludeDepositorCompany)
+                return _mapper.Map<GetByIdCustomerResponse>(await _customerRepository.GetAsync(x => x.Id == request.Id,
+                include: x =>
                 {
-                    query = query.Include(y => y.DepositorCompany);
-                }
+                    IQueryable<Customer> query = x;
 
-                if (detailLevel.IncludeCompany)
-                {
-                    query = query.Include(y => y.Company);
-                }
+                    var detailLevel = request.DetailLevel;
 
-                if (detailLevel.IncludeAddress)
-                {
-                    query = query.Include(y => y.Address);
-                }
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
 
-                if (detailLevel.IncludeReceiver)
-                {
-                    query = query.Include(y => y.Receivers);
-                }
+                    if (detailLevel.IncludeCompany)
+                    {
+                        query = query.Include(y => y.Company);
+                    }
+
+                    if (detailLevel.IncludeAddress)
+                    {
+                        query = query.Include(y => y.Address);
+                    }
+
+                    if (detailLevel.IncludeReceiver)
+                    {
+                        query = query.Include(y => y.Receivers);
+                    }
 
 
-                var includableQuery = query as IIncludableQueryable<Customer, object>;
-                return includableQuery;
-            },
-            withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+                    var includableQuery = query as IIncludableQueryable<Customer, object>;
+                    return includableQuery;
+                },
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
+            else
+            {
+                return _mapper.Map<GetByIdCustomerResponse>(await _customerRepository.GetAsync(x => x.Id == request.Id,
+                withDeleted: false, enableTracking: false, cancellationToken: cancellationToken));
+            }
         }
     }
 

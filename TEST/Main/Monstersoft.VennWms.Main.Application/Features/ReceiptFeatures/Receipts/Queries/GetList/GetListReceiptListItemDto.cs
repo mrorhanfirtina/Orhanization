@@ -25,7 +25,6 @@ public class GetListReceiptListItemDto
     public ReceiptsStatusResponseDto? Status { get; set; }
     public ReceiptsSupplierResponseDto? Supplier { get; set; }
     public ICollection<ReceiptsReceiptAttributeValueResponseDto>? ReceiptAttributeValues { get; set; }
-    public ICollection<ReceiptsReceiptItemResponseDto> ReceiptItems { get; set; }
     public ICollection<ReceiptsReceiptMemoResponseDto>? ReceiptMemos { get; set; }
     public ReceiptsDepositorResponseDto? Depositor { get; set; }
 }

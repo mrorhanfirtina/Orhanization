@@ -36,9 +36,9 @@ public class StockAttributeController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] StockAttributesDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListStockAttributeQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListStockAttributeQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListStockAttributeListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

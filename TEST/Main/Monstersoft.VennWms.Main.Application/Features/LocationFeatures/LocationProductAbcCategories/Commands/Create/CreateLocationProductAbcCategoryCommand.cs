@@ -26,7 +26,7 @@ public class CreateLocationProductAbcCategoryCommand : IRequest<CreatedLocationP
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationProductAbcCategorys";
+    public string[]? CacheGroupKey => ["GetLocationProductAbcCategorys"];
 
     public CreateLocationProductAbcCategoryDto LocationProductAbcCategory { get; set; }
     public LocationProductAbcCategoriesDetailLevel DetailLevel { get; set; }

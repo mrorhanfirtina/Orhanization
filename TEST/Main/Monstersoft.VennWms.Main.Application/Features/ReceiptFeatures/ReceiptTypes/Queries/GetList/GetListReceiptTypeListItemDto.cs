@@ -13,7 +13,6 @@ public class GetListReceiptTypeListItemDto
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public ICollection<ReceiptTypesReceiptResponseDto>? Receipts { get; set; }
     public ReceiptTypesDepositorCompanyResponseDto? DepositorCompany { get; set; }
 }
 

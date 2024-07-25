@@ -17,7 +17,7 @@ public class DeleteUnsuitReasonCommand : IRequest<DeletedUnsuitReasonResponse>, 
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetUnsuitReasons";
+    public string[]? CacheGroupKey => ["GetUnsuitReasons"];
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string[] Roles => [Admin, User, Write, UnsuitReasonOperationClaims.Delete];
 

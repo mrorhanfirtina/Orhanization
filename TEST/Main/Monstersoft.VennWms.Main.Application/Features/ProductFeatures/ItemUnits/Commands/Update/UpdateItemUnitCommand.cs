@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnits.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnits.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemUnits.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
@@ -25,7 +24,7 @@ public class UpdateItemUnitCommand : IRequest<UpdatedItemUnitResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetItemUnits";
+    public string[]? CacheGroupKey => ["GetItemUnits"];
 
     public UpdateItemUnitDto ItemUnit { get; set; }
     public ItemUnitsDetailLevel DetailLevel { get; set; }

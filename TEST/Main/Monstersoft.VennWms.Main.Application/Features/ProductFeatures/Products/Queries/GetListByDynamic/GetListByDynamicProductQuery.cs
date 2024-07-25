@@ -108,6 +108,11 @@ public class GetListByDynamicProductQuery : IRequest<GetListResponse<GetListByDy
                             if (detailLevel.ProductBarcodeDetailLevel.BarcodeSupplierDetailLevel.IncludeSupplier)
                             {
                                 query = query.Include(y => y.ProductBarcodes).ThenInclude(y => y.BarcodeSuppliers).ThenInclude(y => y.Supplier);
+
+                                if (detailLevel.ProductBarcodeDetailLevel.BarcodeSupplierDetailLevel.SupplierDetailLevel.IncludeCompany)
+                                {
+                                    query = query.Include(y => y.ProductBarcodes).ThenInclude(y => y.BarcodeSuppliers).ThenInclude(y => y.Supplier).ThenInclude(y => y.Company);
+                                }
                             }
                         }
                     }

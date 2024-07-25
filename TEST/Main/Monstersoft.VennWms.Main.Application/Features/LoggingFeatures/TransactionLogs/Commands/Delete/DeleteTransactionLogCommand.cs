@@ -21,7 +21,7 @@ public class DeleteTransactionLogCommand : IRequest<DeletedTransactionLogRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetTransactionLogs";
+    public string[]? CacheGroupKey => ["GetTransactionLogs"];
 
     public Guid Id { get; set; }
 

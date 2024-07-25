@@ -20,6 +20,4 @@ public class GetListPurchaseOrderListItemDto
     public PurchaseOrderSupplierResponseDto? Supplier { get; set; }
     public ICollection<PurchaseOrderPoAttributeValueResponseDto>? PoAttributeValues { get; set; }
     public ICollection<PurchaseOrderPoMemoResponseDto>? PoMemo { get; set; }
-    public ICollection<PurchaseOrderReceiptResponseDto>? Receipt { get; set; }
-
 }

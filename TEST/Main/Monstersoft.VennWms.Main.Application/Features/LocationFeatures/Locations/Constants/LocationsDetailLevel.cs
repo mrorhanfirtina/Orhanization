@@ -124,4 +124,11 @@ public class LocationsDetailLevel
     {
         public bool IncludeZone { get; set; } = false;
     }
+
+    public bool IncludeBufferLocation { get; set; } = false;
+    public LocationsBufferLocationSubDetailLevel BufferLocationDetailLevel { get; set; } = new LocationsBufferLocationSubDetailLevel();
+    public class LocationsBufferLocationSubDetailLevel
+    {
+        public bool IncludeBuffLocation { get; set; } = false;
+    }
 }

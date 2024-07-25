@@ -25,7 +25,7 @@ public class UpdateWorkTaskCommand : IRequest<UpdatedWorkTaskResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetWorkTasks";
+    public string[]? CacheGroupKey => ["GetWorkTasks"];
 
     public UpdateWorkTaskDto WorkTask { get; set; }
     public WorkTasksDetailLevel? DetailLevel { get; set; }

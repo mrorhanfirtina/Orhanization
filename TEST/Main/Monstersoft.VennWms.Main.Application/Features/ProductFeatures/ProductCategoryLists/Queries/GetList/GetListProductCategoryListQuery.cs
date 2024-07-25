@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductCategoryLists.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductCategoryLists.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -31,7 +28,6 @@ public class GetListProductCategoryListQuery : IRequest<GetListResponse<GetListP
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public ProductCategoryListsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListProductCategoryListQueryHandler : IRequestHandler<GetListProductCategoryListQuery, GetListResponse<GetListProductCategoryListListItemDto>>
@@ -54,38 +50,14 @@ public class GetListProductCategoryListQuery : IRequest<GetListResponse<GetListP
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<ProductCategoryList> productCategoryListList = await _productCategoryListRepository.GetListAsync(
+            Paginate<ProductCategoryList> productCategoryListList = await _productCategoryListRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<ProductCategoryList> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    var includableQuery = query as IIncludableQueryable<ProductCategoryList, object>;
-                    return includableQuery;
-                },
+                include: m => m.Include(m => m.DepositorCompany),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListProductCategoryListListItemDto>>(productCategoryListList);
-            }
-            else
-            {
-                Paginate<ProductCategoryList> productCategoryListList = await _productCategoryListRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListProductCategoryListListItemDto>>(productCategoryListList);
-            }
+            return _mapper.Map<GetListResponse<GetListProductCategoryListListItemDto>>(productCategoryListList);
         }
     }
 }

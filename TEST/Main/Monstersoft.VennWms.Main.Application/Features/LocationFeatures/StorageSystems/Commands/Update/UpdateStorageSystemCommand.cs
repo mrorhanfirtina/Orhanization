@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Rules;
@@ -26,7 +25,7 @@ public class UpdateStorageSystemCommand : IRequest<UpdatedStorageSystemResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStorageSystems";
+    public string[]? CacheGroupKey => ["GetStorageSystems"];
 
     public UpdateStorageSystemDto StorageSystem { get; set; }
     public StorageSystemsDetailLevel DetailLevel { get; set; }

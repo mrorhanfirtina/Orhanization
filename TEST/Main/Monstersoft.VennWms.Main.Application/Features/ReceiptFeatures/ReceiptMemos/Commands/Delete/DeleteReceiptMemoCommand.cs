@@ -20,7 +20,7 @@ public class DeleteReceiptMemoCommand : IRequest<DeletedReceiptMemoResponse>, IT
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceiptMemos";
+    public string[]? CacheGroupKey => ["GetReceiptMemos"];
 
     public Guid Id { get; set; }
 

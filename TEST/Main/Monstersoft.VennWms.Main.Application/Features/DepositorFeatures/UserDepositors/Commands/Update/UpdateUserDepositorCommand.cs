@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.UserDepositors.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.UserDepositors.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.UserDepositors.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.UserDepositors.Rules;
@@ -26,7 +25,7 @@ public class UpdateUserDepositorCommand : IRequest<UpdatedUserDepositorResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetUserDepositors";
+    public string[]? CacheGroupKey => ["GetUserDepositors"];
 
     public UpdateUserDepositorDto UserDepositor { get; set; }
     public UserDepositorsDetailLevel DetailLevel { get; set; }

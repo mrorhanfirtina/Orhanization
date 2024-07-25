@@ -25,7 +25,8 @@ public class CreateStockReserveReasonCommand : IRequest<CreatedStockReserveReaso
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockReserveReasons";
+    public string[]? CacheGroupKey => ["GetStockReserveReasons"];
+
 
     public CreateStockReserveReasonDto StockReserveReason { get; set; }
     public StockReserveReasonsDetailLevel? DetailLevel { get; set; }

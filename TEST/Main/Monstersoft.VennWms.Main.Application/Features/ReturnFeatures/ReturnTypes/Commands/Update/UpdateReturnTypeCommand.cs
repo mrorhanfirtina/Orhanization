@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnTypes.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnTypes.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnTypes.Rules;
@@ -26,7 +25,7 @@ public class UpdateReturnTypeCommand : IRequest<UpdatedReturnTypeResponse>, ITra
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturnTypes";
+    public string[]? CacheGroupKey => ["GetReturnTypes"];
 
     public UpdateReturnTypeDto ReturnType { get; set; }
     public ReturnTypesDetailLevel? DetailLevel { get; set; }

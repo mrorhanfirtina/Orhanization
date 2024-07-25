@@ -14,6 +14,4 @@ public class GetListOrderTypeListItemDto
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
     public OrderTypeDepositorCompanyResponseDto? DepositorCompany { get; set; }
-    public ICollection<OrderTypeOrderResponseDto>? Orders { get; set; }
-
 }

@@ -13,7 +13,6 @@ public class GetListShipmentTypeListItemDto
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public ICollection<ShipmentTypesShipmentResponseDto>? Shipments { get; set; }
-    public ShipmentTypesDepositorCompanyResponseDto DepositorCompany { get; set; }
+    public ShipmentTypesDepositorCompanyResponseDto? DepositorCompany { get; set; }
 }
 

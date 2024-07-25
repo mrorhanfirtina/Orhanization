@@ -27,6 +27,7 @@ public class Location : Entity<Guid>
     public virtual ICollection<LocationProduct>? LocationProducts { get; set; }
     public virtual ICollection<LocationStockAttribute>? LocationStockAttributes { get; set; }
     public virtual ICollection<LocationProductAttribute>? LocationProductAttributes { get; set; }
+    public virtual ICollection<BufferLocation>? BufferLocations { get; set; }
 
     public Location()
     {
@@ -39,6 +40,7 @@ public class Location : Entity<Guid>
         LocationDepositors = new HashSet<LocationDepositor>();
         LocationProductCategories = new HashSet<LocationProductCategory>();
         LocationProductAbcCategories = new HashSet<LocationProductAbcCategory>();
+        BufferLocations = new HashSet<BufferLocation>();
     }
 
     public Location(Guid id,string code, string description, Guid storageSystemId, Guid depositorCompanyId) : this()

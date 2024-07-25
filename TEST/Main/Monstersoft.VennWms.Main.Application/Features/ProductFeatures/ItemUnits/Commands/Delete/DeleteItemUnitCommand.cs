@@ -21,7 +21,7 @@ public class DeleteItemUnitCommand : IRequest<DeletedItemUnitResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetItemUnits";
+    public string[]? CacheGroupKey => ["GetItemUnits"];
 
     public Guid Id { get; set; }
 

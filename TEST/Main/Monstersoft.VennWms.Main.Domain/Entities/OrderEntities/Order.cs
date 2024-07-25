@@ -19,8 +19,8 @@ public class Order : Entity<Guid>
     public int StatusId { get; set; }
     public virtual Customer? Customer { get; set; }
     public virtual OrderPriority? OrderPriority { get; set; }
-    public virtual OrderShipment OrderShipment { get; set; }
     public virtual OrderType? OrderType { get; set; }
+    public virtual ICollection<OrderShipment> OrderShipments { get; set; }
     public virtual ICollection<OrderAttributeValue>? OrderAttributeValues { get; set; }
     public virtual ICollection<OrderItem> OrderItems { get; set; }
     public virtual ICollection<OrderMemo>? OrderMemos { get; set; }
@@ -34,6 +34,7 @@ public class Order : Entity<Guid>
         OrderAttributeValues = new HashSet<OrderAttributeValue>();
         OrderItems = new HashSet<OrderItem>();
         OrderMemos = new HashSet<OrderMemo>();
+        OrderShipments = new HashSet<OrderShipment>();
     }
 
     public Order(Guid id, string code, Guid depositorId, Guid depositorCompanyId, Guid orderTypeId , DateTime inputDate, int statusId) : this()
