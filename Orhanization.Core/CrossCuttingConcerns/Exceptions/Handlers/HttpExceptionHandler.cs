@@ -23,7 +23,7 @@ public class HttpExceptionHandler : ExceptionHandler
     protected override Task HandleException(Exception exception)
     {
         Response.StatusCode = StatusCodes.Status500InternalServerError;
-        string details = new InternalServerProblemDetails(exception.Message).AsJson();
+        string details = new InternalServerProblemDetails(exception.Message, exception.InnerException?.ToString()).AsJson();
         return Response.WriteAsync(details);
     }
 

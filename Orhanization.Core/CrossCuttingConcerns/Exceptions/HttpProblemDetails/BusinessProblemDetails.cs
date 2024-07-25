@@ -5,13 +5,13 @@ namespace Orhanization.Core.CrossCuttingConcerns.Exceptions.HttpProblemDetails;
 
 public class BusinessProblemDetails : ProblemDetails
 {
-    public string HelpLink { get; set; }
-    public BusinessProblemDetails(string detail, string helpLink)
+    public string helpLink { get; set; }
+    public BusinessProblemDetails(string detail, string _helpLink)
     {
         Title = "Business Rule Violation";
         Detail = detail;
         Status = StatusCodes.Status404NotFound;
         Type = "Business Rule";
-        HelpLink = helpLink;
+        helpLink = _helpLink;
     }
 }

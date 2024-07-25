@@ -27,7 +27,7 @@ public class CreateActionParameterDefaultCommand : IRequest<CreatedActionParamet
     public string[]? CacheGroupKey => ["GetActionParameterDefaults"];
 
     public CreateActionParameterDefaultDto ActionParameterDefault { get; set; }
-    public ActionParameterDefaultsDetailLevel DetailLevel { get; set; }
+    public ActionParameterDefaultsDetailLevel? DetailLevel { get; set; }
 
     public class CreateActionParameterDefaultCommandHandler : IRequestHandler<CreateActionParameterDefaultCommand, CreatedActionParameterDefaultResponse>
     {
