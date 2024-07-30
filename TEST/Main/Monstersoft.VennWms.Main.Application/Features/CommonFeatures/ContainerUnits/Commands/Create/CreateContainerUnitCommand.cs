@@ -24,7 +24,7 @@ public class CreateContainerUnitCommand : IRequest<CreatedContainerUnitResponse>
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetContainerUnits";
+    public string[]? CacheGroupKey => ["GetContainerUnits"];
     public string[] Roles => [Admin, User, Add, Write];
     public UserRequestInfo? UserRequestInfo { get; set; }
 

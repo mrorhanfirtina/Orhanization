@@ -20,7 +20,7 @@ public class DeleteWorkTaskCommand : IRequest<DeletedWorkTaskResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetWorkTasks";
+    public string[]? CacheGroupKey => ["GetWorkTasks"];
 
     public Guid Id { get; set; }
 

@@ -20,7 +20,7 @@ public class DeleteOrderTypeCommand : IRequest<DeletedOrderTypeResponse>, ITrans
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderTypes";
+    public string[]? CacheGroupKey => ["GetOrderTypes"];
 
     public Guid Id { get; set; }
 

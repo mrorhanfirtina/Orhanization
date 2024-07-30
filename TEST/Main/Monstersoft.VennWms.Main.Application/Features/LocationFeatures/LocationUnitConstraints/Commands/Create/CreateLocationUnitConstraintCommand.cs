@@ -26,7 +26,7 @@ public class CreateLocationUnitConstraintCommand : IRequest<CreatedLocationUnitC
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationUnitConstraints";
+    public string[]? CacheGroupKey => ["GetLocationUnitConstraints"];
 
     public CreateLocationUnitConstraintDto LocationUnitConstraint { get; set; }
     public LocationUnitConstraintsDetailLevel DetailLevel { get; set; }

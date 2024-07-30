@@ -20,7 +20,7 @@ public class DeleteCustomerCommand : IRequest<DeletedCustomerResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetCustomers";
+    public string[]? CacheGroupKey => ["GetCustomers"];
 
     public Guid Id { get; set; }
 

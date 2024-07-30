@@ -20,7 +20,7 @@ public class DeleteStockMemoCommand : IRequest<DeletedStockMemoResponse>, ITrans
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockMemos";
+    public string[]? CacheGroupKey => ["GetStockMemos"];
 
     public Guid Id { get; set; }
 

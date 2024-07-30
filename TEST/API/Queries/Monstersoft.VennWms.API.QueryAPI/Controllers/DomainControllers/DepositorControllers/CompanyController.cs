@@ -36,9 +36,9 @@ public class CompanyController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] CompaniesDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListCompanyQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListCompanyQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListCompanyListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

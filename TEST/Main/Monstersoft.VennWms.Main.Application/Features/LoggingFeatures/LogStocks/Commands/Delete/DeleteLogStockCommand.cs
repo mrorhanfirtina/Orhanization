@@ -21,7 +21,7 @@ public class DeleteLogStockCommand : IRequest<DeletedLogStockResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetTransactionLogs";
+    public string[]? CacheGroupKey => ["GetTransactionLogs"];
 
     public Guid Id { get; set; }
 

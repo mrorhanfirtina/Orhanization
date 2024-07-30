@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.SiteDepositors.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.SiteDepositors.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.SiteDepositors.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.SiteDepositors.Rules;
@@ -25,7 +24,7 @@ public class UpdateSiteDepositorCommand : IRequest<UpdatedSiteDepositorResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetSiteDepositors";
+    public string[]? CacheGroupKey => ["GetSiteDepositors"];
 
     public UpdateSiteDepositorDto SiteDepositor { get; set; }
     public SiteDepositorsDetailLevel DetailLevel { get; set; }

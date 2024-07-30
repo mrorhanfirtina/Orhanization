@@ -23,7 +23,7 @@ public class CreateLockReasonCommand : IRequest<CreatedLockReasonResponse>, ITra
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLockReasons";
+    public string[]? CacheGroupKey => ["GetLockReasons"];
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string[] Roles => [Admin, LockReasonOperationClaims.User, Add, Write];
 

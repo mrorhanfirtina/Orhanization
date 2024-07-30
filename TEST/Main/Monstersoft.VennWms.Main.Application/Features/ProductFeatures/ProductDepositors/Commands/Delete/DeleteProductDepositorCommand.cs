@@ -20,7 +20,7 @@ public class DeleteProductDepositorCommand : IRequest<DeletedProductDepositorRes
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetProductDepositors";
+    public string[]? CacheGroupKey => ["GetProductDepositors"];
 
     public Guid Id { get; set; }
 

@@ -21,7 +21,7 @@ public class DeleteShipmentCommand : IRequest<DeletedShipmentResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetShipments";
+    public string[]? CacheGroupKey => ["GetShipments"];
 
     public Guid Id { get; set; }
 

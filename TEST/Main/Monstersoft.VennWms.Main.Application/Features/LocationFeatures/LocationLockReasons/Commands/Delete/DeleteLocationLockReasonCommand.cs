@@ -19,7 +19,7 @@ public class DeleteLocationLockReasonCommand : IRequest<DeletedLocationLockReaso
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationLockReasons";
+    public string[]? CacheGroupKey => ["GetLocationLockReasons"];
 
     public Guid Id { get; set; }
 

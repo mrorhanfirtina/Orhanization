@@ -25,7 +25,7 @@ public class CreateTransactionLogCommand : IRequest<CreatedTransactionLogRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetTransactionLogs";
+    public string[]? CacheGroupKey => ["GetTransactionLogs"];
 
     public CreateTransactionLogDto TransactionLog { get; set; }
     public TransactionLogsDetailLevel DetailLevel { get; set; }

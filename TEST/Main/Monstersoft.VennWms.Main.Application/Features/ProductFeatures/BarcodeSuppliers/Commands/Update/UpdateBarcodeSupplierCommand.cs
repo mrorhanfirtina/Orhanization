@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.BarcodeSuppliers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
@@ -25,7 +24,7 @@ public class UpdateBarcodeSupplierCommand : IRequest<UpdatedBarcodeSupplierRespo
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBarcodeSuppliers";
+    public string[]? CacheGroupKey => ["GetBarcodeSuppliers"];
 
     public UpdateBarcodeSupplierDto BarcodeSupplier { get; set; }
     public BarcodeSuppliersDetailLevel DetailLevel { get; set; }

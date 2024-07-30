@@ -20,7 +20,7 @@ public class CreatedOrderResponse
     public DateTime CreatedDate { get; set; }
     public OrderCustomerResponseDto? Customer { get; set; }
     public OrderOrderPriorityResponseDto? OrderPriority { get; set; }
-    public OrderOrderShipmentResponseDto? OrderShipment { get; set; }
+    public ICollection<OrderOrderShipmentResponseDto>? OrderShipments { get; set; }
     public OrderOrderTypeResponseDto? OrderType { get; set; }
     public ICollection<OrderOrderAttributeValueResponseDto>? OrderAttributeValues { get; set; }
     public ICollection<OrderOrderItemResponseDto>? OrderItems { get; set; }

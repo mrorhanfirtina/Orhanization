@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItems.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItems.Constants;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItems.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItems.Rules;
@@ -28,7 +27,7 @@ public class UpdateOrderItemCommand : IRequest<UpdatedOrderItemResponse>, ITrans
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderItems";
+    public string[]? CacheGroupKey => ["GetOrderItems"];
 
     public UpdateOrderItemDto OrderItem { get; set; }
     public OrderItemsDetailLevel DetailLevel { get; set; }

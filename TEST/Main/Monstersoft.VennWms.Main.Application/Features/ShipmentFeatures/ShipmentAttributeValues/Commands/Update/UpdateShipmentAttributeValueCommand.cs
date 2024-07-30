@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributeValues.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributeValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributeValues.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentAttributeValues.Rules;
@@ -26,7 +25,7 @@ public class UpdateShipmentAttributeValueCommand : IRequest<UpdatedShipmentAttri
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetShipmentAttributes";
+    public string[]? CacheGroupKey => ["GetShipmentAttributeValues"];
 
     public UpdateShipmentAttributeValueDto ShipmentAttributeValue { get; set; }
     public ShipmentAttributesValueDetailLevel? DetailLevel { get; set; }

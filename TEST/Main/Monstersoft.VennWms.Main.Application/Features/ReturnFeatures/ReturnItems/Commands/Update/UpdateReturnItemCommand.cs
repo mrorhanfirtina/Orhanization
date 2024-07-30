@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItems.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItems.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItems.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItems.Rules;
@@ -26,7 +25,7 @@ public class UpdateReturnItemCommand : IRequest<UpdatedReturnItemResponse>, ITra
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturnItems";
+    public string[]? CacheGroupKey => ["GetReturnItems"];
 
     public UpdateReturnItemDto ReturnItem { get; set; }
     public ReturnItemsDetailLevel? DetailLevel { get; set; }

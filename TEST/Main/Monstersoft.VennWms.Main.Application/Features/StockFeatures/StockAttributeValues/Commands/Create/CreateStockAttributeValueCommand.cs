@@ -25,7 +25,8 @@ public class CreateStockAttributeValueCommand : IRequest<CreatedStockAttributeVa
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockAttributeValues";
+    public string[]? CacheGroupKey => ["GetStockAttributeValues"];
+
 
     public CreateStockAttributeValueDto StockAttributeValue { get; set; }
     public StockAttributeValuesDetailLevel? DetailLevel { get; set; }

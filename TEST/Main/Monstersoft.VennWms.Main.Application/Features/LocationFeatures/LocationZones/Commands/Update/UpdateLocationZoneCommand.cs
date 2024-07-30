@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationZones.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationZones.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationZones.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationZones.Rules;
@@ -26,7 +25,7 @@ public class UpdateLocationZoneCommand : IRequest<UpdatedLocationZoneResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationZones";
+    public string[]? CacheGroupKey => ["GetLocationZones"];
 
     public UpdateLocationZoneDto LocationZone { get; set; }
     public LocationZonesDetailLevel DetailLevel { get; set; }

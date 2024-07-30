@@ -20,7 +20,8 @@ public class DeleteShipmentAttributeCommand : IRequest<DeletedShipmentAttributeR
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetShipmentAttributes";
+    public string[]? CacheGroupKey => ["GetShipmentAttributes"];
+
 
     public Guid Id { get; set; }
 

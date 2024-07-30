@@ -20,7 +20,7 @@ public class DeleteItemUnitConversionCommand : IRequest<DeletedItemUnitConversio
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetItemUnitConversions";
+    public string[]? CacheGroupKey => ["GetItemUnitConversions"];
 
     public Guid Id { get; set; }
 

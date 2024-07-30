@@ -7,7 +7,6 @@ using Monstersoft.VennWms.Main.Application.Features.StockFeatures.Stocks.Queries
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.Stocks.Queries.GetListByDynamic;
 using Orhanization.Core.Application.Requests;
 using Orhanization.Core.Application.Response;
-using Orhanization.Core.Persistence.Dynamic;
 
 
 namespace Monstersoft.VennWms.API.QueryAPI.Controllers.DomainControllers.StockControllers;
@@ -25,9 +24,9 @@ public class StockController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] StocksDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListStockQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListStockQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListStockListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

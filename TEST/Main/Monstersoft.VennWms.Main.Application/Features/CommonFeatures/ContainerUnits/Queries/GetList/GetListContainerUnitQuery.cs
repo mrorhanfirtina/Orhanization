@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Constants;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -32,7 +29,6 @@ public class GetListContainerUnitQuery : IRequest<GetListResponse<GetListContain
 
 
     public PageRequest PageRequest { get; set; }
-    public ContainerUnitsDetaillevel DetailLevel { get; set; }
 
 
     public class GetListContainerUnitQueryHandler : IRequestHandler<GetListContainerUnitQuery, GetListResponse<GetListContainerUnitListItemDto>>
@@ -55,41 +51,14 @@ public class GetListContainerUnitQuery : IRequest<GetListResponse<GetListContain
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            
-
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<ContainerUnit> containerUnitList = await _containerUnitRepository.GetListAsync(
-                include: x =>
-                {
-                    IQueryable<ContainerUnit> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    var includableQuery = query as IIncludableQueryable<ContainerUnit, object>;
-                    return includableQuery;
-                },
-                enableTracking: false,
+            Paginate<ContainerUnit> containerUnitList = await _containerUnitRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListContainerUnitListItemDto>>(containerUnitList);
-            }
-            else
-            {
-                Paginate<ContainerUnit> containerUnitList = await _containerUnitRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x => x.Include(x => x.DepositorCompany),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListContainerUnitListItemDto>>(containerUnitList);
-            }
+            return _mapper.Map<GetListResponse<GetListContainerUnitListItemDto>>(containerUnitList);
         }
     }
 

@@ -20,7 +20,7 @@ public class DeletePoAttributeValueCommand : IRequest<DeletedPoAttributeValueRes
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetPoAttributeValues";
+    public string[]? CacheGroupKey => ["GetPoAttributeValues"];
 
     public Guid Id { get; set; }
 

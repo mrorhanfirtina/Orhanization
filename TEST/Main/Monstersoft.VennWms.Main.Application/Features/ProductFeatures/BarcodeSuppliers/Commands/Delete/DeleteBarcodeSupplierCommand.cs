@@ -20,7 +20,7 @@ public class DeleteBarcodeSupplierCommand : IRequest<DeletedBarcodeSupplierRespo
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBarcodeSuppliers";
+    public string[]? CacheGroupKey => ["GetBarcodeSuppliers"];
 
     public Guid Id { get; set; }
 

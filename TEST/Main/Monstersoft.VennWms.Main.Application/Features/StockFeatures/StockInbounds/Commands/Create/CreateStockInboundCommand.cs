@@ -24,7 +24,8 @@ public class CreateStockInboundCommand : IRequest<CreatedStockInboundResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockInbounds";
+    public string[]? CacheGroupKey => ["GetStockInbounds"];
+
 
     public CreateStockInboundDto StockInbound { get; set; }
     public StockInboundsDetailLevel? DetailLevel { get; set; }

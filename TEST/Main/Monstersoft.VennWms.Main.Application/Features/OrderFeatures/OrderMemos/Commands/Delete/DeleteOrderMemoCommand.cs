@@ -20,7 +20,7 @@ public class DeleteOrderMemoCommand : IRequest<DeletedOrderMemoResponse>, ITrans
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderMemos";
+    public string[]? CacheGroupKey => ["GetOrderMemos"];
 
     public Guid Id { get; set; }
 

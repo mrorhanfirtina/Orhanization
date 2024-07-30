@@ -36,9 +36,9 @@ public class DepositorController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] DepositorsDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListDepositorQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListDepositorQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListDepositorListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

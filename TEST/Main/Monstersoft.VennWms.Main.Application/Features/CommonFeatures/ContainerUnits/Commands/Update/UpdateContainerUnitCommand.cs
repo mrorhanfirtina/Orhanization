@@ -24,7 +24,7 @@ public class UpdateContainerUnitCommand : IRequest<UpdatedContainerUnitResponse>
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetContainerUnits";
+    public string[]? CacheGroupKey => ["GetContainerUnits"];
     public string[] Roles => [Admin, User, Write, ContainerUnitOperationClaims.Update];
     public UserRequestInfo? UserRequestInfo { get; set; }
 

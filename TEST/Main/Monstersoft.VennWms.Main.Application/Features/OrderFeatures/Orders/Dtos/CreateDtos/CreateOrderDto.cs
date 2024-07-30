@@ -2,7 +2,6 @@
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderAttributeValues.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItems.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderMemos.Dtos.CreateDtos;
-using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipments.Dtos.CreateDtos;
 
 namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Dtos.CreateDtos;
 
@@ -19,6 +18,5 @@ public class CreateOrderDto
     public ICollection<CreateOrderItemSubDto> OrderItems { get; set; }
     public ICollection<CreateOrderMemoSubDto>? OrderMemos { get; set; }
     public CreateOrderPrioritySubDto? OrderPriority { get; set; }
-    public CreateOrderShipmentSubDto? OrderShipment { get; set; }
 }
 

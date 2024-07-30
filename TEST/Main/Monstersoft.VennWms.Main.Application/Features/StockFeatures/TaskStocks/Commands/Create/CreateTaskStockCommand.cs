@@ -25,7 +25,7 @@ public class CreateTaskStockCommand : IRequest<CreatedTaskStockResponse>, ITrans
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetTaskStocks";
+    public string[]? CacheGroupKey => ["GetTaskStocks"];
 
     public CreateTaskStockDto TaskStock { get; set; }
     public TaskStocksDetailLevel? DetailLevel { get; set; }

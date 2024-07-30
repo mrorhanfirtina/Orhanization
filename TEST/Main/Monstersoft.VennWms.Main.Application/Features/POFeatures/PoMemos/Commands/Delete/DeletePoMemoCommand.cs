@@ -20,7 +20,7 @@ public class DeletePoMemoCommand : IRequest<DeletedPoMemoResponse>, ITransaction
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetPoMemos";
+    public string[]? CacheGroupKey => ["GetPoMemos"];
 
     public Guid Id { get; set; }
 

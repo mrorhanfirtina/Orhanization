@@ -23,7 +23,7 @@ public class CreateOrderPriorityCommand : IRequest<CreatedOrderPriorityResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderPriorities";
+    public string[]? CacheGroupKey => ["GetOrderPriorities"];
 
     public CreateOrderPriorityDto OrderPriority { get; set; }
     public OrderPrioritiesDetailLevel DetailLevel { get; set; }

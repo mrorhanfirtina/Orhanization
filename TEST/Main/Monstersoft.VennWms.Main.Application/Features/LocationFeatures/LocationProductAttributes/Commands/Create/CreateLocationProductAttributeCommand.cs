@@ -27,7 +27,7 @@ public class CreateLocationProductAttributeCommand : IRequest<CreatedLocationPro
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationProductAttributes";
+    public string[]? CacheGroupKey => ["GetLocationProductAttributes"];
 
     public CreateLocationProductAttributeDto LocationProductAttribute { get; set; }
     public LocationProductAttributesDetailLevel DetailLevel { get; set; }

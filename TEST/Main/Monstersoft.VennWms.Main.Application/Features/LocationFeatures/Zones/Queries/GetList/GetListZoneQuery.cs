@@ -30,7 +30,6 @@ public class GetListZoneQuery : IRequest<GetListResponse<GetListZoneListItemDto>
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public ZonesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListZoneQueryHandler : IRequestHandler<GetListZoneQuery, GetListResponse<GetListZoneListItemDto>>
@@ -53,43 +52,14 @@ public class GetListZoneQuery : IRequest<GetListResponse<GetListZoneListItemDto>
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<Zone> zoneList = await _zoneRepository.GetListAsync(
+            Paginate<Zone> zoneList = await _zoneRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<Zone> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeBuilding)
-                    {
-                        query = query.Include(y => y.Building);
-                    }
-
-                    var includableQuery = query as IIncludableQueryable<Zone, object>;
-                    return includableQuery;
-                },
+                include: m => m.Include(x => x.Building).Include(x => x.DepositorCompany),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListZoneListItemDto>>(zoneList);
-            }
-            else
-            {
-                Paginate<Zone> zoneList = await _zoneRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListZoneListItemDto>>(zoneList);
-            }
+            return _mapper.Map<GetListResponse<GetListZoneListItemDto>>(zoneList);
         }
     }
 

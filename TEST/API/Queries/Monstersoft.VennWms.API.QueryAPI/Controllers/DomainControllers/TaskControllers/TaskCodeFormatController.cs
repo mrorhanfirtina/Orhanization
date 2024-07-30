@@ -35,9 +35,9 @@ public class TaskCodeFormatController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] TaskCodeFormatsDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListTaskCodeFormatQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListTaskCodeFormatQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListTaskCodeFormatListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

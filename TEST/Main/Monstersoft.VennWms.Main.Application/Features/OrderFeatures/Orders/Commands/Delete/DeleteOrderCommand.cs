@@ -22,7 +22,7 @@ public class DeleteOrderCommand : IRequest<DeletedOrderResponse>, ITransactional
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrders";
+    public string[]? CacheGroupKey => ["GetOrders"];
 
     public Guid Id { get; set; }
 
@@ -47,7 +47,7 @@ public class DeleteOrderCommand : IRequest<DeletedOrderResponse>, ITransactional
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
             Order order = await _orderRepository.GetAsync(predicate: x => x.Id == request.Id,
-            include: x => x.Include(y => y.OrderShipment)
+            include: x => x.Include(y => y.OrderShipments)
                            .Include(y => y.OrderMemos)
                            .Include(y => y.OrderAttributeValues)
                            .Include(y => y.OrderItems)

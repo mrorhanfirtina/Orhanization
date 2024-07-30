@@ -21,7 +21,6 @@ public class GetListShipmentListItemDto
     public ShipmentsBranchResponseDto? Branch { get; set; }
     public ICollection<ShipmentsShipmentAttributeValueResponseDto>? ShipmentAttributeValues { get; set; }
     public ICollection<ShipmentsShipmentMemoResponseDto>? ShipmentMemos { get; set; }
-    public ICollection<ShipmentsOrderShipmentResponseDto>? OrderShipments { get; set; }
-    public ShipmentsDepositorResponseDto Depositor { get; set; }
-    public ShipmentsDepositorCompanyResponseDto DepositorCompany { get; set; }
+    public ShipmentsDepositorResponseDto? Depositor { get; set; }
+    public ShipmentsDepositorCompanyResponseDto? DepositorCompany { get; set; }
 }

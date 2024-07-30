@@ -27,11 +27,10 @@ public class GetListPrinterQuery : IRequest<GetListResponse<GetListPrinterListIt
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string CacheKey => $"GetListPrinterQuery({PageRequest.PageIndex},{PageRequest.PageSize})";
     public bool ByPassCache { get; }
-    public string? CacheGroupKey => "GetBarcodes";
+    public string? CacheGroupKey => "GetPrinters";
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public PrintersDetailLevel DetailLevel { get; set; }
 
 
     public class GetListPrinterQueryHandler : IRequestHandler<GetListPrinterQuery, GetListResponse<GetListPrinterListItemDto>>
@@ -54,38 +53,15 @@ public class GetListPrinterQuery : IRequest<GetListResponse<GetListPrinterListIt
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<Printer> printerList = await _printerRepository.GetListAsync(
+            Paginate<Printer> printerList = await _printerRepository.GetListAsync(
                     predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                    include: x =>
-                    {
-                        IQueryable<Printer> query = x;
-
-                        var detailLevel = request.DetailLevel;
-
-                        if (detailLevel.IncludeDepositorCompany)
-                        {
-                            query = query.Include(y => y.DepositorCompany);
-                        }
-
-                        var includableQuery = query as IIncludableQueryable<Printer, object>;
-                        return includableQuery;
-                    },
+                    include: x => x.Include(i => i.DepositorCompany),
+                    orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                     index: request.PageRequest.PageIndex,
                     size: request.PageRequest.PageSize, enableTracking: false, cancellationToken: cancellationToken);
-                return _mapper.Map<GetListResponse<GetListPrinterListItemDto>>(printerList);
-            }
-            else
-            {
-                Paginate<Printer> printerList = await _printerRepository.GetListAsync(
-                    predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                    index: request.PageRequest.PageIndex,
-                    size: request.PageRequest.PageSize, enableTracking: false, cancellationToken: cancellationToken);
-                return _mapper.Map<GetListResponse<GetListPrinterListItemDto>>(printerList);
-            }
+
+            return _mapper.Map<GetListResponse<GetListPrinterListItemDto>>(printerList);
         }
     }
 }

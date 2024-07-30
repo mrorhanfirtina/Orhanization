@@ -27,7 +27,8 @@ public class CreateProductAttributeCommand : IRequest<CreatedProductAttributeRes
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetProductAttributes";
+    public string[]? CacheGroupKey => ["GetProductAttributes"];
+
 
     public CreateProductAttributeDto ProductAttribute { get; set; }
     public ProductAttributesDetailLevel DetailLevel { get; set; }

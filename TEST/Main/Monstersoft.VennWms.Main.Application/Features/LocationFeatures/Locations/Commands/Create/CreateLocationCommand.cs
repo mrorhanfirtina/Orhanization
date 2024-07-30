@@ -25,7 +25,7 @@ public class CreateLocationCommand : IRequest<CreatedLocationResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocations";
+    public string[]? CacheGroupKey => ["GetLocations"];
 
     public CreateLocationDto Location { get; set; }
     public LocationsDetailLevel DetailLevel { get; set; }
@@ -290,6 +290,16 @@ public class CreateLocationCommand : IRequest<CreatedLocationResponse>, ITransac
                             {
                                 query = query.Include(y => y.LocationProductAttributes).ThenInclude(m => m.ProductAttribute).ThenInclude(l => l.AttributeInputType);
                             }
+                        }
+                    }
+
+                    if (detailLevel.IncludeBufferLocation)
+                    {
+                        query = query.Include(y => y.BufferLocations);
+
+                        if (detailLevel.BufferLocationDetailLevel.IncludeBuffLocation)
+                        {
+                            query = query.Include(y => y.BufferLocations).ThenInclude(m => m.BuffLocation);
                         }
                     }
 

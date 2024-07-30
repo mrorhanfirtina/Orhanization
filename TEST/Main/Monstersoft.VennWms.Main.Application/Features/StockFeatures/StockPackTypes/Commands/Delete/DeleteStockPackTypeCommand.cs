@@ -19,7 +19,7 @@ public class DeleteStockPackTypeCommand : IRequest<DeletedStockPackTypeResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockPackTypes";
+    public string[]? CacheGroupKey => ["GetStockPackTypes"];
 
     public Guid Id { get; set; }
 

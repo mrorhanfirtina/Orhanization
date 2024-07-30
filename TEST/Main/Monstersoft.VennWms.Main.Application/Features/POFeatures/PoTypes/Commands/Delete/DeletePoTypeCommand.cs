@@ -20,7 +20,7 @@ public class DeletePoTypeCommand : IRequest<DeletedPoTypeResponse>, ITransaction
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetPoTypes";
+    public string[]? CacheGroupKey => ["GetPoTypes"];
 
     public Guid Id { get; set; }
 

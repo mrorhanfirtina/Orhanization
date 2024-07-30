@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptAttributes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -31,7 +28,6 @@ public class GetListReceiptAttributeQuery : IRequest<GetListResponse<GetListRece
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public ReceiptAttributesDetailLevel? DetailLevel { get; set; }
 
 
     public class GetListReceiptAttributeQueryHandler : IRequestHandler<GetListReceiptAttributeQuery, GetListResponse<GetListReceiptAttributeListItemDto>>
@@ -54,46 +50,14 @@ public class GetListReceiptAttributeQuery : IRequest<GetListResponse<GetListRece
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
+            Paginate<ReceiptAttribute> receiptAttributeList = await _receiptAttributeRepository.GetListAsync(
+            predicate: m => m.DepositorCompanyId == depositorCompanyId,
+            include: x => x.Include(i => i.DepositorCompany).Include(i => i.AttributeInputType),
+            orderBy: x => x.OrderByDescending(m => m.CreatedDate),
+            index: request.PageRequest.PageIndex, enableTracking: false,
+            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<ReceiptAttribute> receiptAttributeList = await _receiptAttributeRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<ReceiptAttribute> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeAttributeInputType)
-                    {
-                        query = query.Include(y => y.AttributeInputType);
-                    }
-
-
-                    var includableQuery = query as IIncludableQueryable<ReceiptAttribute, object>;
-                    return includableQuery;
-                },
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListReceiptAttributeListItemDto>>(receiptAttributeList);
-            }
-            else
-            {
-                Paginate<ReceiptAttribute> receiptAttributeList = await _receiptAttributeRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListReceiptAttributeListItemDto>>(receiptAttributeList);
-            }
+            return _mapper.Map<GetListResponse<GetListReceiptAttributeListItemDto>>(receiptAttributeList);
         }
     }
 

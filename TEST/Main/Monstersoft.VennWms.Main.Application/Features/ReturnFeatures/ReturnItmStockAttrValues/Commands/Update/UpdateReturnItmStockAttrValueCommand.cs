@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItmStockAttrValues.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItmStockAttrValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItmStockAttrValues.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnItmStockAttrValues.Rules;
@@ -26,7 +25,7 @@ public class UpdateReturnItmStockAttrValueCommand : IRequest<UpdatedReturnItmSto
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturnItmStockAttrValues";
+    public string[]? CacheGroupKey => ["GetReturnItmStockAttrValues"];
 
     public UpdateReturnItmStockAttrValueDto ReturnItmStockAttrValue { get; set; }
     public ReturnItmStockAttrValuesDetailLevel? DetailLevel { get; set; }

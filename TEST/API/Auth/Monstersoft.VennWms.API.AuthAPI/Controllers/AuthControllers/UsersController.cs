@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Monstersoft.VennWms.API.AuthAPI.Controllers.Base;
 using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Users.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Users.Commands.Delete;
@@ -7,7 +6,6 @@ using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Users
 using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Users.Commands.UpdateFromAuth;
 using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Users.Queries.GetById;
 using Monstersoft.VennWms.Main.Application.Features.AuthenticationFeatures.Users.Queries.GetList;
-using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Requests;
 using Orhanization.Core.Application.Response;
 

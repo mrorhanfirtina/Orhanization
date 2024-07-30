@@ -17,7 +17,7 @@ public class DeleteReserveReasonCommand : IRequest<DeletedReserveReasonResponse>
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReserveReasons";
+    public string[]? CacheGroupKey => ["GetReserveReasons"];
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string[] Roles => [Admin, User, Write, ReserveReasonOperationClaims.Delete];
 

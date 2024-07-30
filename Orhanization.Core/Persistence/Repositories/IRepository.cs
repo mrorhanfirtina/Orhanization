@@ -26,6 +26,14 @@ public interface IRepository<TEntity, TEntityId> : IQuery<TEntity> where TEntity
         bool autoinclude = false,
         CancellationToken cancellationToken = default);
 
+    IQueryable<TEntity> GetListNoPaginate(Expression<Func<TEntity, bool>>? predicate = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        bool withDeleted = false, bool enableTracking = true, bool autoInclude = false,
+        CancellationToken cancellationToken = default);
+
+
+
     Paginate<TEntity> GetListByDynamic(
         DynamicQuery dynamic,
         Expression<Func<TEntity, bool>>? predicate = null,

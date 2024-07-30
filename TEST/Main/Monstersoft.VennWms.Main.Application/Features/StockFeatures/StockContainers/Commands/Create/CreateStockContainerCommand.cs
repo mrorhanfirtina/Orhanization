@@ -25,7 +25,8 @@ public class CreateStockContainerCommand : IRequest<CreatedStockContainerRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockContainers";
+    public string[]? CacheGroupKey => ["GetStockContainers"];
+
 
     public CreateStockContainerDto StockContainer { get; set; }
     public StockContainersDetailLevel? DetailLevel { get; set; }

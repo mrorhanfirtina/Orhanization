@@ -35,9 +35,9 @@ public class OrderTypeController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] OrderTypesDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListOrderTypeQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListOrderTypeQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListOrderTypeListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

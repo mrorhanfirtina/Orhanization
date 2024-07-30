@@ -26,7 +26,7 @@ public class CreateLogStockCommand : IRequest<CreatedLogStockResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetTransactionLogs";
+    public string[]? CacheGroupKey => ["GetTransactionLogs"];
 
     public CreateLogStockDto LogStock { get; set; }
     public LogStocksDetailLevel DetailLevel { get; set; }

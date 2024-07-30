@@ -24,7 +24,7 @@ public class CreateWorkTaskCommand : IRequest<CreatedWorkTaskResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetWorkTasks";
+    public string[]? CacheGroupKey => ["GetWorkTasks"];
 
     public CreateWorkTaskDto WorkTask { get; set; }
     public WorkTasksDetailLevel? DetailLevel { get; set; }

@@ -21,7 +21,7 @@ public class DeleteBuildingCommand : IRequest<DeletedBuildingResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBuildings";
+    public string[]? CacheGroupKey => ["GetBuildings"];
 
     public Guid Id { get; set; }
 

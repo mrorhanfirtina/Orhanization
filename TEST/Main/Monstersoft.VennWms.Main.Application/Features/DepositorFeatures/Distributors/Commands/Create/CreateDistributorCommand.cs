@@ -27,7 +27,7 @@ public class CreateDistributorCommand : IRequest<CreatedDistributorResponse>, IT
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetDisturbitors";
+    public string[]? CacheGroupKey => ["GetDisturbitors"];
 
     public CreateDistributorDto Disturbitor { get; set; }
     public DistributorsDetailLevel DetailLevel { get; set; }

@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.StockFeatures.Stocks.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.Stocks.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.Stocks.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.Stocks.Rules;
@@ -26,7 +25,7 @@ public class UpdateStockCommand : IRequest<UpdatedStockResponse>, ITransactional
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStocks";
+    public string[]? CacheGroupKey => ["GetStocks"];
 
     public UpdateStockDto Stock { get; set; }
     public StocksDetailLevel? DetailLevel { get; set; }

@@ -13,6 +13,5 @@ public class GetListReturnTypeListItemDto
     public string Format { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public ICollection<ReturnTypesReturnResponseDto>? Returns { get; set; }
     public ReturnTypesDepositorCompanyResponseDto? DepositorCompany { get; set; }
 }

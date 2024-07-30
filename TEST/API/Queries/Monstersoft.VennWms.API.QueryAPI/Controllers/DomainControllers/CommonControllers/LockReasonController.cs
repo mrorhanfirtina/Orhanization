@@ -35,9 +35,9 @@ public class LockReasonController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] LockReasonsDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListLockReasonQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListLockReasonQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListLockReasonListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

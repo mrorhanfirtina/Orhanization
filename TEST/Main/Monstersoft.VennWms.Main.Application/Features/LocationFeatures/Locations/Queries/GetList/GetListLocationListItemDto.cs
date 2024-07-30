@@ -20,14 +20,5 @@ public class GetListLocationListItemDto
     public LocationLocationPriorityResponseDto? LocationPriority { get; set; }
     public LocationLocationCodeFormatResponseDto? LocationCodeFormat { get; set; }
     public LocationLocationCoordinateResponseDto? LocationCoordinate { get; set; }
-    public ICollection<LocationLocationZoneResponseDto>? LocationZones { get; set; }
-    public ICollection<LocationLocationUnitConstraintResponseDto>? LocationUnitConstraints { get; set; }
-    public ICollection<LocationLocationProductCategoryResponseDto>? LocationProductCategories { get; set; }
-    public ICollection<LocationLocationProductAbcCategoryResponseDto>? LocationProductAbcCategories { get; set; }
-    public ICollection<LocationLocationProductConstraintResponseDto>? LocationProductConstraints { get; set; }
-    public ICollection<LocationLocationDepositorResponseDto>? LocationDepositors { get; set; }
-    public ICollection<LocationLocationProductResponseDto>? LocationProducts { get; set; }
-    public ICollection<LocationLocationStockAttributeResponseDto>? LocationStockAttributes { get; set; }
-    public ICollection<LocationLocationProductAttributeResponseDto>? LocationProductAttributes { get; set; }
-
+    public ICollection<LocationBufferLocationResponseDto>? BufferLocations { get; set; }
 }

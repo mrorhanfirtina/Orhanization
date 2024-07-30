@@ -21,7 +21,7 @@ public class DeleteProductCommand : IRequest<DeletedProductResponse>, ITransacti
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetProducts";
+    public string[]? CacheGroupKey => ["GetProducts"];
 
     public Guid Id { get; set; }
 

@@ -25,7 +25,7 @@ public class CreatePoTypeCommand : IRequest<CreatedPoTypeResponse>, ITransaction
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetPoTypes";
+    public string[]? CacheGroupKey => ["GetPoTypes"];
 
     public CreatePoTypeDto PoType { get; set; }
     public PoTypesDetailLevel DetailLevel { get; set; }

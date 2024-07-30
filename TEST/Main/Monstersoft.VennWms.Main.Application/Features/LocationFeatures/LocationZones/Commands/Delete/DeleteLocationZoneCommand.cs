@@ -20,7 +20,7 @@ public class DeleteLocationZoneCommand : IRequest<DeletedLocationZoneResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationZones";
+    public string[]? CacheGroupKey => ["GetLocationZones"];
 
     public Guid Id { get; set; }
 

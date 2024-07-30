@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockPackTypes.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockPackTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockPackTypes.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockPackTypes.Rules;
@@ -25,7 +24,7 @@ public class UpdateStockPackTypeCommand : IRequest<UpdatedStockPackTypeResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockPackTypes";
+    public string[]? CacheGroupKey => ["GetStockPackTypes"];
 
     public UpdateStockPackTypeDto StockPackType { get; set; }
     public StockPackTypesDetailLevel? DetailLevel { get; set; }

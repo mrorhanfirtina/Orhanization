@@ -10,6 +10,7 @@ using Monstersoft.VennWms.Main.Domain.Entities.POEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.ReturnEntities;
+using Monstersoft.VennWms.Main.Domain.Entities.SerialEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.StockEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.TaskEntities;
@@ -54,6 +55,11 @@ public class BaseDbContext : DbContext
     public DbSet<LocationCodeComponent> LocationCodeComponents { get; set;}
     public DbSet<AbcCategoryList> AbcCategoryLists { get; set; }
     public DbSet<PriorityList> PriorityLists { get; set; }
+    public DbSet<ActionParameter> ActionParameters { get; set; }
+    public DbSet<ActionParameterCategory> ActionParameterCategories { get; set; }
+    public DbSet<ActionParameterDepositor> ActionParameterDepositors { get; set; }
+    public DbSet<ActionParameterUser> ActionParameterUsers { get; set; }
+    public DbSet<ActionParameterDefault> ActionParameterDefaults { get; set; }
 
     //Depositor Entities
     public DbSet<Branch> Branches { get; set; }
@@ -92,6 +98,7 @@ public class BaseDbContext : DbContext
     public DbSet<LocationCoordinate> LocationCoordinates { get; set; }
     public DbSet<LocationProductCategory> LocationProductCategories { get; set; }
     public DbSet<LocationProductAbcCategory> LocationProductAbcCategories { get; set; }
+    public DbSet<BufferLocation> BufferLocations { get; set; }
 
 
     //Logging Entities
@@ -179,6 +186,7 @@ public class BaseDbContext : DbContext
     public DbSet<TaskStock> TaskStocks { get; set; }
     public DbSet<StockPackType> StockPackTypes { get; set; }
     public DbSet<StockInbound> StockInbounds { get; set; }
+    public DbSet<StockContainerHierarchy> StockContainerHierarchies { get; set; }
 
     //Task Entities
     public DbSet<TaskList> TaskLists { get; set; }
@@ -193,4 +201,11 @@ public class BaseDbContext : DbContext
     public DbSet<UserOperationClaim> UserOperationClaims { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<OtpAuthenticator> OtpAuthenticators { get; set; }
+
+    //Serial Entities
+    public DbSet<ExpectedSerial> ExpectedSerials { get; set; }
+    public DbSet<ExpectedSerialHierarchy> ExpectedSerialHierarchies { get; set; }
+    public DbSet<Serial> Serials { get; set; }
+    public DbSet<SerialHierarchy> SerialHierarchies { get; set; }
+    public DbSet<SerialLog> SerialLogs { get; set; }
 }

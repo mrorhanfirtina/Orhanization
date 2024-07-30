@@ -2,11 +2,9 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Rules;
-using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.ProductRepositories;
 using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ProductEntities;
@@ -27,7 +25,7 @@ public class CreateProductCommand : IRequest<CreatedProductResponse>, ITransacti
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetProducts";
+    public string[]? CacheGroupKey => ["GetProducts"];
 
     public CreateProductDto Product { get; set; }
     public ProductsDetailLevel DetailLevel { get; set; }

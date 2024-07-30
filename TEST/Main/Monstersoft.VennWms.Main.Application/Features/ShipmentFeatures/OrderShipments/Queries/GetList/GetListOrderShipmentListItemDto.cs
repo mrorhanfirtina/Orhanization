@@ -14,7 +14,6 @@ public class GetListOrderShipmentListItemDto
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
     public OrderShipmentsOrderResponseDto? Order { get; set; }
-    public ICollection<OrderShipmentsOrderShipItemResponseDto>? OrderShipItems { get; set; }
     public OrderShipmentsShipmentResponseDto? Shipment { get; set; }
     public OrderShipmentsDepositorCompanyResponseDto? DepositorCompany { get; set; }
     public OrderShipmentsProgressStatusResponseDto? ProgressStatus { get; set; }

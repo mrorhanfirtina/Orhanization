@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentTypes.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentTypes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
@@ -25,7 +24,7 @@ public class UpdateShipmentTypeCommand : IRequest<UpdatedShipmentTypeResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetShipmentTypes";
+    public string[]? CacheGroupKey => ["GetShipmentTypes"];
 
     public UpdateShipmentTypeDto ShipmentType { get; set; }
     public ShipmentTypesDetailLevel? DetailLevel { get; set; }

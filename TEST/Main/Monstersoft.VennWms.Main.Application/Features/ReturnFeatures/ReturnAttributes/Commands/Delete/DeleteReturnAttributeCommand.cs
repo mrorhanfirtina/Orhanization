@@ -20,7 +20,7 @@ public class DeleteReturnAttributeCommand : IRequest<DeletedReturnAttributeRespo
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturnAttributes";
+    public string[]? CacheGroupKey => ["GetReturnAttributes"];
 
     public Guid Id { get; set; }
 

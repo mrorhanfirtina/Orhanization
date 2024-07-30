@@ -27,7 +27,7 @@ public class LocalityBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest,
             RequestUserId = _httpContextAccessor.HttpContext.User.GetUserId(),
             RequestUserLocalityId = _httpContextAccessor.HttpContext.User.GetUserLocalityId()
         };
-            
+
         TResponse response = await next();
         return response;
     }

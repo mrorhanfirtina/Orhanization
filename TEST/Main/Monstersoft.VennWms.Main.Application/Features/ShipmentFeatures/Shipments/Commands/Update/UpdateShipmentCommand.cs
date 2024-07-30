@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.Shipments.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.Shipments.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.Shipments.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.Shipments.Rules;
@@ -26,7 +25,7 @@ public class UpdateShipmentCommand : IRequest<UpdatedShipmentResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetShipments";
+    public string[]? CacheGroupKey => ["GetShipments"];
 
     public UpdateShipmentDto Shipment { get; set; }
     public ShipmentsDetailLevel? DetailLevel { get; set; }

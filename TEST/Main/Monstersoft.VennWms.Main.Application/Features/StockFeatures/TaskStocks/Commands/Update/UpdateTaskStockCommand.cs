@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.StockFeatures.TaskStocks.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.TaskStocks.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.TaskStocks.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.TaskStocks.Rules;
@@ -26,7 +25,7 @@ public class UpdateTaskStockCommand : IRequest<UpdatedTaskStockResponse>, ITrans
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetTaskStocks";
+    public string[]? CacheGroupKey => ["GetTaskStocks"];
 
     public UpdateTaskStockDto TaskStock { get; set; }
     public TaskStocksDetailLevel? DetailLevel { get; set; }

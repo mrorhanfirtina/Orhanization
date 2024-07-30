@@ -20,7 +20,7 @@ public class BuildingDtoMappingProfiles : Profile
         CreateMap<Depositor, BuildingDepositorResponseDto>().ReverseMap();
         CreateMap<Unit, BuildingLenghtUnitResponseDto>().ReverseMap();
         CreateMap<SiteDepositor, BuildingSiteDepositorResponseDto>().ReverseMap();
-        CreateMap<Site, BuildingSiteResponseDto>().ReverseMap();
+        CreateMap<Site, BuildingsSiteResponseDto>().ReverseMap();
         CreateMap<StorageSystem, BuildingStorageSystemResponseDto>().ReverseMap();
         CreateMap<Unit, BuildingVolumeUnitResponseDto>().ReverseMap();
         CreateMap<Zone, BuildingZoneResponseDto>().ReverseMap();

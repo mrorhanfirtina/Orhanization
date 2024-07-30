@@ -1,5 +1,4 @@
 ﻿using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Locations.Dtos.ResponseDtos;
-using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 
 namespace Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Locations.Queries.GetById;
 
@@ -30,4 +29,5 @@ public class GetByIdLocationResponse
     public ICollection<LocationLocationProductResponseDto>? LocationProducts { get; set; }
     public ICollection<LocationLocationStockAttributeResponseDto>? LocationStockAttributes { get; set; }
     public ICollection<LocationLocationProductAttributeResponseDto>? LocationProductAttributes { get; set; }
+    public ICollection<LocationBufferLocationResponseDto>? BufferLocations { get; set; }
 }

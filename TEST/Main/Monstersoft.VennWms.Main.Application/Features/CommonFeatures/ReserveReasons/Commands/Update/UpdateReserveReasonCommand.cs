@@ -22,7 +22,7 @@ public class UpdateReserveReasonCommand : IRequest<UpdatedReserveReasonResponse>
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReserveReasons";
+    public string[]? CacheGroupKey => ["GetReserveReasons"];
     public string[] Roles => [ Admin, User, Write, ReserveReasonOperationClaims.Update];
     public UserRequestInfo? UserRequestInfo { get; set; }
 

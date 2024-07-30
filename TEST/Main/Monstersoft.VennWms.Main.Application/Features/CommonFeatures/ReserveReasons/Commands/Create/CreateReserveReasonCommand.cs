@@ -23,7 +23,7 @@ public class CreateReserveReasonCommand : IRequest<CreatedReserveReasonResponse>
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReserveReasons";
+    public string[]? CacheGroupKey => ["GetReserveReasons"];
     public UserRequestInfo? UserRequestInfo {get; set; }
     public string[] Roles => [Admin, User, Add, Write];
 

@@ -19,14 +19,12 @@ public class GetListOrderListItemDto
     public DateTime UpdatedDate { get; set; }
     public OrderCustomerResponseDto? Customer { get; set; }
     public OrderOrderPriorityResponseDto? OrderPriority { get; set; }
-    public OrderOrderShipmentResponseDto? OrderShipment { get; set; }
+    public ICollection<OrderOrderShipmentResponseDto>? OrderShipments { get; set; }
     public OrderOrderTypeResponseDto? OrderType { get; set; }
     public ICollection<OrderOrderAttributeValueResponseDto>? OrderAttributeValues { get; set; }
-    public ICollection<OrderOrderItemResponseDto>? OrderItems { get; set; }
     public ICollection<OrderOrderMemoResponseDto>? OrderMemos { get; set; }
     public OrderDepositorResponseDto? Depositor { get; set; }
     public OrderDepositorCompanyResponseDto? DepositorCompany { get; set; }
     public OrderReceiverResponseDto? Receiver { get; set; }
     public OrderStatusResponseDto? Status { get; set; }
-
 }

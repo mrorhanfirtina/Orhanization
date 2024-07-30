@@ -19,7 +19,7 @@ public class DeleteUnitCommand : IRequest<DeletedUnitResponse>, ITransactionalRe
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetUnits";
+    public string[]? CacheGroupKey => ["GetUnits"];
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string[] Roles => [ Admin, User, Write, UnitOperationClaims.Delete];
 

@@ -25,7 +25,7 @@ public class CreateOrderMemoCommand : IRequest<CreatedOrderMemoResponse>, ITrans
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderMemos";
+    public string[]? CacheGroupKey => ["GetOrderMemos"];
 
     public CreateOrderMemoDto OrderMemo { get; set; }
     public OrderMemosDetailLevel DetailLevel { get; set; }

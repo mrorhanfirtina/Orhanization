@@ -19,7 +19,7 @@ public class DeleteSiteDepositorCommand : IRequest<DeletedSiteDepositorResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetSiteDepositors";
+    public string[]? CacheGroupKey => ["GetSiteDepositors"];
 
     public Guid Id { get; set; }
 

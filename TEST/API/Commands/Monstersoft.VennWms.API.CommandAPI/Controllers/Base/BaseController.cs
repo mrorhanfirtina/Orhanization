@@ -5,8 +5,8 @@ using Orhanization.Core.Security.Extensions;
 
 namespace Monstersoft.VennWms.API.CommandAPI.Controllers.Base;
 
-//[Route("api/[controller]")]
-//[ApiController]
+[Route("api/[controller]")]
+[ApiController]
 public class BaseController : ControllerBase
 {
     private IMediator? _mediator;

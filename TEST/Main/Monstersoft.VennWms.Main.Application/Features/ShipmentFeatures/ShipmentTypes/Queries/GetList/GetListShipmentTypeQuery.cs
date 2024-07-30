@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.ShipmentTypes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -54,44 +52,14 @@ public class GetListShipmentTypeQuery : IRequest<GetListResponse<GetListShipment
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<ShipmentType> shipmentTypeList = await _shipmentTypeRepository.GetListAsync(
+            Paginate<ShipmentType> shipmentTypeList = await _shipmentTypeRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<ShipmentType> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeShipment)
-                    {
-                        query = query.Include(y => y.Shipments);
-                    }
-
-
-                    var includableQuery = query as IIncludableQueryable<ShipmentType, object>;
-                    return includableQuery;
-                },
+                include: x => x.Include(x => x.DepositorCompany),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListShipmentTypeListItemDto>>(shipmentTypeList);
-            }
-            else
-            {
-                Paginate<ShipmentType> shipmentTypeList = await _shipmentTypeRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListShipmentTypeListItemDto>>(shipmentTypeList);
-            }
+            return _mapper.Map<GetListResponse<GetListShipmentTypeListItemDto>>(shipmentTypeList);
         }
     }
 

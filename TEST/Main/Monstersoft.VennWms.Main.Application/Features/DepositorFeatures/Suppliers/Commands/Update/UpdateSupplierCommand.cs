@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Suppliers.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Suppliers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Suppliers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
@@ -25,7 +24,7 @@ public class UpdateSupplierCommand : IRequest<UpdatedSupplierResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetSuppliers";
+    public string[]? CacheGroupKey => ["GetSuppliers"];
 
     public UpdateSupplierDto Supplier { get; set; }
     public SuppliersDetailLevel DetailLevel { get; set; }

@@ -13,7 +13,5 @@ public class GetListSiteListItemDto
     public DateTime UpdatedDate { get; set; }
     public SiteDepositorCompanyResponseDto? DepositorCompany { get; set; }
     public ICollection<SiteSiteDepositorResponseDto>? SiteDepositors { get; set; }
-    public ICollection<SiteBuildingResponseDto>? Buildings { get; set; }
-
 }
 

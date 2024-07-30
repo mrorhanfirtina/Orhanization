@@ -31,7 +31,6 @@ public class GetListTransactionLogQuery : IRequest<GetListResponse<GetListTransa
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public TransactionLogsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListTransactionLogQueryHandler : IRequestHandler<GetListTransactionLogQuery, GetListResponse<GetListTransactionLogListItemDto>>
@@ -54,128 +53,33 @@ public class GetListTransactionLogQuery : IRequest<GetListResponse<GetListTransa
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<TransactionLog> transactionLogList = await _transactionLogRepository.GetListAsync(
+            Paginate<TransactionLog> transactionLogList = await _transactionLogRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<TransactionLog> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeDepositor)
-                    {
-                        query = query.Include(y => y.Depositor);
-                    }
-
-                    if (detailLevel.IncludeUser)
-                    {
-                        query = query.Include(y => y.User);
-                    }
-
-                    if (detailLevel.IncludeLogStock)
-                    {
-                        query = query.Include(y => y.LogStocks);
-
-                        if (detailLevel.LogStockDetailLevel.IncludeProduct)
-                        {
-                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.Product);
-                        }
-
-                        if (detailLevel.LogStockDetailLevel.IncludeFromLocation)
-                        {
-                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.FromLocation);
-                        }
-
-                        if (detailLevel.LogStockDetailLevel.IncludeToLocation)
-                        {
-                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.ToLocation);
-                        }
-
-                        if (detailLevel.LogStockDetailLevel.IncludeTransactionType)
-                        {
-                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.TransactionType);
-                        }
-
-                        if (detailLevel.LogStockDetailLevel.IncludeLogStockReserveReason)
-                        {
-                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockReserveReasons);
-
-                            if (detailLevel.LogStockDetailLevel.LogStockReserveReasonDetailLevel.IncludeFromReason)
-                            {
-                                query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockReserveReasons).ThenInclude(y => y.FromReason);
-                            }
-
-                            if (detailLevel.LogStockDetailLevel.LogStockReserveReasonDetailLevel.IncludeToReason)
-                            {
-                                query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockReserveReasons).ThenInclude(y => y.ToReason);
-                            }
-                        }
-
-                        if (detailLevel.LogStockDetailLevel.IncludeLogStockAttributeValue)
-                        {
-                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockAttributeValues);
-
-                            if (detailLevel.LogStockDetailLevel.LogStockAttributeDetailLevel.IncludeStockAttribute)
-                            {
-                                query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockAttributeValues).ThenInclude(y => y.StockAttribute);
-                            }
-                        }
-
-                        if (detailLevel.LogStockDetailLevel.IncludeLogStockContainer)
-                        {
-                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockContainers);
-
-                            if (detailLevel.LogStockDetailLevel.LogStockContainerDetailLevel.IncludeFromContainerUnit)
-                            {
-                                query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockContainers).ThenInclude(y => y.FromContainerUnit);
-                            }
-
-                            if (detailLevel.LogStockDetailLevel.LogStockContainerDetailLevel.IncludeToContainerUnit)
-                            {
-                                query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockContainers).ThenInclude(y => y.ToContainerUnit);
-                            }
-                        }
-
-                        if (detailLevel.LogStockDetailLevel.IncludeLogStockUnsuitReason)
-                        {
-                            query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockUnsuitReasons);
-
-                            if (detailLevel.LogStockDetailLevel.LogStockUnsuitReasonDetailLevel.IncludeFromReason)
-                            {
-                                query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockUnsuitReasons).ThenInclude(y => y.FromReason);
-                            }
-
-                            if (detailLevel.LogStockDetailLevel.LogStockUnsuitReasonDetailLevel.IncludeToReason)
-                            {
-                                query = query.Include(y => y.LogStocks).ThenInclude(y => y.LogStockUnsuitReasons).ThenInclude(y => y.ToReason);
-                            }
-                        }
-                    }
-
-                    var includableQuery = query as IIncludableQueryable<TransactionLog, object>;
-                    return includableQuery;
-                },
+                include: x => x.Include(y => y.DepositorCompany)
+                               .Include(y => y.Depositor)
+                               .Include(y => y.User)
+                               .Include(y => y.LogStocks)
+                               .Include(y => y.LogStocks).ThenInclude(m => m.Product)
+                               .Include(y => y.LogStocks).ThenInclude(m => m.FromLocation)
+                               .Include(y => y.LogStocks).ThenInclude(m => m.ToLocation)
+                               .Include(y => y.LogStocks).ThenInclude(m => m.TransactionType)
+                               .Include(y => y.LogStocks).ThenInclude(m => m.LogStockReserveReasons)
+                               .Include(y => y.LogStocks).ThenInclude(m => m.LogStockReserveReasons).ThenInclude(y => y.FromReason)
+                               .Include(y => y.LogStocks).ThenInclude(m => m.LogStockReserveReasons).ThenInclude(y => y.ToReason)
+                               .Include(y => y.LogStocks).ThenInclude(m => m.LogStockUnsuitReasons)
+                               .Include(y => y.LogStocks).ThenInclude(m => m.LogStockUnsuitReasons).ThenInclude(y => y.FromReason)
+                               .Include(y => y.LogStocks).ThenInclude(m => m.LogStockUnsuitReasons).ThenInclude(y => y.ToReason)
+                               .Include(y => y.LogStocks).ThenInclude(m => m.LogStockAttributeValues)
+                               .Include(y => y.LogStocks).ThenInclude(m => m.LogStockAttributeValues).ThenInclude(y => y.StockAttribute)
+                               .Include(y => y.LogStocks).ThenInclude(m => m.LogStockContainers)
+                               .Include(y => y.LogStocks).ThenInclude(m => m.LogStockContainers).ThenInclude(y => y.FromContainerUnit)
+                               .Include(y => y.LogStocks).ThenInclude(m => m.LogStockContainers).ThenInclude(y => y.ToContainerUnit),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListTransactionLogListItemDto>>(transactionLogList);
-            }
-            else
-            {
-                Paginate<TransactionLog> transactionLogList = await _transactionLogRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+            return _mapper.Map<GetListResponse<GetListTransactionLogListItemDto>>(transactionLogList);
 
-                return _mapper.Map<GetListResponse<GetListTransactionLogListItemDto>>(transactionLogList);
-            }
         }
     }
 }

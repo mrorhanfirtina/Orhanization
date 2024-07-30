@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Constants;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.Units.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Caching;
@@ -31,7 +28,6 @@ public class GetListUnitQuery : IRequest<GetListResponse<GetListUnitListItemDto>
     public string[] Roles => [Admin, User, Read];
 
     public PageRequest PageRequest { get; set; }
-    public UnitsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListUnitQueryHandler : IRequestHandler<GetListUnitQuery, GetListResponse<GetListUnitListItemDto>>
@@ -54,50 +50,15 @@ public class GetListUnitQuery : IRequest<GetListResponse<GetListUnitListItemDto>
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<Unit> unitList = await _unitRepository.GetListAsync(
+            Paginate<Unit> unitList = await _unitRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<Unit> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeReferenceUnit)
-                    {
-                        query = query.Include(y => y.ReferenceUnitConversions);
-
-                        if (detailLevel.ReferenceUnitDetailLevel.IncludeTargetUnit)
-                        {
-                            query = query.Include(y => y.ReferenceUnitConversions).ThenInclude(z => z.TargetUnit);
-                        }
-                    }
-
-                    var includableQuery = query as IIncludableQueryable<Unit, object>;
-                    return includableQuery;
-                },
+                include: x => x.Include(y => y.ReferenceUnitConversions)
+                              .Include(y => y.ReferenceUnitConversions).ThenInclude(m => m.TargetUnit),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex,
                 size: request.PageRequest.PageSize, enableTracking: false, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListUnitListItemDto>>(unitList);
-            }
-            else
-            {
-                Paginate<Unit> unitList = await _unitRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex,
-                size: request.PageRequest.PageSize, enableTracking: false, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListUnitListItemDto>>(unitList);
-            }
+            return _mapper.Map<GetListResponse<GetListUnitListItemDto>>(unitList);
         }
     }
-
-
 }

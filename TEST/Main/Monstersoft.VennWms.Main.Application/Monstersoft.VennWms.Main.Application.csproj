@@ -47,6 +47,10 @@
     <Folder Include="Features\CommonFeatures\AbcCategoryLists\Queries\GetList\" />
     <Folder Include="Features\CommonFeatures\AbcCategoryLists\Rules\" />
     <Folder Include="Features\CommonFeatures\AbcCategoryLists\Validators\" />
+    <Folder Include="Features\CommonFeatures\ActionParameterDepositors\Queries\GetById\" />
+    <Folder Include="Features\CommonFeatures\ActionParameters\Queries\GetById\" />
+    <Folder Include="Features\CommonFeatures\ActionParameters\Queries\GetListByDynamic\" />
+    <Folder Include="Features\CommonFeatures\ActionParameterCategories\Queries\GetListByDynamic\" />
     <Folder Include="Features\CommonFeatures\LocationCodeComponents\Commands\Create\" />
     <Folder Include="Features\CommonFeatures\LocationCodeComponents\Commands\Delete\" />
     <Folder Include="Features\CommonFeatures\LocationCodeComponents\Commands\Update\" />
@@ -172,6 +176,15 @@
     <Folder Include="Features\TaskFeatures\TransactionTypes\Queries\GetListByDynamic\" />
     <Folder Include="Features\TaskFeatures\TransactionTypes\Queries\GetList\" />
     <Folder Include="Features\TaskFeatures\TransactionTypes\Validators\" />
+    <Folder Include="Services\Concrete\BarcodeServices\" />
+    <Folder Include="Services\Concrete\LocationServices\" />
+    <Folder Include="Services\Concrete\OrderServices\" />
+    <Folder Include="Services\Concrete\POServices\" />
+    <Folder Include="Services\Concrete\ProductServices\" />
+    <Folder Include="Services\Concrete\ReturnServices\" />
+    <Folder Include="Services\Concrete\ShipmentServices\" />
+    <Folder Include="Services\Concrete\StockServices\" />
+    <Folder Include="Services\Concrete\TaskServices\" />
   </ItemGroup>
 
   <ItemGroup>

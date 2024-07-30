@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockUnsuitReasons.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockUnsuitReasons.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockUnsuitReasons.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockUnsuitReasons.Rules;
@@ -26,7 +25,7 @@ public class UpdateStockUnsuitReasonCommand : IRequest<UpdatedStockUnsuitReasonR
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockUnsuitReasons";
+    public string[]? CacheGroupKey => ["GetStockUnsuitReasons"];
 
     public UpdateStockUnsuitReasonDto StockUnsuitReason { get; set; }
     public StockUnsuitReasonsDetailLevel? DetailLevel { get; set; }

@@ -26,7 +26,7 @@ public class UpdateReturnAttributeValueCommand : IRequest<UpdatedReturnAttribute
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturnAttributeValues";
+    public string[]? CacheGroupKey => ["GetReturnAttributeValues"];
 
     public UpdateReturnAttributeValueDto ReturnAttributeValue { get; set; }
     public ReturnAttributeValuesDetailLevel? DetailLevel { get; set; }

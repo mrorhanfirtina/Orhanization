@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductDepositors.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductDepositors.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductDepositors.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductDepositors.Rules;
@@ -26,7 +25,7 @@ public class UpdateProductDepositorCommand : IRequest<UpdatedProductDepositorRes
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetProductDepositors";
+    public string[]? CacheGroupKey => ["GetProductDepositors"];
 
     public UpdateProductDepositorDto ProductDepositor { get; set; }
     public ProductDepositorsDetailLevel DetailLevel { get; set; }

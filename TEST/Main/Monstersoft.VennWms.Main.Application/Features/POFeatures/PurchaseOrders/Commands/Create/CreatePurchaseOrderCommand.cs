@@ -2,11 +2,9 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PurchaseOrders.Constants;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PurchaseOrders.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PurchaseOrders.Rules;
-using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Repositories.PORepositories;
 using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.POEntities;
@@ -27,7 +25,7 @@ public class CreatePurchaseOrderCommand : IRequest<CreatedPurchaseOrderResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetPurchaseOrders";
+    public string[]? CacheGroupKey => ["GetPurchaseOrders"];
 
     public CreatePurchaseOrderDto PurchaseOrder { get; set; }
     public PurchaseOrdersDetailLevel DetailLevel { get; set; }

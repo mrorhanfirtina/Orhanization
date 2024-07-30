@@ -20,7 +20,7 @@ public class DeleteReceiptAttributeValueCommand : IRequest<DeletedReceiptAttribu
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceiptAttributeValues";
+    public string[]? CacheGroupKey => ["GetReceiptAttributeValues"];
 
     public Guid Id { get; set; }
 

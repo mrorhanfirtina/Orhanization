@@ -25,7 +25,7 @@ public class CreateOrderTypeCommand : IRequest<CreatedOrderTypeResponse>, ITrans
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderTypes";
+    public string[]? CacheGroupKey => ["GetOrderTypes"];
 
     public CreateOrderTypeDto OrderType { get; set; }
     public OrderTypesDetailLevel DetailLevel { get; set; }

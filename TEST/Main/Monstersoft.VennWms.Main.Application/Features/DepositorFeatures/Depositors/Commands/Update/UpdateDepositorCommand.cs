@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Depositors.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
@@ -25,7 +24,7 @@ public class UpdateDepositorCommand : IRequest<UpdatedDepositorResponse>, ITrans
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetDepositors";
+    public string[]? CacheGroupKey => ["GetDepositors"];
 
     public UpdateDepositorDto Depositor { get; set; }
     public DepositorsDetailLevel DetailLevel { get; set; }

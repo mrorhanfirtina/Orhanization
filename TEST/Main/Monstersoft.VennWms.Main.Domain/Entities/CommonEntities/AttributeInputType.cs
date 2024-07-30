@@ -11,7 +11,7 @@ public class AttributeInputType : Entity<int>
 
     }
 
-    public AttributeInputType(string description):this()
+    public AttributeInputType(string description) : this()
     {
         Description = description;
     }

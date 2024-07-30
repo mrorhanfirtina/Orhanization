@@ -139,16 +139,16 @@ public class GetByCodeOrderQuery : IRequest<GetByCodeOrderResponse>, ITransactio
 
                     if (detailLevel.IncludeOrderShipment)
                     {
-                        query = query.Include(y => y.OrderShipment);
+                        query = query.Include(y => y.OrderShipments);
 
                         if (detailLevel.OrderShipmentDetailLevel.IncludeShipment)
                         {
-                            query = query.Include(y => y.OrderShipment).ThenInclude(m => m.Shipment);
+                            query = query.Include(y => y.OrderShipments).ThenInclude(m => m.Shipment);
                         }
 
                         if (detailLevel.OrderShipmentDetailLevel.IncludeProgressStatus)
                         {
-                            query = query.Include(y => y.OrderShipment).ThenInclude(m => m.ProgressStatus);
+                            query = query.Include(y => y.OrderShipments).ThenInclude(m => m.ProgressStatus);
                         }
                     }
 

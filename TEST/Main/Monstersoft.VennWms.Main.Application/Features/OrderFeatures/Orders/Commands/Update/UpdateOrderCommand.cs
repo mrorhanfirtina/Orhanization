@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Constants;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Rules;
@@ -27,7 +26,7 @@ public class UpdateOrderCommand : IRequest<UpdatedOrderResponse>, ITransactional
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrders";
+    public string[]? CacheGroupKey => ["GetOrders"];
 
     public UpdateOrderDto Order { get; set; }
     public OrdersDetailLevel DetailLevel { get; set; }
@@ -53,7 +52,7 @@ public class UpdateOrderCommand : IRequest<UpdatedOrderResponse>, ITransactional
             .CheckIdExistence(request.Order.Id);
 
             Order? currentOrder = await _orderRepository.GetAsync(predicate: x => x.Id == request.Order.Id,
-            include: x => x.Include(y => y.OrderShipment)
+            include: x => x.Include(y => y.OrderShipments)
                            .Include(y => y.OrderMemos)
                            .Include(y => y.OrderAttributeValues)
                            .Include(y => y.OrderItems)
@@ -68,8 +67,11 @@ public class UpdateOrderCommand : IRequest<UpdatedOrderResponse>, ITransactional
             Order? order = _mapper.Map(request.Order, currentOrder);
             order.UpdatedDate = DateTime.Now;
 
-            order.OrderShipment.CreatedDate = order.CreatedDate;
-            order.OrderShipment.UpdatedDate = DateTime.Now;
+            order.OrderShipments?.ToList().ForEach(x =>
+            {
+                x.CreatedDate = order.CreatedDate;
+                x.UpdatedDate = DateTime.Now;
+            });
 
             order.OrderMemos?.ToList().ForEach(x =>
             {
@@ -191,16 +193,16 @@ public class UpdateOrderCommand : IRequest<UpdatedOrderResponse>, ITransactional
 
                     if (detailLevel.IncludeOrderShipment)
                     {
-                        query = query.Include(y => y.OrderShipment);
+                        query = query.Include(y => y.OrderShipments);
 
                         if (detailLevel.OrderShipmentDetailLevel.IncludeShipment)
                         {
-                            query = query.Include(y => y.OrderShipment).ThenInclude(m => m.Shipment);
+                            query = query.Include(y => y.OrderShipments).ThenInclude(m => m.Shipment);
                         }
 
                         if (detailLevel.OrderShipmentDetailLevel.IncludeProgressStatus)
                         {
-                            query = query.Include(y => y.OrderShipment).ThenInclude(m => m.ProgressStatus);
+                            query = query.Include(y => y.OrderShipments).ThenInclude(m => m.ProgressStatus);
                         }
                     }
 

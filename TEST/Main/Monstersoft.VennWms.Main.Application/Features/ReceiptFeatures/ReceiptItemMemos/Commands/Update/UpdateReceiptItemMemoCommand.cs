@@ -26,7 +26,7 @@ public class UpdateReceiptItemMemoCommand : IRequest<UpdatedReceiptItemMemoRespo
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceiptItemMemos";
+    public string[]? CacheGroupKey => ["GetReceiptItemMemos"];
 
     public UpdateReceiptItemMemoDto ReceiptItemMemo { get; set; }
     public ReceiptItemMemosDetailLevel? DetailLevel { get; set; }

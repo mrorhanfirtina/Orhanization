@@ -24,7 +24,7 @@ public class CreateUnsuitReasonCommand : IRequest<CreatedUnsuitReasonResponse>, 
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetUnsuitReasons";
+    public string[]? CacheGroupKey => ["GetUnsuitReasons"];
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string[] Roles => [Admin, User, Add, Write];
 

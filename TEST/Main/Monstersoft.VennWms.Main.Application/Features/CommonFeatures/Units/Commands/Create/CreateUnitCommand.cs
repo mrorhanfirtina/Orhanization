@@ -22,7 +22,7 @@ public class CreateUnitCommand : IRequest<CreatedUnitResponse>, ITransactionalRe
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetUnits";
+    public string[]? CacheGroupKey => ["GetUnits"];
     public string[] Roles => [Admin, User, Add, Write];
     public UserRequestInfo? UserRequestInfo { get; set; }
 

@@ -35,9 +35,9 @@ public class PoAttributeController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] PoAttributesDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListPoAttributeQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListPoAttributeQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListPoAttributeListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

@@ -19,7 +19,7 @@ public class DeleteLocationProductAbcCategoryCommand : IRequest<DeletedLocationP
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationProductAbcCategorys";
+    public string[]? CacheGroupKey => ["GetLocationProductAbcCategorys"];
 
     public Guid Id { get; set; }
 

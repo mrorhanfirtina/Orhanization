@@ -20,7 +20,7 @@ public class DeleteStockReserveReasonCommand : IRequest<DeletedStockReserveReaso
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockReserveReasons";
+    public string[]? CacheGroupKey => ["GetStockReserveReasons"];
 
     public Guid Id { get; set; }
 

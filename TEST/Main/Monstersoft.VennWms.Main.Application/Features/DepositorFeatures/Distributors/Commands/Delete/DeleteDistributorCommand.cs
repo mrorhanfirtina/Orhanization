@@ -21,7 +21,7 @@ public class DeleteDistributorCommand : IRequest<DeletedDistributorResponse>, IT
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetDisturbitors";
+    public string[]? CacheGroupKey => ["GetDisturbitors"];
 
     public Guid Id { get; set; }
 

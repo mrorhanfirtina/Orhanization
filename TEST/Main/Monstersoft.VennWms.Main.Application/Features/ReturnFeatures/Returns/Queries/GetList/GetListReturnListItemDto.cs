@@ -20,7 +20,6 @@ public class GetListReturnListItemDto
     public ReturnsCustomerResponseDto? Customer { get; set; }
     public ReturnsReturnTypeResponseDto? ReturnType { get; set; }
     public ICollection<ReturnsReturnAttributeValueResponseDto>? ReturnAttributeValues { get; set; }
-    public ICollection<ReturnsReturnItemResponseDto> ReturnItems { get; set; }
     public ICollection<ReturnsReturnMemoResponseDto>? ReturnMemos { get; set; }
     public ReturnsDepositorResponseDto Depositor { get; set; }
     public DepositorCompanyResponseDto DepositorCompany { get; set; }

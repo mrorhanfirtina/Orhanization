@@ -36,9 +36,9 @@ public class PoTypeController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] PoTypesDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListPoTypeQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListPoTypeQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListPoTypeListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

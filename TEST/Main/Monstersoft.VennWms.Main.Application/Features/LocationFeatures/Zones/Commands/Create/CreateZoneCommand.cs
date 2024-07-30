@@ -26,7 +26,7 @@ public class CreateZoneCommand : IRequest<CreatedZoneResponse>, ITransactionalRe
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetZones";
+    public string[]? CacheGroupKey => ["GetZones"];
 
     public CreateZoneDto Zone { get; set; }
     public ZonesDetailLevel DetailLevel { get; set; }

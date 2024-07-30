@@ -20,7 +20,7 @@ public class DeleteProductAttributeValueCommand : IRequest<DeletedProductAttribu
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetProductAttributeValues";
+    public string[]? CacheGroupKey => ["GetProductAttributeValues"];
 
     public Guid Id { get; set; }
 

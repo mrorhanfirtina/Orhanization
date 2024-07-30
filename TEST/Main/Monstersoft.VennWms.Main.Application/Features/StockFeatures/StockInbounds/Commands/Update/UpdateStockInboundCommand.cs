@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockInbounds.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockInbounds.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockInbounds.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
@@ -24,7 +23,7 @@ public class UpdateStockInboundCommand : IRequest<UpdatedStockInboundResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockInbounds";
+    public string[]? CacheGroupKey => ["GetStockInbounds"];
 
     public UpdateStockInboundDto StockInbound { get; set; }
     public StockInboundsDetailLevel? DetailLevel { get; set; }

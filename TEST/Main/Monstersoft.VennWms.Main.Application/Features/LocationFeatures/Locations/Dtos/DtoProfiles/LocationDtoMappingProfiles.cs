@@ -52,5 +52,7 @@ public class LocationDtoMappingProfiles : Profile
         CreateMap<Unit, LocationVolumeUnitResponseDto>().ReverseMap();
         CreateMap<Unit, LocationWeightUnitResponseDto>().ReverseMap();
         CreateMap<Zone, LocationZoneResponseDto>().ReverseMap();
+        CreateMap<BufferLocation, LocationBufferLocationResponseDto>().ReverseMap();
+        CreateMap<Location, LocationBuffLocationResponseDto>().ReverseMap();
     }
 }

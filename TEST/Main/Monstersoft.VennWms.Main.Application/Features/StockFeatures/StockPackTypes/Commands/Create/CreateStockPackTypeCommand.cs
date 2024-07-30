@@ -24,7 +24,8 @@ public class CreateStockPackTypeCommand : IRequest<CreatedStockPackTypeResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockPackTypes";
+    public string[]? CacheGroupKey => ["GetStockPackTypes"];
+
 
     public CreateStockPackTypeDto StockPackType { get; set; }
     public StockPackTypesDetailLevel? DetailLevel { get; set; }

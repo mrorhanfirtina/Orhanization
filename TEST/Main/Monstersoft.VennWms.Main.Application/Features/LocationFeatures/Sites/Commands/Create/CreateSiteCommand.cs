@@ -27,7 +27,7 @@ public class CreateSiteCommand : IRequest<CreatedSiteResponse>, ITransactionalRe
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetSites";
+    public string[]? CacheGroupKey => ["GetSites"];
 
     public CreateSiteDto Site { get; set; }
     public SitesDetailLevel DetailLevel { get; set; }

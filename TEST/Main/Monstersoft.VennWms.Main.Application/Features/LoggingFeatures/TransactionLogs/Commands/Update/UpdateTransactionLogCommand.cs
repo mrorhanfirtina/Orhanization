@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.LoggingFeatures.TransactionLogs.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.LoggingFeatures.TransactionLogs.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LoggingFeatures.TransactionLogs.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LoggingFeatures.TransactionLogs.Rules;
@@ -26,7 +25,7 @@ public class UpdateTransactionLogCommand : IRequest<UpdatedTransactionLogRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetTransactionLogs";
+    public string[]? CacheGroupKey => ["GetTransactionLogs"];
 
     public UpdateTransactionLogDto TransactionLog { get; set; }
     public TransactionLogsDetailLevel DetailLevel { get; set; }
