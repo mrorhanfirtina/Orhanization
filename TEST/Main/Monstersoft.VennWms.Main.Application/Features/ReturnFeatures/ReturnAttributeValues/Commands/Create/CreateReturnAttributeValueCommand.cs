@@ -25,7 +25,8 @@ public class CreateReturnAttributeValueCommand : IRequest<CreatedReturnAttribute
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturnAttributeValues";
+    public string[]? CacheGroupKey => ["GetReturnAttributeValues"];
+
 
     public CreateReturnAttributeValueDto ReturnAttributeValue { get; set; }
     public ReturnAttributeValuesDetailLevel? DetailLevel { get; set; }

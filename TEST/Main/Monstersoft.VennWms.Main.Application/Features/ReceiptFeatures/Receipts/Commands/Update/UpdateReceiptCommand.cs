@@ -2,13 +2,11 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.Receipts.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.Receipts.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.Receipts.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.Receipts.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
 using Monstersoft.VennWms.Main.Application.Statics;
-using Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.ReceiptEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -27,7 +25,7 @@ public class UpdateReceiptCommand : IRequest<UpdatedReceiptResponse>, ITransacti
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceipts";
+    public string[]? CacheGroupKey => ["GetReceipts"];
 
     public UpdateReceiptDto Receipt { get; set; }
     public ReceiptsDetailLevel? DetailLevel { get; set; }

@@ -25,7 +25,8 @@ public class CreateTaskListCommand : IRequest<CreatedTaskListResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetTaskLists";
+    public string[]? CacheGroupKey => ["GetTaskLists"];
+
 
     public CreateTaskListDto TaskList { get; set; }
     public TaskListsDetailLevel? DetailLevel { get; set; }

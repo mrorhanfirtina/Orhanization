@@ -25,7 +25,7 @@ public class UpdateOrderPriorityCommand : IRequest<UpdatedOrderPriorityResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderPriorities";
+    public string[]? CacheGroupKey => ["GetOrderPriorities"];
 
     public UpdateOrderPriorityDto OrderPriority { get; set; }
     public OrderPrioritiesDetailLevel DetailLevel { get; set; }

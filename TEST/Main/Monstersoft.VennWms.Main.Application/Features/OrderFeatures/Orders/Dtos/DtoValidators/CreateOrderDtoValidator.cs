@@ -5,7 +5,6 @@ using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItems.Dto
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderMemos.Dtos.DtoValidators;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderPriorities.Dtos.DtoValidators;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Dtos.CreateDtos;
-using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipments.Dtos.DtoValidators;
 
 namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Dtos.DtoValidators;
 
@@ -21,7 +20,7 @@ public class CreateOrderDtoValidator : AbstractValidator<CreateOrderDto>
         RuleFor(p => p.OrderTypeId).NotEmpty().NotEqual(Guid.Empty).WithMessage("{PropertyName} alanı boş Guid olamaz.");
         RuleFor(x => x.Customer).SetValidator(new CreateCustomerSubDtoValidator());
         RuleFor(x => x.OrderPriority).SetValidator(new CreateOrderPrioritySubDtoValidator());
-        RuleFor(x => x.OrderShipment).SetValidator(new CreateOrderShipmentSubDtoValidator());
+        //RuleFor(x => x.OrderShipment).SetValidator(new CreateOrderShipmentSubDtoValidator());
         RuleForEach(x => x.OrderAttributeValues).SetValidator(new CreateOrderAttributeValueSubDtoValidator());
         RuleForEach(x => x.OrderItems).SetValidator(new CreateOrderItemSubDtoValidator());
         RuleForEach(x => x.OrderMemos).SetValidator(new CreateOrderMemoSubDtoValidator());

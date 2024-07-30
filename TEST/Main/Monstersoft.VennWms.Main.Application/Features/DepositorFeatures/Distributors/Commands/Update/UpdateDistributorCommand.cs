@@ -24,7 +24,7 @@ public class UpdateDistributorCommand : IRequest<UpdatedDistributorResponse>, IT
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetDisturbitors";
+    public string[]? CacheGroupKey => ["GetDisturbitors"];
 
     public UpdateDistributorDto Disturbitor { get; set; }
     public DistributorsDetailLevel DetailLevel { get; set; }

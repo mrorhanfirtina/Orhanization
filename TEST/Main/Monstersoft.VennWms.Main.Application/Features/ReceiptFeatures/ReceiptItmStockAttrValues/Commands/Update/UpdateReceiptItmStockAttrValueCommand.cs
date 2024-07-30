@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItmStockAttrValues.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItmStockAttrValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReceiptFeatures.ReceiptItmStockAttrValues.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ReceiptRepositories;
@@ -25,7 +24,7 @@ public class UpdateReceiptItmStockAttrValueCommand : IRequest<UpdatedReceiptItmS
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceiptItmStockAttrValues";
+    public string[]? CacheGroupKey => ["GetReceiptItmStockAttrValues"];
 
     public UpdateReceiptItmStockAttrValueDto ReceiptItmStockAttrValue { get; set; }
     public ReceiptItmStockAttrValuesDetailLevel? DetailLevel { get; set; }

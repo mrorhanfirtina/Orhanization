@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProductAbcCategories.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProductAbcCategories.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProductAbcCategories.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationProductAbcCategories.Rules;
@@ -25,7 +24,7 @@ public class UpdateLocationProductAbcCategoryCommand : IRequest<UpdatedLocationP
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationProductAbcCategorys";
+    public string[]? CacheGroupKey => ["GetLocationProductAbcCategorys"];
 
     public UpdateLocationProductAbcCategoryDto LocationProductAbcCategory { get; set; }
     public LocationProductAbcCategoriesDetailLevel DetailLevel { get; set; }

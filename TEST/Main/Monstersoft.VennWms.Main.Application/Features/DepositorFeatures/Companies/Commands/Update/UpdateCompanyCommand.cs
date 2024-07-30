@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Companies.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Companies.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Companies.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Companies.Rules;
@@ -26,7 +25,7 @@ public class UpdateCompanyCommand : IRequest<UpdatedCompanyResponse>, ITransacti
     public string[] Roles => [Admin, User, Write, CompanyOperationClaims.Update];
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetCompanies";
+    public string[]? CacheGroupKey => ["GetCompanies"];
 
     public UpdateCompanyDto Company { get; set; }
     public CompaniesDetailLevel DetailLevel { get; set; }

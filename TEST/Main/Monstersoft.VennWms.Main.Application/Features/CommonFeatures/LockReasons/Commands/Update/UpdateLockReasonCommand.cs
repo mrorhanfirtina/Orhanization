@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Constants;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Rules;
@@ -24,7 +23,7 @@ public class UpdateLockReasonCommand : IRequest<UpdatedLockReasonResponse>, ITra
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLockReasons";
+    public string[]? CacheGroupKey => ["GetLockReasons"];
     public string[] Roles => [ Admin, User, Write, LockReasonOperationClaims.Update];
     public UserRequestInfo? UserRequestInfo { get; set; }
 

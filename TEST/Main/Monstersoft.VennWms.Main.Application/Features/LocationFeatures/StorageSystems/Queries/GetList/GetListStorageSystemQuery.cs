@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.StorageSystems.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.LocationRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.LocationEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -31,7 +28,6 @@ public class GetListStorageSystemQuery : IRequest<GetListResponse<GetListStorage
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public StorageSystemsDetailLevel DetailLevel { get; set; }
 
 
     public class GetListStorageSystemQueryHandler : IRequestHandler<GetListStorageSystemQuery, GetListResponse<GetListStorageSystemListItemDto>>
@@ -54,49 +50,14 @@ public class GetListStorageSystemQuery : IRequest<GetListResponse<GetListStorage
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<StorageSystem> storageSystemList = await _storageSystemRepository.GetListAsync(
+            Paginate<StorageSystem> storageSystemList = await _storageSystemRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<StorageSystem> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeBuilding)
-                    {
-                        query = query.Include(y => y.Building);
-                    }
-
-                    if (detailLevel.IncludeLocation)
-                    {
-                        query = query.Include(y => y.Locations);
-                    }
-
-
-                    var includableQuery = query as IIncludableQueryable<StorageSystem, object>;
-                    return includableQuery;
-                },
+                include: m => m.Include(x => x.Building).Include(x => x.DepositorCompany),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListStorageSystemListItemDto>>(storageSystemList);
-            }
-            else
-            {
-                Paginate<StorageSystem> storageSystemList = await _storageSystemRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListStorageSystemListItemDto>>(storageSystemList);
-            }
+            return _mapper.Map<GetListResponse<GetListStorageSystemListItemDto>>(storageSystemList);
         }
     }
 

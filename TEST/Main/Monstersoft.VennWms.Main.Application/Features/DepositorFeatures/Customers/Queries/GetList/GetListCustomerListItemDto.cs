@@ -12,6 +12,4 @@ public class GetListCustomerListItemDto
     public CustomerDepositorCompanyResponseDto? DepositorCompany { get; set; }
     public CustomerAddressResponseDto? Address { get; set; }
     public CustomerCompanyResponseDto? Company { get; set; }
-    public ICollection<CustomerReceiverResponseDto>? Receivers { get; set; }
-
 }

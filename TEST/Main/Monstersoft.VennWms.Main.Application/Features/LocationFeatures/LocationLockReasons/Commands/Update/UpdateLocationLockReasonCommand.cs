@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationLockReasons.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationLockReasons.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationLockReasons.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationLockReasons.Rules;
@@ -25,7 +24,7 @@ public class UpdateLocationLockReasonCommand : IRequest<UpdatedLocationLockReaso
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationLockReasons";
+    public string[]? CacheGroupKey => ["GetLocationLockReasons"];
 
     public UpdateLocationLockReasonDto LocationLockReason { get; set; }
     public LocationLockReasonsDetailLevel DetailLevel { get; set; }

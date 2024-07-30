@@ -29,5 +29,6 @@ public class GetListByDynamicLocationListItemDto
     public ICollection<LocationLocationProductResponseDto>? LocationProducts { get; set; }
     public ICollection<LocationLocationStockAttributeResponseDto>? LocationStockAttributes { get; set; }
     public ICollection<LocationLocationProductAttributeResponseDto>? LocationProductAttributes { get; set; }
+    public ICollection<LocationBufferLocationResponseDto>? BufferLocations { get; set; }
 
 }

@@ -36,9 +36,9 @@ public class ZoneController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] ZonesDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListZoneQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListZoneQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListZoneListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

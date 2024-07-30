@@ -20,7 +20,7 @@ public class DeleteReceiptTypeCommand : IRequest<DeletedReceiptTypeResponse>, IT
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceiptTypes";
+    public string[]? CacheGroupKey => ["GetReceiptTypes"];
 
     public Guid Id { get; set; }
 

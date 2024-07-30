@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationDepositors.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationDepositors.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationDepositors.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.LocationDepositors.Rules;
@@ -25,7 +24,7 @@ public class UpdateLocationDepositorCommand : IRequest<UpdatedLocationDepositorR
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationDepositors";
+    public string[]? CacheGroupKey => ["GetLocationDepositors"];
 
     public UpdateLocationDepositorDto LocationDepositor { get; set; }
     public LocationDepositorsDetailLevel DetailLevel { get; set; }

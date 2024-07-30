@@ -1,6 +1,4 @@
 ﻿using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Dtos.ResponseDtos;
-using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
-using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 
 namespace Monstersoft.VennWms.Main.Application.Features.OrderFeatures.Orders.Commands.Update;
 
@@ -21,7 +19,7 @@ public class UpdatedOrderResponse
     public DateTime UpdatedDate { get; set; }
     public OrderCustomerResponseDto? Customer { get; set; }
     public OrderOrderPriorityResponseDto? OrderPriority { get; set; }
-    public OrderOrderShipmentResponseDto? OrderShipment { get; set; }
+    public ICollection<OrderOrderShipmentResponseDto>? OrderShipments { get; set; }
     public OrderOrderTypeResponseDto? OrderType { get; set; }
     public ICollection<OrderOrderAttributeValueResponseDto>? OrderAttributeValues { get; set; }
     public ICollection<OrderOrderItemResponseDto>? OrderItems { get; set; }

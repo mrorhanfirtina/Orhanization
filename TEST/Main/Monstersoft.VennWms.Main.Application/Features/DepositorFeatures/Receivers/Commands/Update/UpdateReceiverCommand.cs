@@ -25,7 +25,7 @@ public class UpdateReceiverCommand : IRequest<UpdatedReceiverResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceivers";
+    public string[]? CacheGroupKey => ["GetReceivers"];
 
     public UpdateReceiverDto Receiver { get; set; }
     public ReceiversDetailLevel DetailLevel { get; set; }

@@ -21,7 +21,7 @@ public class DeleteTaskListCommand : IRequest<DeletedTaskListResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetTaskLists";
+    public string[]? CacheGroupKey => ["GetTaskLists"];
 
     public Guid Id { get; set; }
 

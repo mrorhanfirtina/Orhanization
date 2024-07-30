@@ -25,9 +25,9 @@ public class BarcodeSupplierController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] BarcodeSuppliersDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListBarcodeSupplierQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListBarcodeSupplierQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListBarcodeSupplierListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

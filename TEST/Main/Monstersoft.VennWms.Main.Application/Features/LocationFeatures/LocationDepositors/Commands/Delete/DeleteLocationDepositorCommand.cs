@@ -19,7 +19,7 @@ public class DeleteLocationDepositorCommand : IRequest<DeletedLocationDepositorR
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationDepositors";
+    public string[]? CacheGroupKey => ["GetLocationDepositors"];
 
     public Guid Id { get; set; }
 

@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ItemPackTypes.Rules;
@@ -26,7 +25,7 @@ public class UpdateItemPackTypeCommand : IRequest<UpdatedItemPackTypeResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetItemPackTypes";
+    public string[]? CacheGroupKey => ["GetItemPackTypes"];
 
     public UpdateItemPackTypeDto ItemPackType { get; set; }
     public ItemPackTypesDetailLevel DetailLevel { get; set; }

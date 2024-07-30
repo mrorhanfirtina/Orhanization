@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Constants;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.LockReasons.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -31,7 +28,6 @@ public class GetListLockReasonQuery : IRequest<GetListResponse<GetListLockReason
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public LockReasonsDetailLevel DetailLevel { get; set; }
 
     public class GetListLockReasonQueryHandler : IRequestHandler<GetListLockReasonQuery, GetListResponse<GetListLockReasonListItemDto>>
     {
@@ -53,39 +49,14 @@ public class GetListLockReasonQuery : IRequest<GetListResponse<GetListLockReason
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<LockReason> lockReasonList = await _lockReasonRepository.GetListAsync(
-                include: x =>
-                {
-                    IQueryable<LockReason> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-
-                    var includableQuery = query as IIncludableQueryable<LockReason, object>;
-                    return includableQuery;
-                },
+            Paginate<LockReason> lockReasonList = await _lockReasonRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x => x.Include(m => m.DepositorCompany),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, withDeleted: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListLockReasonListItemDto>>(lockReasonList);
-            }
-            else
-            {
-                Paginate<LockReason> lockReasonList = await _lockReasonRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, withDeleted: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListLockReasonListItemDto>>(lockReasonList);
-            }  
+            return _mapper.Map<GetListResponse<GetListLockReasonListItemDto>>(lockReasonList);
         }
     }
 }

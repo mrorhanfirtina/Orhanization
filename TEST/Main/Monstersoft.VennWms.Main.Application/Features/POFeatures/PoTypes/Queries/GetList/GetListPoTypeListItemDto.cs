@@ -14,6 +14,4 @@ public class GetListPoTypeListItemDto
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
     public PoTypeDepositorCompanyResponseDto? DepositorCompany { get; set; }
-    public ICollection<PoTypePurchaseOrderResponseDto>? PurchaseOrders { get; set; }
-
 }

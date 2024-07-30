@@ -10,7 +10,6 @@ public class GetListTaskListListItemDto
     public Guid DepositorCompanyId { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
-    public ICollection<TaskListsWorkTaskResponseDto>? WorkTasks { get; set; }
     public TaskListsDepositorResponseDto Depositor { get; set; }
     public TaskListsDepositorCompanyResponseDto DepositorCompany { get; set; }
 }

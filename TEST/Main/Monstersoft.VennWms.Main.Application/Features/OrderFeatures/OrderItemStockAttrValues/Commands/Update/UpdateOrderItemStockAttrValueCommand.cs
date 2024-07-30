@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Constants;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderItemStockAttrValues.Rules;
@@ -26,7 +25,7 @@ public class UpdateOrderItemStockAttrValueCommand : IRequest<UpdatedOrderItemSto
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderItemStockAttrValues";
+    public string[]? CacheGroupKey => ["GetOrderItemStockAttrValues"];
 
     public UpdateOrderItemStockAttrValueDto OrderItemStockAttrValue { get; set; }
     public OrderItemStockAttrValuesDetailLevel DetailLevel { get; set; }

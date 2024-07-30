@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipments.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipments.Dtos.CreateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipments.Rules;
@@ -25,7 +25,8 @@ public class CreateOrderShipmentCommand : IRequest<CreatedOrderShipmentResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderShipments";
+    public string[]? CacheGroupKey => ["GetOrderShipments"];
+
 
     public CreateOrderShipmentDto OrderShipment { get; set; }
     public OrderShipmentsDetailLevel? DetailLevel { get; set; }

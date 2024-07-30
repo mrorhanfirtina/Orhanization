@@ -36,9 +36,9 @@ public class ReturnController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] ReturnsDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListReturnQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListReturnQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListReturnListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

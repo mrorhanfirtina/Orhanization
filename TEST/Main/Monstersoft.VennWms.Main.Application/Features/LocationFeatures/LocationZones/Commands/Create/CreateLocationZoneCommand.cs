@@ -27,7 +27,7 @@ public class CreateLocationZoneCommand : IRequest<CreatedLocationZoneResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetLocationZones";
+    public string[]? CacheGroupKey => ["GetLocationZones"];
 
     public CreateLocationZoneDto LocationZone { get; set; }
     public LocationZonesDetailLevel DetailLevel { get; set; }

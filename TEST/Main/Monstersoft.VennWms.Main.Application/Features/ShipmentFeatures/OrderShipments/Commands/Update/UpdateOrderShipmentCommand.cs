@@ -2,13 +2,11 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipments.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipments.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipments.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipments.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.ShipmentRepositories;
 using Monstersoft.VennWms.Main.Application.Statics;
-using Monstersoft.VennWms.Main.Domain.Entities.LoggingEntities;
 using Monstersoft.VennWms.Main.Domain.Entities.ShipmentEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -27,7 +25,7 @@ public class UpdateOrderShipmentCommand : IRequest<UpdatedOrderShipmentResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderShipments";
+    public string[]? CacheGroupKey => ["GetOrderShipments"];
 
     public UpdateOrderShipmentDto OrderShipment { get; set; }
     public OrderShipmentsDetailLevel? DetailLevel { get; set; }

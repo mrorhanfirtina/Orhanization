@@ -8,6 +8,7 @@ public class ItemUnit : Entity<Guid>
     public Guid ProductId { get; set; }
     public int UnitId { get; set; }
     public bool IsConsumerUnit { get; set; }
+    public bool HasSerial { get; set; }
     public virtual ICollection<ItemPackType>? ItemPackTypes { get; set; }
     public virtual ICollection<ItemUnitConversion>? ItemUnitConversions { get; set; }
     public virtual Unit? Unit { get; set; }
@@ -18,12 +19,13 @@ public class ItemUnit : Entity<Guid>
         ItemUnitConversions = new HashSet<ItemUnitConversion>();
     }
 
-    public ItemUnit(Guid id, Guid productId, int unitId, bool isConsumerUnit) : this()
+    public ItemUnit(Guid id, Guid productId, int unitId, bool isConsumerUnit, bool hasSerial) : this()
     {
         Id = id;
         ProductId = productId;
         UnitId = unitId;
         IsConsumerUnit = isConsumerUnit;
+        HasSerial = hasSerial;
     }
 
 }

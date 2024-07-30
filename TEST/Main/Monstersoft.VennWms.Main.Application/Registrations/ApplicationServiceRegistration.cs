@@ -1,8 +1,15 @@
 ﻿using Core.ElasticSearch;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyModel;
+using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Application.Services.Abstract.AuthenticationServices;
+using Monstersoft.VennWms.Main.Application.Services.Abstract.CommonServices;
+using Monstersoft.VennWms.Main.Application.Services.Abstract.ReceiptServices;
 using Monstersoft.VennWms.Main.Application.Services.Concrete.AuthenticationServices;
+using Monstersoft.VennWms.Main.Application.Services.Concrete.CommonServices;
+using Monstersoft.VennWms.Main.Application.Services.Concrete.ReceiptServices;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Orhanization.Core.Application.Pipelines.Authorization;
 using Orhanization.Core.Application.Pipelines.Caching;
 using Orhanization.Core.Application.Pipelines.Locality;
@@ -43,13 +50,14 @@ public static class ApplicationServiceRegistration
 
         //services.AddScoped<LoggerServiceBase, FileLogger>();  //Dosya logu icin su anda kapalı sql acık.
         services.AddSingleton<LoggerServiceBase, MsSqlLogger>();
+        services.AddSingleton<IMailService, MailKitMailService>();
+        services.AddSingleton<IElasticSearch, ElasticSearchManager>();
 
-        
         services.AddScoped<IAuthService, AuthManager>();
         services.AddScoped<IAuthenticatorService, AuthenticatorManager>();
         services.AddScoped<IUserService, UserManager>();
-        services.AddSingleton<IMailService, MailKitMailService>();
-        services.AddSingleton<IElasticSearch, ElasticSearchManager>();
+        services.AddScoped<IReceiptService, ReceiptManager>();
+        services.AddScoped<IActionParameterService, ActionParameterManager>();
 
         return services;
     }

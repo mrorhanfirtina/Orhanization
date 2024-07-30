@@ -8,6 +8,7 @@ public class CreatedItemUnitResponse
     public Guid ProductId { get; set; }
     public int UnitId { get; set; }
     public bool IsCustomerUnit { get; set; }
+    public bool HasSerial { get; set; }
     public DateTime CreatedDate { get; set; }
     public ItemUnitProductResponseDto? Product { get; set; }
     public ItemUnitUnitResponseDto? Unit { get; set; }

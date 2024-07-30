@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductCategories.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductCategories.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductCategories.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductCategories.Rules;
@@ -25,7 +24,8 @@ public class UpdateProductCategoryCommand : IRequest<UpdatedProductCategoryRespo
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetProductCategories";
+    public string[]? CacheGroupKey => ["GetProductCategories"];
+
 
     public UpdateProductCategoryDto ProductCategory { get; set; }
     public ProductCategoriesDetailLevel DetailLevel { get; set; }

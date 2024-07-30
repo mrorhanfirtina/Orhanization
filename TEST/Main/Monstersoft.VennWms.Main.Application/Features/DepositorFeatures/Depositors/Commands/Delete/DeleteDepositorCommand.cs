@@ -20,7 +20,7 @@ public class DeleteDepositorCommand : IRequest<DeletedDepositorResponse>, ITrans
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetDepositors";
+    public string[]? CacheGroupKey => ["GetDepositors"];
 
     public Guid Id { get; set; }
 

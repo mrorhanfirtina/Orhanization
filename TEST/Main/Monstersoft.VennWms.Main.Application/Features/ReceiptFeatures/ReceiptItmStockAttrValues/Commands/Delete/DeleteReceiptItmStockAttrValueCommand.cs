@@ -20,7 +20,7 @@ public class DeleteReceiptItmStockAttrValueCommand : IRequest<DeletedReceiptItmS
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceiptItmStockAttrValues";
+    public string[]? CacheGroupKey => ["GetReceiptItmStockAttrValues"];
 
     public Guid Id { get; set; }
 

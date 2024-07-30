@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Buildings.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Buildings.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Buildings.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Buildings.Rules;
@@ -26,7 +25,7 @@ public class UpdateBuildingCommand : IRequest<UpdatedBuildingResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBuildings";
+    public string[]? CacheGroupKey => ["GetBuildings"];
 
     public UpdateBuildingDto Building { get; set; }
     public BuildingsDetailLevel DetailLevel { get; set; }

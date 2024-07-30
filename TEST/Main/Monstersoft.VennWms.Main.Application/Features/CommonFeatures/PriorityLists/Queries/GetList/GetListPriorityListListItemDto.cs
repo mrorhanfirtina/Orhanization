@@ -8,9 +8,9 @@ public class GetListPriorityListListItemDto
     public string Code { get; set; }
     public string Description { get; set; }
     public int Priority { get; set; }
-    public PriorityListDepositorCompanyResponseDto? DepositorCompany { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }
+    public PriorityListDepositorCompanyResponseDto? DepositorCompany { get; set; }
 }
 
 

@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Customers.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Customers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Customers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
@@ -25,7 +24,7 @@ public class UpdateCustomerCommand : IRequest<UpdatedCustomerResponse>, ITransac
     public string[] Roles => [Admin, User, Write, CustomerOperationClaims.Update];
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetCustomers";
+    public string[]? CacheGroupKey => ["GetCustomers"];
 
     public UpdateCustomerDto Customer { get; set; }
     public CustomersDetailLevel DetailLevel { get; set; }

@@ -13,7 +13,5 @@ public class GetListStorageSystemListItemDto
     public DateTime UpdatedDate { get; set; }
     public StorageSystemBuildingResponseDto? Building { get; set; }
     public StorageSystemDepositorCompanyResponseDto? DepositorCompany { get; set; }
-    public ICollection<StorageSystemLocationResponseDto>? Locations { get; set; }
-
 }
 

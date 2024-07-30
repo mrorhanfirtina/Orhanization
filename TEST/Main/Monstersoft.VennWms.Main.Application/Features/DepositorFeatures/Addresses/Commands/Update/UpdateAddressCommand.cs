@@ -22,7 +22,7 @@ public class UpdateAddressCommand : IRequest<UpdatedAddressResponse>, ITransacti
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetAddresses";
+    public string[]? CacheGroupKey => ["GetAddresses"];
 
     public UpdateAddressDto Address { get; set; }
 

@@ -27,7 +27,7 @@ public class CreateBuildingCommand : IRequest<CreatedBuildingResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBuildings";
+    public string[]? CacheGroupKey => ["GetBuildings"];
 
     public CreateBuildingDto Building { get; set; }
     public BuildingsDetailLevel DetailLevel { get; set; }

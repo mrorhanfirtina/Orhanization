@@ -21,7 +21,7 @@ public class DeleteOrderShipItemCommand : IRequest<DeletedOrderShipItemResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderShipItems";
+    public string[]? CacheGroupKey => ["GetOrderShipItems"];
 
     public Guid Id { get; set; }
 

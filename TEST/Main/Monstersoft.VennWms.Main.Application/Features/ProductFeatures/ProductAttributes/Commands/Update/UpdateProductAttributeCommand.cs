@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributes.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributes.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.ProductAttributes.Rules;
@@ -26,7 +25,7 @@ public class UpdateProductAttributeCommand : IRequest<UpdatedProductAttributeRes
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetProductAttributes";
+    public string[]? CacheGroupKey => ["GetProductAttributes"];
 
     public UpdateProductAttributeDto ProductAttribute { get; set; }
     public ProductAttributesDetailLevel DetailLevel { get; set; }

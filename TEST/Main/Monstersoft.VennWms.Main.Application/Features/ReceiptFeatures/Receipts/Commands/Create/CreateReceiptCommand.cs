@@ -25,7 +25,8 @@ public class CreateReceiptCommand : IRequest<CreatedReceiptResponse>, ITransacti
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceipts";
+    public string[]? CacheGroupKey => ["GetReceipts"];
+
 
     public CreateReceiptDto Receipt { get; set; }
     public ReceiptsDetailLevel? DetailLevel { get; set; }

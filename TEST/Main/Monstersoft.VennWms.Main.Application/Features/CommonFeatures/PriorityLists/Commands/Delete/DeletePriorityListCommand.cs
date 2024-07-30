@@ -19,7 +19,7 @@ public class DeletePriorityListCommand : IRequest<DeletedPriorityListResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetPriorityLists";
+    public string[]? CacheGroupKey => ["GetPriorityLists"];
 
     public int Id { get; set; }
 

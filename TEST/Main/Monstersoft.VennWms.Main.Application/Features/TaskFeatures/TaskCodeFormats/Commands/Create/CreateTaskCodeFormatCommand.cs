@@ -24,7 +24,8 @@ public class CreateTaskCodeFormatCommand : IRequest<CreatedTaskCodeFormatRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetTaskCodeFormats";
+    public string[]? CacheGroupKey => ["GetTaskCodeFormats"];
+
 
     public CreateTaskCodeFormatDto TaskCodeFormat { get; set; }
     public TaskCodeFormatsDetailLevel? DetailLevel { get; set; }

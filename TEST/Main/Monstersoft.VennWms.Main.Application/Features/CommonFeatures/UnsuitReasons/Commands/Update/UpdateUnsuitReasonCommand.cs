@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Constants;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.UnsuitReasons.Rules;
@@ -24,7 +23,7 @@ public class UpdateUnsuitReasonCommand : IRequest<UpdatedUnsuitReasonResponse>, 
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetUnsuitReasons";
+    public string[]? CacheGroupKey => ["GetUnsuitReasons"];
     public string[] Roles => [Admin, User, Write, UnsuitReasonOperationClaims.Update];
     public UserRequestInfo? UserRequestInfo { get; set; }
 

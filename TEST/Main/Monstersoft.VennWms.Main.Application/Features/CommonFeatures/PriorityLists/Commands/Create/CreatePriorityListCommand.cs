@@ -24,7 +24,7 @@ public class CreatePriorityListCommand : IRequest<CreatedPriorityListResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetPriorityLists";
+    public string[]? CacheGroupKey => ["GetPriorityLists"];
 
     public CreatePriorityListDto PriorityList { get; set; }
     public PriorityListsDetailLevel DetailLevel { get; set; }

@@ -31,7 +31,6 @@ public class GetListCompanyQuery : IRequest<GetListResponse<GetListCompanyListIt
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public CompaniesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListCompanyQueryHandler : IRequestHandler<GetListCompanyQuery, GetListResponse<GetListCompanyListItemDto>>
@@ -54,46 +53,14 @@ public class GetListCompanyQuery : IRequest<GetListResponse<GetListCompanyListIt
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<Company> companyList = await _companyRepository.GetListAsync(
+            Paginate<Company> companyList = await _companyRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<Company> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeAddress)
-                    {
-                        query = query.Include(y => y.Address);
-                    }
-
-
-                    var includableQuery = query as IIncludableQueryable<Company, object>;
-                    return includableQuery;
-                },
+                include: x => x.Include(m => m.Address).Include(m => m.DepositorCompany),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListCompanyListItemDto>>(companyList);
-            }
-            else
-            {
-                Paginate<Company> companyList = await _companyRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListCompanyListItemDto>>(companyList);
-            }
-
-
+            return _mapper.Map<GetListResponse<GetListCompanyListItemDto>>(companyList);
         }
     }
 

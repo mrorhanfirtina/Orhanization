@@ -27,7 +27,7 @@ public class CreateShipmentTypeCommand : IRequest<CreatedShipmentTypeResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetShipmentTypes";
+    public string[]? CacheGroupKey => ["GetShipmentTypes"];
 
     public CreateShipmentTypeDto ShipmentType { get; set; }
     public ShipmentTypesDetailLevel? DetailLevel { get; set; }

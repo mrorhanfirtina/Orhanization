@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnMemos.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnMemos.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.ReturnMemos.Rules;
@@ -26,7 +25,7 @@ public class UpdateReturnMemoCommand : IRequest<UpdatedReturnMemoResponse>, ITra
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturnMemos";
+    public string[]? CacheGroupKey => ["GetReturnMemos"];
 
     public UpdateReturnMemoDto ReturnMemo { get; set; }
     public ReturnMemosDetailLevel? DetailLevel { get; set; }

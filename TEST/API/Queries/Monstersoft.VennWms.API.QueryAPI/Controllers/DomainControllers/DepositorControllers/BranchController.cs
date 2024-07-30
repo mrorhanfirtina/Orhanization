@@ -35,9 +35,9 @@ public class BranchController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] BranchesDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListBranchQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListBranchQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListBranchListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

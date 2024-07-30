@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Customers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Customers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
+using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -50,42 +51,54 @@ public class GetListByDynamicCustomerQuery : IRequest<GetListResponse<GetListByD
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            Paginate<Customer> customerList = await _customerRepository.GetListByDynamicAsync(
-            dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: x =>
+            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
             {
-                IQueryable<Customer> query = x;
-
-                var detailLevel = request.DetailLevel;
-
-                if (detailLevel.IncludeDepositorCompany)
+                Paginate<Customer> customerList = await _customerRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                include: x =>
                 {
-                    query = query.Include(y => y.DepositorCompany);
+                    IQueryable<Customer> query = x;
+
+                    var detailLevel = request.DetailLevel;
+
+                    if (detailLevel.IncludeDepositorCompany)
+                    {
+                        query = query.Include(y => y.DepositorCompany);
+                    }
+
+                    if (detailLevel.IncludeCompany)
+                    {
+                        query = query.Include(y => y.Company);
+                    }
+
+                    if (detailLevel.IncludeAddress)
+                    {
+                        query = query.Include(y => y.Address);
+                    }
+
+                    if (detailLevel.IncludeReceiver)
+                    {
+                        query = query.Include(y => y.Receivers);
+                    }
+
+
+                    var includableQuery = query as IIncludableQueryable<Customer, object>;
+                    return includableQuery;
+                },
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
+
+                    return _mapper.Map<GetListResponse<GetListByDynamicCustomerListItemDto>>(customerList);
                 }
+            else
+            {
+                Paginate<Customer> customerList = await _customerRepository.GetListByDynamicAsync(
+                dynamic: request.DynamicQuery, predicate: m => m.DepositorCompanyId == depositorCompanyId,
+                index: request.PageRequest.PageIndex, enableTracking: false,
+                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                if (detailLevel.IncludeCompany)
-                {
-                    query = query.Include(y => y.Company);
-                }
-
-                if (detailLevel.IncludeAddress)
-                {
-                    query = query.Include(y => y.Address);
-                }
-
-                if (detailLevel.IncludeReceiver)
-                {
-                    query = query.Include(y => y.Receivers);
-                }
-
-
-                var includableQuery = query as IIncludableQueryable<Customer, object>;
-                return includableQuery;
-            },
-            index: request.PageRequest.PageIndex, enableTracking: false,
-            size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-            return _mapper.Map<GetListResponse<GetListByDynamicCustomerListItemDto>>(customerList);
+                return _mapper.Map<GetListResponse<GetListByDynamicCustomerListItemDto>>(customerList);
+            }
         }
     }
 

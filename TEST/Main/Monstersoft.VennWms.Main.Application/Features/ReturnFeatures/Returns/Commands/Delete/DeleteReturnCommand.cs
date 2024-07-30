@@ -21,7 +21,7 @@ public class DeleteReturnCommand : IRequest<DeletedReturnResponse>, ITransaction
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturns";
+    public string[]? CacheGroupKey => ["GetReturns"];
 
     public Guid Id { get; set; }
 

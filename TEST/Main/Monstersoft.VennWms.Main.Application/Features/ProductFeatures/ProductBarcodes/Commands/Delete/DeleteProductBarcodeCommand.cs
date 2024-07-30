@@ -21,7 +21,7 @@ public class DeleteProductBarcodeCommand : IRequest<DeletedProductBarcodeRespons
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetProductBarcodes";
+    public string[]? CacheGroupKey => ["GetProductBarcodes"];
 
     public Guid Id { get; set; }
 

@@ -26,7 +26,7 @@ public class CreateCustomerCommand : IRequest<CreatedCustomerResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetCustomers";
+    public string[]? CacheGroupKey => ["GetCustomers"];
 
     public CreateCustomerDto Customer { get; set; }
     public CustomersDetailLevel DetailLevel { get; set; }

@@ -24,6 +24,5 @@ public class GetListWorkTaskListItemDto
     public WorkTasksTransactionTypeResponseDto? TransactionType { get; set; }
     public WorkTasksDepositorResponseDto? Depositor { get; set; }
     public WorkTasksDepositorCompanyResponseDto? DepositorCompany { get; set; }
-    public ICollection<WorkTasksOrderShipItemTaskResponseDto>? OrderShipItemTasks { get; set; }
 }
 

@@ -9,7 +9,7 @@ public class OrderShipment : Entity<Guid>
 {
     public string Code { get; set; }
     public Guid OrderId { get; set; }
-    public Guid ShipmentId { get; set; }
+    public Guid? ShipmentId { get; set; }
     public Guid DepositorCompanyId { get; set; }
     public DateTime? LastMoveDate { get; set; }
     public int ProgressStatusId { get; set; }

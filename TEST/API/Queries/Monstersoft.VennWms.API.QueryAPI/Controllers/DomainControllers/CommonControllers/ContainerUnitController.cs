@@ -35,9 +35,9 @@ public class ContainerUnitController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] ContainerUnitsDetaillevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListContainerUnitQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListContainerUnitQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListContainerUnitListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

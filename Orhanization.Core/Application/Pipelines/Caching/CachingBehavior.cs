@@ -3,12 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Configuration;
 using Orhanization.Core.Security.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Orhanization.Core.Application.Pipelines.Caching;
 
@@ -32,8 +28,15 @@ public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
             return await next();
         }
 
+        string cacheKey = request.CacheKey;
+        if (cacheKey.Contains("$USER"))
+        {
+            string userId = _httpContextAccessor.HttpContext.User.GetUserId().ToString();
+            cacheKey = request.CacheKey.Replace("$USER", userId);
+        }
+
         TResponse response;
-        byte[]? cachedResponse = await _cache.GetAsync(request.CacheKey, cancellationToken);
+        byte[]? cachedResponse = await _cache.GetAsync(cacheKey, cancellationToken);
 
         if (cachedResponse != null)
         {
@@ -51,12 +54,19 @@ public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
     {
         TResponse response = await next();
 
+        string cacheKey = request.CacheKey;
+        if (cacheKey.Contains("$USER"))
+        {
+            string userId = _httpContextAccessor.HttpContext.User.GetUserId().ToString();
+            cacheKey = request.CacheKey.Replace("$USER", userId);
+        }
+
         TimeSpan slidingExpiration = request.SlidingExpiration ?? TimeSpan.FromDays(_cacheSettings.SlidingExpiration);
         DistributedCacheEntryOptions cacheOptions = new() { SlidingExpiration = slidingExpiration };
 
         byte[] serializeData = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(response));
 
-        await _cache.SetAsync(request.CacheKey, serializeData, cacheOptions, cancellationToken);
+        await _cache.SetAsync(cacheKey, serializeData, cacheOptions, cancellationToken);
 
         string cacheGroupKey = request.CacheGroupKey + _httpContextAccessor.HttpContext.User.GetUserLocalityId(); //1.0.10
 
@@ -71,6 +81,13 @@ public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
 
     private async Task AddCacheKeyToGroup(TRequest request, TimeSpan slidingExpiration, CancellationToken cancellationToken)
     {
+        string cacheKey = request.CacheKey;
+        if (cacheKey.Contains("$USER"))
+        {
+            string userId = _httpContextAccessor.HttpContext.User.GetUserId().ToString();
+            cacheKey = request.CacheKey.Replace("$USER", userId);
+        }
+
         string cacheGroupWithLocality = request.CacheGroupKey + _httpContextAccessor.HttpContext.User.GetUserLocalityId(); //1.0.10
 
         byte[]? cacheGroupCache = await _cache.GetAsync(key: cacheGroupWithLocality!, cancellationToken); //1.0.10 old: request.CacheGroupKey!
@@ -78,11 +95,11 @@ public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
         if (cacheGroupCache != null)
         {
             cacheKeysInGroup = JsonSerializer.Deserialize<HashSet<string>>(Encoding.Default.GetString(cacheGroupCache))!;
-            if (!cacheKeysInGroup.Contains(request.CacheKey))
-                cacheKeysInGroup.Add(request.CacheKey);
+            if (!cacheKeysInGroup.Contains(cacheKey))
+                cacheKeysInGroup.Add(cacheKey);
         }
         else
-            cacheKeysInGroup = new HashSet<string>(new[] { request.CacheKey });
+            cacheKeysInGroup = new HashSet<string>(new[] { cacheKey });
         byte[] newCacheGroupCache = JsonSerializer.SerializeToUtf8Bytes(cacheKeysInGroup);
 
         byte[]? cacheGroupCacheSlidingExpirationCache = await _cache.GetAsync(

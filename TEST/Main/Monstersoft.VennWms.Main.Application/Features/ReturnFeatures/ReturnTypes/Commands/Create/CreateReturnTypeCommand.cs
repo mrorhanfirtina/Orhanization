@@ -25,7 +25,7 @@ public class CreateReturnTypeCommand : IRequest<CreatedReturnTypeResponse>, ITra
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturnTypes";
+    public string[]? CacheGroupKey => ["GetReturnTypes"];
 
     public CreateReturnTypeDto ReturnType { get; set; }
     public ReturnTypesDetailLevel? DetailLevel { get; set; }

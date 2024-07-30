@@ -25,7 +25,8 @@ public class CreateShipmentMemoCommand : IRequest<CreatedShipmentMemoResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetShipmentMemos";
+    public string[]? CacheGroupKey => ["GetShipmentMemos"];
+
 
     public CreateShipmentMemoDto ShipmentMemo { get; set; }
     public ShipmentMemosDetailLevel? DetailLevel { get; set; }

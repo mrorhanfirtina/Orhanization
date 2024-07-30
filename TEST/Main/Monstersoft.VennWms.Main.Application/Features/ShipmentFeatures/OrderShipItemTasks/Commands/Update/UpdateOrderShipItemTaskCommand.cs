@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemTasks.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemTasks.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemTasks.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ShipmentFeatures.OrderShipItemTasks.Rules;
@@ -26,7 +25,7 @@ public class UpdateOrderShipItemTaskCommand : IRequest<UpdatedOrderShipItemTaskR
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderShipItemTasks";
+    public string[]? CacheGroupKey => ["GetOrderShipItemTasks"];
 
     public UpdateOrderShipItemTaskDto OrderShipItemTask { get; set; }
     public OrderShipItemTasksDetailLevel? DetailLevel { get; set; }

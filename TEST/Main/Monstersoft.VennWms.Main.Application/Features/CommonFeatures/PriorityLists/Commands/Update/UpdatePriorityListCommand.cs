@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.PriorityLists.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.PriorityLists.Constants;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.PriorityLists.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.PriorityLists.Rules;
@@ -25,7 +24,7 @@ public class UpdatePriorityListCommand : IRequest<UpdatedPriorityListResponse>, 
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetPriorityLists";
+    public string[]? CacheGroupKey => ["GetPriorityLists"];
 
     public UpdatePriorityListDto PriorityList { get; set; }
     public PriorityListsDetailLevel DetailLevel { get; set; }

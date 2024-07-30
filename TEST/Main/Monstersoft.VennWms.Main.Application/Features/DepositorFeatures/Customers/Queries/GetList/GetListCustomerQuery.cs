@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Customers.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Customers.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
 using Monstersoft.VennWms.Main.Domain.Entities.DepositorEntities;
@@ -30,7 +28,6 @@ public class GetListCustomerQuery : IRequest<GetListResponse<GetListCustomerList
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public CustomersDetailLevel DetailLevel { get; set; }
 
 
     public class GetListCustomerQueryHandler : IRequestHandler<GetListCustomerQuery, GetListResponse<GetListCustomerListItemDto>>
@@ -55,36 +52,8 @@ public class GetListCustomerQuery : IRequest<GetListResponse<GetListCustomerList
 
             Paginate<Customer> customerList = await _customerRepository.GetListAsync(
             predicate: m => m.DepositorCompanyId == depositorCompanyId,
-            include: x =>
-            {
-                IQueryable<Customer> query = x;
-
-                var detailLevel = request.DetailLevel;
-
-                if (detailLevel.IncludeDepositorCompany)
-                {
-                    query = query.Include(y => y.DepositorCompany);
-                }
-
-                if (detailLevel.IncludeCompany)
-                {
-                    query = query.Include(y => y.Company);
-                }
-
-                if (detailLevel.IncludeAddress)
-                {
-                    query = query.Include(y => y.Address);
-                }
-
-                if (detailLevel.IncludeReceiver)
-                {
-                    query = query.Include(y => y.Receivers);
-                }
-
-
-                var includableQuery = query as IIncludableQueryable<Customer, object>;
-                return includableQuery;
-            },
+            include: x => x.Include(m => m.DepositorCompany).Include(m => m.Address).Include(m => m.Company),
+            orderBy: x => x.OrderByDescending(m => m.CreatedDate),
             index: request.PageRequest.PageIndex, enableTracking: false,
             size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 

@@ -25,7 +25,8 @@ public class CreateStockCommand : IRequest<CreatedStockResponse>, ITransactional
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStocks";
+    public string[]? CacheGroupKey => ["GetStocks"];
+
 
     public CreateStockDto Stock { get; set; }
     public StocksDetailLevel? DetailLevel { get; set; }

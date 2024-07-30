@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Branches.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Branches.Constants;
 using Monstersoft.VennWms.Main.Application.Features.DepositorFeatures.Branches.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.DepositorRepositories;
@@ -22,7 +21,7 @@ public class UpdateBranchCommand : IRequest<UpdatedBranchResponse>, ITransaction
 {
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetBranches";
+    public string[]? CacheGroupKey => ["GetBranches"];
     public string[] Roles => [Admin, User, Write, BranchOperationClaims.Update];
     public UserRequestInfo? UserRequestInfo { get; set; }
 

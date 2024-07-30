@@ -20,7 +20,7 @@ public class DeleteOrderAttributeValueCommand : IRequest<DeletedOrderAttributeVa
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderAttributeValues";
+    public string[]? CacheGroupKey => ["GetOrderAttributeValues"];
 
     public Guid Id { get; set; }
 

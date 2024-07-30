@@ -27,7 +27,8 @@ public class CreateReceiptAttributeCommand : IRequest<CreatedReceiptAttributeRes
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceiptAttributes";
+    public string[]? CacheGroupKey => ["GetReceiptAttributes"];
+
 
     public CreateReceiptAttributeDto ReceiptAttribute { get; set; }
     public ReceiptAttributesDetailLevel? DetailLevel { get; set; }

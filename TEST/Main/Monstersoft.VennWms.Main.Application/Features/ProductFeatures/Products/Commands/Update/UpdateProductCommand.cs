@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ProductFeatures.Products.Rules;
@@ -26,7 +25,7 @@ public class UpdateProductCommand : IRequest<UpdatedProductResponse>, ITransacti
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetProducts";
+    public string[]? CacheGroupKey => ["GetProducts"];
 
     public UpdateProductDto Product { get; set; }
     public ProductsDetailLevel DetailLevel { get; set; }

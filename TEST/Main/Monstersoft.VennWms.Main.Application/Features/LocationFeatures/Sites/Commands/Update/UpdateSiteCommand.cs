@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Constants;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.LocationFeatures.Sites.Rules;
@@ -26,7 +25,7 @@ public class UpdateSiteCommand : IRequest<UpdatedSiteResponse>, ITransactionalRe
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetSites";
+    public string[]? CacheGroupKey => ["GetSites"];
 
     public UpdateSiteDto Site { get; set; }
     public SitesDetailLevel DetailLevel { get; set; }

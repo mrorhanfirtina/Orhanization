@@ -257,6 +257,16 @@ public class GetByCodeLocationQuery : IRequest<GetByCodeLocationResponse>, ITran
                         }
                     }
 
+                    if (detailLevel.IncludeBufferLocation)
+                    {
+                        query = query.Include(y => y.BufferLocations);
+
+                        if (detailLevel.BufferLocationDetailLevel.IncludeBuffLocation)
+                        {
+                            query = query.Include(y => y.BufferLocations).ThenInclude(m => m.BuffLocation);
+                        }
+                    }
+
 
                     var includableQuery = query as IIncludableQueryable<Location, object>;
                     return includableQuery;

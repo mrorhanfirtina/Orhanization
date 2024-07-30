@@ -17,7 +17,7 @@ public class CreatedBuildingResponse
     public decimal? Latitude { get; set; }
     public decimal? Longitude { get; set; }
     public DateTime CreatedDate { get; set; }
-    public BuildingSiteResponseDto? Site { get; set; }
+    public BuildingsSiteResponseDto? Site { get; set; }
     public BuildingDepositorCompanyResponseDto? DepositorCompany { get; set; }
     public BuildingBuildingDimensionResponseDto? BuildingDimension { get; set; }
     public ICollection<BuildingStorageSystemResponseDto>? StorageSystems { get; set; }

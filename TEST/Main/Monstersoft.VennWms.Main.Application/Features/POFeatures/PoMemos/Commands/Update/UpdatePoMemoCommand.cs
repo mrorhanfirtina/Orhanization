@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.PORepositories;
@@ -25,7 +24,7 @@ public class UpdatePoMemoCommand : IRequest<UpdatedPoMemoResponse>, ITransaction
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetPoMemos";
+    public string[]? CacheGroupKey => ["GetPoMemos"];
 
     public UpdatePoMemoDto PoMemo { get; set; }
     public PoMemosDetailLevel DetailLevel { get; set; }

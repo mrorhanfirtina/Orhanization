@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockMemos.Commands.Create;
+using Microsoft.EntityFrameworkCore.Query;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockMemos.Constants;
 using Monstersoft.VennWms.Main.Application.Features.StockFeatures.StockMemos.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.StockRepositories;
@@ -25,7 +24,7 @@ public class UpdateStockMemoCommand : IRequest<UpdatedStockMemoResponse>, ITrans
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockMemos";
+    public string[]? CacheGroupKey => ["GetStockMemos"];
 
     public UpdateStockMemoDto StockMemo { get; set; }
     public StockMemosDetailLevel? DetailLevel { get; set; }

@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderTypes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.OrderFeatures.OrderTypes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.OrderRepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.OrderEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -31,7 +28,6 @@ public class GetListOrderTypeQuery : IRequest<GetListResponse<GetListOrderTypeLi
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public OrderTypesDetailLevel DetailLevel { get; set; }
 
 
 
@@ -55,59 +51,14 @@ public class GetListOrderTypeQuery : IRequest<GetListResponse<GetListOrderTypeLi
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<OrderType> orderTypeList = await _orderTypeRepository.GetListAsync(
+            Paginate<OrderType> orderTypeList = await _orderTypeRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<OrderType> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-                    if (detailLevel.IncludeOrder)
-                    {
-                        query = query.Include(y => y.Orders);
-
-                        if (detailLevel.OrderDetailLevel.IncludeDepositor)
-                        {
-                            query = query.Include(y => y.Orders).ThenInclude(y => y.Depositor);
-                        }
-
-                        if (detailLevel.OrderDetailLevel.IncludeCustomer)
-                        {
-                            query = query.Include(y => y.Orders).ThenInclude(y => y.Customer);
-                        }
-
-                        if (detailLevel.OrderDetailLevel.IncludeReceiver)
-                        {
-                            query = query.Include(y => y.Orders).ThenInclude(y => y.Receiver);
-                        }
-                    }
-
-
-                    var includableQuery = query as IIncludableQueryable<OrderType, object>;
-                    return includableQuery;
-                },
+                include: x => x.Include(x => x.DepositorCompany),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListOrderTypeListItemDto>>(orderTypeList);
-            }
-            else
-            {
-                Paginate<OrderType> orderTypeList = await _orderTypeRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListOrderTypeListItemDto>>(orderTypeList);
-            }
+            return _mapper.Map<GetListResponse<GetListOrderTypeListItemDto>>(orderTypeList);
         }
     }
 }

@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.POFeatures.PurchaseOrders.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PurchaseOrders.Constants;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PurchaseOrders.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PurchaseOrders.Rules;
@@ -26,7 +25,7 @@ public class UpdatePurchaseOrderCommand : IRequest<UpdatedPurchaseOrderResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetPurchaseOrders";
+    public string[]? CacheGroupKey => ["GetPurchaseOrders"];
 
     public UpdatePurchaseOrderDto PurchaseOrder { get; set; }
     public PurchaseOrdersDetailLevel DetailLevel { get; set; }

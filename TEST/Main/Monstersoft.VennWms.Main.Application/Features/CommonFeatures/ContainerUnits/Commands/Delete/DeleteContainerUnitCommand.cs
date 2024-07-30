@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Constants;
-using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Extensions;
 using Monstersoft.VennWms.Main.Application.Features.CommonFeatures.ContainerUnits.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.CommonRepositories;
 using Monstersoft.VennWms.Main.Domain.Entities.CommonEntities;
@@ -21,7 +20,7 @@ public class DeleteContainerUnitCommand : IRequest<DeletedContainerUnitResponse>
     public string[] Roles => [Admin, User, Write, ContainerUnitOperationClaims.Delete];
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetContainerUnits";
+    public string[]? CacheGroupKey => ["GetContainerUnits"];
 
     public int Id { get; set; }
 

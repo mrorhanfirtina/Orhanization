@@ -20,7 +20,7 @@ public class DeletePrinterCommand : IRequest<DeletedPrinterResponse>, ITransacti
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetPrinters";
+    public string[]? CacheGroupKey => ["GetBarcodes", "GetPrinters"];
 
     public Guid Id { get; set; }
 

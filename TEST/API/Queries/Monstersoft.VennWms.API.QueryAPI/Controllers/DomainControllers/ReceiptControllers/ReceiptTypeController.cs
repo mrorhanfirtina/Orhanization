@@ -35,9 +35,9 @@ public class ReceiptTypeController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] ReceiptTypesDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListReceiptTypeQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListReceiptTypeQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListReceiptTypeListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

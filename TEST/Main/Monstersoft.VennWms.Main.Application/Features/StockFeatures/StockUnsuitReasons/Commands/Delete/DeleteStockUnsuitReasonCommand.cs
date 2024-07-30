@@ -20,7 +20,7 @@ public class DeleteStockUnsuitReasonCommand : IRequest<DeletedStockUnsuitReasonR
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetStockUnsuitReasons";
+    public string[]? CacheGroupKey => ["GetStockUnsuitReasons"];
 
     public Guid Id { get; set; }
 

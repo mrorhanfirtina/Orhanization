@@ -21,7 +21,7 @@ public class DeleteCompanyCommand : IRequest<DeletedCompanyResponse>, ITransacti
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetCompanies";
+    public string[]? CacheGroupKey => ["GetCompanies"];
 
     public Guid Id { get; set; }
 

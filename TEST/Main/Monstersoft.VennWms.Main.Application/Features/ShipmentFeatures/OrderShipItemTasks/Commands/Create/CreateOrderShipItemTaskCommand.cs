@@ -25,7 +25,8 @@ public class CreateOrderShipItemTaskCommand : IRequest<CreatedOrderShipItemTaskR
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetOrderShipItemTasks";
+    public string[]? CacheGroupKey => ["GetOrderShipItemTasks"];
+
 
     public CreateOrderShipItemTaskDto OrderShipItemTask { get; set; }
     public OrderShipItemTasksDetailLevel? DetailLevel { get; set; }

@@ -24,9 +24,9 @@ public class TransactionLogController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] TransactionLogsDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListTransactionLogQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListTransactionLogQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListTransactionLogListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

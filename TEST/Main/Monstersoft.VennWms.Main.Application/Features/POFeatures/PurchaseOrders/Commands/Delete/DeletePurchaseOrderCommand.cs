@@ -21,7 +21,7 @@ public class DeletePurchaseOrderCommand : IRequest<DeletedPurchaseOrderResponse>
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetPurchaseOrders";
+    public string[]? CacheGroupKey => ["GetPurchaseOrders"];
 
     public Guid Id { get; set; }
 

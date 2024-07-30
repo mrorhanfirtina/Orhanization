@@ -20,7 +20,7 @@ public class DeleteReturnTypeCommand : IRequest<DeletedReturnTypeResponse>, ITra
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturnTypes";
+    public string[]? CacheGroupKey => ["GetReturnTypes"];
 
     public Guid Id { get; set; }
 

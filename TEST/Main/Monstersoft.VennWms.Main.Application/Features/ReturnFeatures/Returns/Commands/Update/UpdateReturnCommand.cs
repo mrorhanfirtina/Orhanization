@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.Returns.Commands.Create;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.Returns.Constants;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.Returns.Dtos.UpdateDtos;
 using Monstersoft.VennWms.Main.Application.Features.ReturnFeatures.Returns.Rules;
@@ -26,7 +25,7 @@ public class UpdateReturnCommand : IRequest<UpdatedReturnResponse>, ITransaction
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturns";
+    public string[]? CacheGroupKey => ["GetReturns"];
 
     public UpdateReturnDto Return { get; set; }
     public ReturnsDetailLevel? DetailLevel { get; set; }

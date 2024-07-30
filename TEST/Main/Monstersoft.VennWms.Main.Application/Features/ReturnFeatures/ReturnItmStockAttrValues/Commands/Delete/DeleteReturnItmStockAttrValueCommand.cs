@@ -20,7 +20,7 @@ public class DeleteReturnItmStockAttrValueCommand : IRequest<DeletedReturnItmSto
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReturnItmStockAttrValues";
+    public string[]? CacheGroupKey => ["GetReturnItmStockAttrValues"];
 
     public Guid Id { get; set; }
 

@@ -25,7 +25,7 @@ public class CreateReceiverCommand : IRequest<CreatedReceiverResponse>, ITransac
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceivers";
+    public string[]? CacheGroupKey => ["GetReceivers"];
 
     public CreateReceiverDto Receiver { get; set; }
     public ReceiversDetailLevel DetailLevel { get; set; }

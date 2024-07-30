@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore;
-using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Constants;
 using Monstersoft.VennWms.Main.Application.Features.POFeatures.PoAttributes.Rules;
 using Monstersoft.VennWms.Main.Application.Repositories.PORepositories;
-using Monstersoft.VennWms.Main.Application.Statics;
 using Monstersoft.VennWms.Main.Domain.Entities.POEntities;
 using Orhanization.Core.Application.Dtos;
 using Orhanization.Core.Application.Pipelines.Authorization;
@@ -31,7 +28,6 @@ public class GetListPoAttributeQuery : IRequest<GetListResponse<GetListPoAttribu
     public TimeSpan? SlidingExpiration { get; }
 
     public PageRequest PageRequest { get; set; }
-    public PoAttributesDetailLevel DetailLevel { get; set; }
 
 
     public class GetListPoAttributeQueryHandler : IRequestHandler<GetListPoAttributeQuery, GetListResponse<GetListPoAttributeListItemDto>>
@@ -54,44 +50,14 @@ public class GetListPoAttributeQuery : IRequest<GetListResponse<GetListPoAttribu
 
             Guid depositorCompanyId = Guid.Parse(request.UserRequestInfo.RequestUserLocalityId);
 
-            if (ObjectExtensions.AnyPropertyTrue(request.DetailLevel))
-            {
-                Paginate<PoAttribute> poAttributeList = await _poAttributeRepository.GetListAsync(
+            Paginate<PoAttribute> poAttributeList = await _poAttributeRepository.GetListAsync(
                 predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                include: x =>
-                {
-                    IQueryable<PoAttribute> query = x;
-
-                    var detailLevel = request.DetailLevel;
-
-                    if (detailLevel.IncludeAttributeInputType)
-                    {
-                        query = query.Include(y => y.AttributeInputType);
-                    }
-
-                    if (detailLevel.IncludeDepositorCompany)
-                    {
-                        query = query.Include(y => y.DepositorCompany);
-                    }
-
-
-                    var includableQuery = query as IIncludableQueryable<PoAttribute, object>;
-                    return includableQuery;
-                },
+                include: x => x.Include(y => y.DepositorCompany).Include(y => y.AttributeInputType),
+                orderBy: x => x.OrderByDescending(m => m.CreatedDate),
                 index: request.PageRequest.PageIndex, enableTracking: false,
                 size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
 
-                return _mapper.Map<GetListResponse<GetListPoAttributeListItemDto>>(poAttributeList);
-            }
-            else
-            {
-                Paginate<PoAttribute> poAttributeList = await _poAttributeRepository.GetListAsync(
-                predicate: m => m.DepositorCompanyId == depositorCompanyId,
-                index: request.PageRequest.PageIndex, enableTracking: false,
-                size: request.PageRequest.PageSize, cancellationToken: cancellationToken);
-
-                return _mapper.Map<GetListResponse<GetListPoAttributeListItemDto>>(poAttributeList);
-            }
+            return _mapper.Map<GetListResponse<GetListPoAttributeListItemDto>>(poAttributeList);
         }
     }
 

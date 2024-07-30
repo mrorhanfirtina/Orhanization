@@ -36,9 +36,9 @@ public class ProductAttributeController : BaseController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest, [FromBody] ProductAttributesDetailLevel detailLevel)
+    public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
     {
-        GetListProductAttributeQuery query = new() { PageRequest = pageRequest, DetailLevel = detailLevel };
+        GetListProductAttributeQuery query = new() { PageRequest = pageRequest };
         GetListResponse<GetListProductAttributeListItemDto> response = await Mediator.Send(query);
         return Ok(response);
     }

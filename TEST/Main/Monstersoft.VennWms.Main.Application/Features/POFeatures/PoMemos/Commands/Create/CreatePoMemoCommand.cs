@@ -24,7 +24,7 @@ public class CreatePoMemoCommand : IRequest<CreatedPoMemoResponse>, ITransaction
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetPoMemos";
+    public string[]? CacheGroupKey => ["GetPoMemos"];
 
     public CreatePoMemoDto PoMemo { get; set; }
     public PoMemosDetailLevel DetailLevel { get; set; }

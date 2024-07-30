@@ -21,7 +21,7 @@ public class DeleteReceiptCommand : IRequest<DeletedReceiptResponse>, ITransacti
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetReceipts";
+    public string[]? CacheGroupKey => ["GetReceipts"];
 
     public Guid Id { get; set; }
 

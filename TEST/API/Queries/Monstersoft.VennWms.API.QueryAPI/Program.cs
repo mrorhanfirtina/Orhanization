@@ -39,8 +39,6 @@ builder.Services
         };
     });
 
-builder.Services.AddDistributedMemoryCache(); //InMemoryCache
-
 builder.Services.AddCors(
     opt =>
         opt.AddDefaultPolicy(p =>
@@ -78,12 +76,14 @@ builder.Services.AddSwaggerGen(opt =>
     );
 });
 
+//builder.Services.AddDistributedMemoryCache(); //InMemoryCache
+
 //builder.Services.AddStackExchangeRedisCache(opt => opt.Configuration=("localhost:6379")); //Redis
 //Add Redis cache service to the application
-/*builder.Services.AddStackExchangeRedisCache(options =>
+builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetSection("RedisCache").GetValue<string>("Configuration");
-});*///Redis
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -101,7 +101,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-if (app.Environment.IsProduction())
+if (!app.Environment.IsProduction())
 {
     app.ConfigureCustomExceptionMiddleware();
 }

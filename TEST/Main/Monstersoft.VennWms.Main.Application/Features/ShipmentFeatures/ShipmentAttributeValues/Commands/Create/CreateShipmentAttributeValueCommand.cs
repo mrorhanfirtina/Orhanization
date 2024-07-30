@@ -25,7 +25,8 @@ public class CreateShipmentAttributeValueCommand : IRequest<CreatedShipmentAttri
     public UserRequestInfo? UserRequestInfo { get; set; }
     public string? CacheKey => "";
     public bool ByPassCache => false;
-    public string? CacheGroupKey => "GetShipmentAttributes";
+    public string[]? CacheGroupKey => ["GetShipmentAttributeValues"];
+
 
     public CreateShipmentAttributeValueDto ShipmentAttributeValue { get; set; }
     public ShipmentAttributesValueDetailLevel? DetailLevel { get; set; }
