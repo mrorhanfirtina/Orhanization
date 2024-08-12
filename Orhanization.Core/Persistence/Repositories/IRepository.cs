@@ -32,6 +32,12 @@ public interface IRepository<TEntity, TEntityId> : IQuery<TEntity> where TEntity
         bool withDeleted = false, bool enableTracking = true, bool autoInclude = false,
         CancellationToken cancellationToken = default);
 
+    ICollection<TEntity> GetListCollection(Expression<Func<TEntity, bool>>? predicate = null,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,
+        bool withDeleted = false, bool enableTracking = true, bool autoInclude = false,
+        CancellationToken cancellationToken = default);
+
 
 
     Paginate<TEntity> GetListByDynamic(

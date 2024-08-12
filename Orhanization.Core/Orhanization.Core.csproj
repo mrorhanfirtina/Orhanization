@@ -19,9 +19,9 @@
     <PackageTags>Orhanization test</PackageTags>
     <PackageReleaseNotes>Orhanization nuget package</PackageReleaseNotes>
     <NeutralLanguage>tr</NeutralLanguage>
-    <Version>1.0.21</Version>
-    <AssemblyVersion>1.0.21</AssemblyVersion>
-    <FileVersion>1.0.21</FileVersion>
+    <Version>1.0.22</Version>
+    <AssemblyVersion>1.0.22</AssemblyVersion>
+    <FileVersion>1.0.22</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
