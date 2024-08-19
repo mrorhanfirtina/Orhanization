@@ -1,13 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Orhanization.Core.CrossCuttingConcerns.Serilog.ConfigurationModels;
 using Orhanization.Core.CrossCuttingConcerns.Serilog.Messages;
-using Serilog.Sinks.MSSqlServer;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Serilog.Sinks.MSSqlServer;
 
 namespace Orhanization.Core.CrossCuttingConcerns.Serilog.Loggers;
 

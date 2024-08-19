@@ -2,12 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Orhanization.Core.CrossCuttingConcerns.Logging;
 using Orhanization.Core.CrossCuttingConcerns.Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace Orhanization.Core.Application.Pipelines.Logging;
 

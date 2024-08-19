@@ -1,14 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Orhanization.Core.CrossCuttingConcerns.Serilog.ConfigurationModels;
-using Serilog.Sinks.RabbitMQ.Sinks.RabbitMQ;
-using Serilog.Sinks.RabbitMQ;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Serilog.Formatting.Json;
+using Serilog.Sinks.RabbitMQ;
+using Serilog.Sinks.RabbitMQ.Sinks.RabbitMQ;
 
 namespace Orhanization.Core.CrossCuttingConcerns.Serilog.Loggers;
 
