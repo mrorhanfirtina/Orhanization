@@ -35,6 +35,8 @@ public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
             cacheKey = request.CacheKey.Replace("$USER", userId);
         }
 
+        cacheKey = cacheKey + _httpContextAccessor.HttpContext.User.GetUserLocalityId();
+
         TResponse response;
         byte[]? cachedResponse = await _cache.GetAsync(cacheKey, cancellationToken);
 
@@ -60,6 +62,8 @@ public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
             string userId = _httpContextAccessor.HttpContext.User.GetUserId().ToString();
             cacheKey = request.CacheKey.Replace("$USER", userId);
         }
+
+        cacheKey = cacheKey + _httpContextAccessor.HttpContext.User.GetUserLocalityId();
 
         TimeSpan slidingExpiration = request.SlidingExpiration ?? TimeSpan.FromDays(_cacheSettings.SlidingExpiration);
         DistributedCacheEntryOptions cacheOptions = new() { SlidingExpiration = slidingExpiration };
@@ -87,6 +91,8 @@ public class CachingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
             string userId = _httpContextAccessor.HttpContext.User.GetUserId().ToString();
             cacheKey = request.CacheKey.Replace("$USER", userId);
         }
+
+        cacheKey = cacheKey + _httpContextAccessor.HttpContext.User.GetUserLocalityId();
 
         string cacheGroupWithLocality = request.CacheGroupKey + _httpContextAccessor.HttpContext.User.GetUserLocalityId(); //1.0.10
 
