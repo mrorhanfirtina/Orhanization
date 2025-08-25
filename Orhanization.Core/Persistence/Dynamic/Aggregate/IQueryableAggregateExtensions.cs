@@ -91,40 +91,30 @@ namespace Orhanization.Core.Persistence.Dynamic.Aggregate
         {
             var selects = new List<string>();
 
-            // 1) Group Key alanları
+            // Key alanları
             foreach (var g in groupBy ?? Enumerable.Empty<string>())
             {
                 var alias = ToSafeAlias(g); // Customer.Name -> Customer_Name
                 selects.Add($"Key.{alias} as {alias}");
             }
 
-            // 2) Aggregates
+            // Aggregates
             foreach (var a in aggs)
             {
                 var alias = ToSafeAlias(a.As);
-                var field = a.Field?.Trim() ?? string.Empty;
-
-                // Kullanıcı zaten bir fonksiyon verdiyse (parantez içeriyorsa) pass-through
-                var userProvidedFunc = field.Contains("(");
-
-                string expr = a.Type.ToLowerInvariant() switch
+                var expr = a.Type.ToLowerInvariant() switch
                 {
-                    // Count: kullanıcı fonksiyon verdiyse (ör: ReceiptItems.Count()), direkt onu kullan
-                    // aksi halde klasik Count()
-                    "count" => userProvidedFunc ? field : "Count()",
-
-                    // Sum/Avg/Min/Max: kullanıcı fonksiyon verdiyse (ör: ReceiptItems.Sum(Quantity) veya ReceiptItems.Average(ExpectedQuantity))
-                    // direkt kullan; değilse selector’ı biz saralım.
-                    "sum" => userProvidedFunc ? field : $"Sum({field})",
-                    "avg" => userProvidedFunc ? field : $"Average({field})", // istersen "avg({field})" de kullanabilirsin
-                    "min" => userProvidedFunc ? field : $"Min({field})",
-                    "max" => userProvidedFunc ? field : $"Max({field})",
-
+                    "count" => "Count()",
+                    "sum" => $"Sum({a.Field})",        // örn: OrderItems.Sum(Quantity)
+                    "avg" => $"Average({a.Field})",
+                    "min" => $"Min({a.Field})",
+                    "max" => $"Max({a.Field})",
                     _ => throw new ArgumentException($"Unsupported aggregate: {a.Type}")
                 };
-
                 selects.Add($"{expr} as {alias}");
             }
+
+            
 
             return $"new ({string.Join(", ", selects)})";
         }
