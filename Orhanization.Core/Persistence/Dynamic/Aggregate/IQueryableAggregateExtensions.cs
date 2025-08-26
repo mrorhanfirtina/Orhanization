@@ -193,23 +193,18 @@ namespace Orhanization.Core.Persistence.Dynamic.Aggregate
 
         private static string BuildCountExpr(string field)
         {
-            // count() — grup satırı sayısı
             if (string.IsNullOrWhiteSpace(field))
                 return "Count()";
 
-            // "ReceiptItems.Select(1)" gibi → SelectMany(ReceiptItems).Count()
             if (LooksLikeSelectChain(field))
-                return $"{FixSelectChain(field)}.Count()";
+                return $"{FixSelectChain(field, wrapHead: true)}.Count()";
 
-            // "SelectMany(ReceiptItems)" zaten verilmişse
             if (LooksLikeSelectManyChain(field))
                 return $"{field}.Count()";
 
-            // "ReceiptItems" gibi yalın koleksiyon adı → SelectMany(ReceiptItems).Count()
             if (IsBareIdentifier(field))
-                return $"SelectMany({field}).Count()";
+                return $"SelectMany({field}.AsEnumerable()).Count()";
 
-            // Başka bir şey yazıldıysa aynen Count üstüne çevir (güvenli varsayılan)
             return $"{field}.Count()";
         }
 
@@ -218,26 +213,21 @@ namespace Orhanization.Core.Persistence.Dynamic.Aggregate
             if (string.IsNullOrWhiteSpace(field))
                 throw new ArgumentException($"'{fn}' aggregate requires a field.");
 
-            // "ReceiptItems.Select(Value)" → SelectMany(ReceiptItems).Select(Value).Fn()
             if (LooksLikeSelectChain(field))
-                return $"{FixSelectChain(field)}.{fn}()";
+                return $"{FixSelectChain(field, wrapHead: true)}.{fn}()";
 
-            // "SelectMany(ReceiptItems).Select(Value)" → ... .Fn()
             if (LooksLikeSelectManyChain(field))
                 return $"{field}.{fn}()";
 
-            // "ReceiptItems.ExpectedQuantity" → SelectMany(ReceiptItems).Select(ExpectedQuantity).Fn()
             if (LooksLikeSimpleDotPath(field))
             {
                 var (head, tail) = SplitFirst(field);
-                return $"SelectMany({head}).Select({tail}).{fn}()";
+                return $"SelectMany({head}.AsEnumerable()).Select({tail}).{fn}()";
             }
 
-            // "OrderItems.Sum(Quantity)" gibi içte zaten aggregate varsa
             if (ContainsAny(field, "Sum(", "Average(", "Min(", "Max(", "Count("))
-                return $"{fn}({field})"; // üst seviye grup toplamı
+                return $"{fn}({field})";
 
-            // Aksi halde element scalar alanı → Fn(Field)
             return $"{fn}({field})";
         }
 
@@ -270,27 +260,21 @@ namespace Orhanization.Core.Persistence.Dynamic.Aggregate
         private static bool ContainsAny(string s, params string[] needles)
             => needles.Any(n => s.Contains(n, StringComparison.Ordinal));
 
-        /// <summary>
-        /// "ReceiptItems.Select(Value)" → "SelectMany(ReceiptItems).Select(Value)"
-        /// Diğer durumlarda olduğu gibi bırakır.
-        /// </summary>
-        private static string FixSelectChain(string s)
+        /// "X.Select(...)" -> "SelectMany(X[.AsEnumerable()]).Select(...)"
+        private static string FixSelectChain(string s, bool wrapHead = false)
         {
-            // Başta SelectMany/Select varsa aynen bırak
             if (s.StartsWith("SelectMany(", StringComparison.Ordinal) || s.StartsWith("Select(", StringComparison.Ordinal))
                 return s;
 
-            // "X.Select(" kalıbı → "SelectMany(X).Select("
             var dot = s.IndexOf(".Select(", StringComparison.Ordinal);
             if (dot > 0)
             {
-                var head = s.Substring(0, dot);       // X
-                var tail = s.Substring(dot + 1);      // Select(...)
+                var head = s.Substring(0, dot).Replace("[]", "");
+                var tail = s.Substring(dot + 1); // "Select(...)"
 
-                head = head.Replace("[]", "");
-                return $"SelectMany({head}).{tail}";
+                var headExpr = wrapHead ? $"{head}.AsEnumerable()" : head;
+                return $"SelectMany({headExpr}).{tail}";
             }
-
             return s;
         }
     }
